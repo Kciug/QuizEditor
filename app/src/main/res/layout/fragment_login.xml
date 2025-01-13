@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- App Icon -->
+    <ImageView
+        android:id="@+id/appIcon"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:contentDescription="@string/login_icon_desc"
+        android:layout_gravity="center" />
+
+    <!-- App Title -->
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <!-- Email Input -->
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="emailAddress"
+        android:hint="@string/login_email_hint"
+        android:inputType="textEmailAddress"
+        android:drawableStart="@drawable/ic_email_24"
+        android:drawablePadding="12dp"
+        android:layout_marginTop="32dp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edit_text"/>
+        <!--android:background="@drawable/input_background" /> -->
+
+
+    <!-- Password Input -->
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="password"
+        android:hint="@string/login_password_hint"
+        android:inputType="textPassword"
+        android:drawableStart="@drawable/ic_password_24"
+        android:drawablePadding="12dp"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edit_text"/>
+        <!--android:background="@drawable/input_background" /> -->
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_button_text"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/white"
+        android:padding="12dp" />
+
+    <!-- Reset Password Text -->
+    <TextView
+        android:id="@+id/resetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_password_reset_text"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

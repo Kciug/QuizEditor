@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quiz_mode_navigation"
+    app:startDestination="@+id/navigation_categories">
+
+    <fragment
+        android:id="@+id/navigation_categories"
+        android:name="com.rafalskrzypczyk.quiz_mode.ui.QuizCategoriesFragment"
+        android:label="@string/title_categories"
+        tools:layout="@layout/fragment_quiz_categories" />
+
+
+    <fragment
+        android:id="@+id/navigation_questions"
+        android:name="com.rafalskrzypczyk.quiz_mode.ui.QuizQuestionsFragment"
+        android:label="@string/title_questions"
+        tools:layout="@layout/fragment_quiz_questions" />
+
+    <fragment
+        android:id="@+id/navigation_category_details"
+        android:name="com.rafalskrzypczyk.quiz_mode.ui.QuizCategoryDetailsFragment"
+        android:label="@string/title_categories"
+        tools:layout="@layout/fragment_quiz_category_details" />
+
+</navigation>

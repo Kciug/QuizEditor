@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">QuizEditor</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_mode_quiz">Tryb | Quiz</string>
+    <string name="menu_mode_swipe_quiz">Tryb | Swipe Quiz</string>
+    <string name="menu_mode_calculations">Tryb | Obliczenia</string>
+    <string name="menu_mode_scenarios">Tryb | Scenariusze</string>
+
+    <string name="login_icon_desc">App Icon</string>
+    <string name="login_email_hint">e-mail</string>
+    <string name="login_password_hint">hasło</string>
+    <string name="login_button_text">Zaloguj</string>
+    <string name="login_password_reset_text">Zapomniałem hasła</string>
+</resources>

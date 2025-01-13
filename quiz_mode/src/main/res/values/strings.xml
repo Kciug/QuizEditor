@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">quiz_mode</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_categories">Kategorie</string>
+    <string name="title_questions">Pytania</string>
+
+    <string name="ic_desc_answers">Odpowiedzi</string>
+    <string name="ic_desc_validation_ok">Pytanie poprawne</string>
+
+    <string name="label_category_details">Kategoria</string>
+    <string name="label_category_title">Tytuł</string>
+    <string name="hint_category_title">Nazwa kategorii</string>
+    <string name="label_category_desc">Opis</string>
+    <string name="hint_category_desc">Opis...</string>
+    <string name="label_category_status">Status:</string>
+    <string name="label_category_color">Kolor:</string>
+    <string name="label_category_questions_section">Pytania w tej kategorii</string>
+    <string name="label_category_questions_amount">Ilość pytań: </string>
+
+    <string name="button_edit_category_text">Edytuj</string>
+    <string name="button_category_add_new_text">Nowe pytanie</string>
+    <string name="button_category_add_from_database_text">Dodaj z bazy</string>
+</resources>
