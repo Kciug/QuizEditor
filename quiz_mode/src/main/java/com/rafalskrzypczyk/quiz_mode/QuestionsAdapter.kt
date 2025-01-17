@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

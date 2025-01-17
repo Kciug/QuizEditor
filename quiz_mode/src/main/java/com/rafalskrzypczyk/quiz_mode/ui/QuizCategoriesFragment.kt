@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.presenters.QuizCategoriesPresenter
@@ -32,7 +30,6 @@ class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
         _binding = FragmentQuizCategoriesBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        //val navHostFragment = parentFragmentManager.findFragmentById(R.id.nav_host_fragment_quiz_mode) as NavHostFragment
         navController = findNavController()
 
         presenter = QuizCategoriesPresenter(this)
@@ -45,13 +42,29 @@ class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
     }
 
     override fun displayCategories(categories: List<Category>) {
-        adapter = CategoriesAdapter(categories) { category ->
-            val bundle = Bundle().apply {
-                putInt("categoryId", category.id)
-            }
-            navController.navigate(R.id.navigation_category_details, bundle)
-        }
+        adapter = CategoriesAdapter(
+            categories = categories,
+            onCategoryClicked = { category ->
+                openCategoryDetailsSheet(category.id)
+            },
+            onAddClicked = {
+                openNewCategorySheet()
+            },
+        )
         binding.categoryRecyclerView.adapter = adapter
+    }
+
+    private fun openCategoryDetailsSheet(categoryId: Int){
+        val bundle = Bundle().apply {
+            putInt("categoryId", categoryId)
+        }
+        val bottomBarCategoryDetails = QuizCategoryDetailsFragment(bundle)
+        bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
+    }
+
+    private fun openNewCategorySheet(){
+        val bottomBarCategoryDetails = QuizCategoryDetailsFragment()
+        bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
     }
 
     override fun onDestroyView() {

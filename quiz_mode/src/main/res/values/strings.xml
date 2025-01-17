@@ -8,18 +8,28 @@
 
     <string name="ic_desc_answers">Odpowiedzi</string>
     <string name="ic_desc_validation_ok">Pytanie poprawne</string>
+    <string name="ic_desc_close">Zamknij</string>
+    <string name="ic_desc_edit_category">Edytuj</string>
+    <string name="ic_desc_add_new">Dodaj nowy element</string>
 
     <string name="label_category_details">Kategoria</string>
     <string name="label_category_title">Tytuł</string>
-    <string name="hint_category_title">Nazwa kategorii</string>
     <string name="label_category_desc">Opis</string>
-    <string name="hint_category_desc">Opis...</string>
     <string name="label_category_status">Status:</string>
     <string name="label_category_color">Kolor:</string>
     <string name="label_category_questions_section">Pytania w tej kategorii</string>
     <string name="label_category_questions_amount">Ilość pytań: </string>
 
+    <string name="hint_category_title">Nazwa kategorii</string>
+    <string name="hint_category_desc">Opis...</string>
+
+    <string name="button_save">Zapisz</string>
     <string name="button_edit_category_text">Edytuj</string>
     <string name="button_category_add_new_text">Nowe pytanie</string>
     <string name="button_category_add_from_database_text">Dodaj z bazy</string>
+
+    <string name="alert_unsaved_changes_title">Uwaga</string>
+    <string name="alert_unsaved_changes_message">Zmiany zostaną utracone!</string>
+    <string name="alert_unsaved_changes_negative_button">Wróć</string>
+    <string name="alert_unsaved_changes_positive_button">OK</string>
 </resources>

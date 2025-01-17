@@ -30,19 +30,9 @@ class QuizModeFragment : Fragment() {
 
         val navView: BottomNavigationView = binding.navQuizModeBottomBar
 
-        //val navController = findNavController()
-
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_quiz_mode) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        val appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.navigation_categories, R.id.navigation_questions
-//            )
-//        )
-        //setupActionBarWithNavController(activity = (requireActivity() as AppCompatActivity), navController = navController)
         navView.setupWithNavController(navController)
 
         return root
