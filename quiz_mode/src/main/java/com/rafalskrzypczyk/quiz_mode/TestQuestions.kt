@@ -4,7 +4,7 @@ import com.rafalskrzypczyk.quiz_mode.models.Answer
 import com.rafalskrzypczyk.quiz_mode.models.Question
 
 object TestQuestions {
-    val questions = listOf(
+    val questions = mutableListOf(
         Question(
             id = 1,
             text = "What is the capital of France?",

@@ -2,24 +2,29 @@ package com.rafalskrzypczyk.quiz_mode.ui
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Canvas
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.rafalskrzypczyk.quiz_mode.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.QuestionsSimpleAdapter
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
+import com.rafalskrzypczyk.quiz_mode.getColor
+import com.rafalskrzypczyk.quiz_mode.getTitle
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
 import com.rafalskrzypczyk.quiz_mode.presenters.QuizCategoryDetailsPresenter
@@ -38,7 +43,10 @@ import com.rafalskrzypczyk.quiz_mode.presenters.QuizCategoryDetailsPresenter
  * @see Category
  * @see Question
  */
-class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialogFragment(), QuizCategoryDetailsView {
+class QuizCategoryDetailsFragment(
+    val bundle: Bundle? = null,
+    val onDismissSheet: () -> Unit,
+) : BottomSheetDialogFragment(), QuizCategoryDetailsView {
 
     private var _binding: FragmentQuizCategoryDetailsBinding? = null
     private val binding get() = _binding!!
@@ -49,7 +57,7 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
     private lateinit var presenter: QuizCategoryDetailsPresenter
     private lateinit var adapter: QuestionsSimpleAdapter
 
-    private var valuesChanged = false
+    private var isInEditMode = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,11 +78,15 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
         val categoryId = bundle?.getInt("categoryId")
         if(categoryId == null) {
             displayNewCategorySheet()
-
         } else {
             presenter.loadCategoryById(categoryId)
             setupBindings()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissSheet()
     }
 
     override fun onDestroy() {
@@ -104,16 +116,80 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
      */
     private fun setupBindings(){
         binding.buttonClose.setOnClickListener {
-            if (valuesChanged) {
+            if (isInEditMode) {
                 displayWarningDialog { dialog?.dismiss() }
             } else dialog?.dismiss()
         }
 
-        binding.buttonEditCategory.setOnClickListener {
-            enableEditing()
+        binding.buttonEditSave.setOnClickListener {
+            if(isInEditMode){
+                presenter.updateCategoryDetails(
+                    binding.categoryNameField.text.toString(),
+                    binding.categoryDescriptionField.text.toString()
+                )
+            }
+            switchEditing()
+        }
+
+        binding.changeStatusButton.setOnClickListener {
+            showStatusPopupMenu(it) {
+                updateStatus(it)
+            }
         }
 
         setupCategoryFieldHandlers()
+    }
+
+    /**
+     * Displays a popup menu anchored to the specified view, allowing the user to select a category status.
+     *
+     * @param anchor The view to which the popup menu should be anchored.
+     * @param onItemSelected A callback function that is invoked when a category status is selected.
+     *                       The selected [CategoryStatus] is passed as a parameter to this callback.
+     *
+     * @see CategoryStatus
+     */
+    private fun showStatusPopupMenu(anchor: View, onItemSelected: (CategoryStatus) -> Unit) {
+        val popupMenu = PopupMenu(requireContext(), anchor)
+
+        CategoryStatus.entries.forEach {
+            popupMenu.menu.add(it.getTitle(requireContext()))
+        }
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            val selectedStatus = CategoryStatus.entries.find { it.getTitle(requireContext()) == menuItem.title }
+            selectedStatus?.let {
+                onItemSelected(it)
+            }
+            true
+        }
+
+        popupMenu.show()
+    }
+
+    /**
+     * Updates the status display button with the provided [CategoryStatus].
+     *
+     * This function updates the text of the button to reflect the new status and changes the background color of the button.
+     *
+     * @param status The new [CategoryStatus] to be displayed.
+     *
+     * @see CategoryStatus
+     */
+    private fun updateStatus(status: CategoryStatus){
+        presenter.updateCategoryStatus(status)
+    }
+
+    private fun updateStatusLabel(status: CategoryStatus){
+        val statusColor = status.getColor(requireContext())
+        setColorPreview(binding.categoryStatusColor, statusColor)
+        binding.categoryStatusIndicator.setTextColor(statusColor)
+        binding.categoryStatusIndicator.text = status.getTitle(requireContext())
+    }
+
+    private fun setColorPreview(view: View, color: Int){
+        val colorPreviewBackground = view.background as GradientDrawable
+        colorPreviewBackground.setColor(color)
     }
 
     /**
@@ -142,23 +218,6 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
                 true
             } else false
         }
-
-        // Text watchers to detect changes in the category fields
-        binding.categoryNameField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                onValueChanged()
-            }
-            override fun afterTextChanged(p0: Editable?) {}
-        })
-
-        binding.categoryDescriptionField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                onValueChanged()
-            }
-            override fun afterTextChanged(p0: Editable?) {}
-        })
     }
 
     /**
@@ -167,7 +226,7 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
      */
     private fun setupQuestionsListRecyclerView(questions: List<Question>){
         val recyclerView = binding.questionsRecyclerView
-        adapter = QuestionsSimpleAdapter(questions.toMutableList()) { onValueChanged() }
+        adapter = QuestionsSimpleAdapter(questions.toMutableList())
 
         val swipeItemCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -203,7 +262,7 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
      */
     private fun displayNewCategorySheet(){
         setupBindings()
-        enableEditing()
+        switchEditing()
         showKeyboardWithDelay()
         setupQuestionsListRecyclerView(mutableListOf())
     }
@@ -220,23 +279,18 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
     }
 
     /**
-     * Handles the detection of changes in editable fields, enabling the save button.
-     */
-    private fun onValueChanged(){
-        if(!valuesChanged){
-            valuesChanged = true
-            disableHiding()
-            binding.buttonSave.visibility = View.VISIBLE
-        }
-    }
-
-    /**
      * Enables editing for the category fields and hides the edit button.
      */
-    private fun enableEditing(){
-        binding.categoryNameField.isEnabled = true
-        binding.categoryDescriptionField.isEnabled = true
-        binding.buttonEditCategory.visibility = View.INVISIBLE
+    private fun switchEditing(){
+        isInEditMode = !isInEditMode
+        disableHiding()
+
+        binding.categoryNameField.isEnabled = isInEditMode
+        binding.categoryDescriptionField.isEnabled = isInEditMode
+
+        binding.editingButtonsSection.visibility = if(isInEditMode) View.VISIBLE else View.GONE
+
+        binding.buttonEditSave.text = if(isInEditMode) getString(R.string.button_save) else getString(R.string.button_edit)
     }
 
     /**
@@ -283,11 +337,15 @@ class QuizCategoryDetailsFragment(val bundle: Bundle? = null) : BottomSheetDialo
      * @param category The category to display.
      * @param questions List of questions associated with the category.
      */
-    override fun displayCategoryDetails(category: Category, questions: List<Question>) {
+    override fun displayCategoryDetails(category: LiveData<Category>, questions: List<Question>) {
         setupQuestionsListRecyclerView(questions)
-        binding.categoryNameField.setText(category.title)
-        binding.categoryDescriptionField.setText(category.description)
         binding.categoryQuestionsCount.text = String.format(adapter.itemCount.toString())
-
+        category.observe(viewLifecycleOwner){ newValue ->
+            binding.categoryNameField.setText(newValue.title)
+            binding.categoryDescriptionField.setText(newValue.description)
+            setColorPreview(binding.colorPreview, newValue.color.toInt())
+            updateStatusLabel(newValue.status)
+            binding.createdOnLabel.text = newValue.creationDate.toString()
+        }
     }
 }

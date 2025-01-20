@@ -1,8 +1,9 @@
 package com.rafalskrzypczyk.quiz_mode.ui
 
+import androidx.lifecycle.LiveData
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
 
 interface QuizCategoryDetailsView {
-    fun displayCategoryDetails(category: Category, questions: List<Question>)
+    fun displayCategoryDetails(category: LiveData<Category>, questions: List<Question>)
 }

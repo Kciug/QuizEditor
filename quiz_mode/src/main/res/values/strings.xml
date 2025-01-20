@@ -6,25 +6,35 @@
     <string name="title_categories">Kategorie</string>
     <string name="title_questions">Pytania</string>
 
+    <string name="text_placeholder_short">Placeholder</string>
+    <string name="text_placeholder_long">A bit longer placeholder for a fields that can store more content</string>
+
     <string name="ic_desc_answers">Odpowiedzi</string>
     <string name="ic_desc_validation_ok">Pytanie poprawne</string>
     <string name="ic_desc_close">Zamknij</string>
     <string name="ic_desc_edit_category">Edytuj</string>
     <string name="ic_desc_add_new">Dodaj nowy element</string>
 
+    <string name="content_desc_category_color">Kolor kategorii</string>
+    <string name="content_desc_category_status_color">Kolor statusu kategorii</string>
+
     <string name="label_category_details">Kategoria</string>
     <string name="label_category_title">Tytuł</string>
     <string name="label_category_desc">Opis</string>
-    <string name="label_category_status">Status:</string>
-    <string name="label_category_color">Kolor:</string>
+    <string name="label_category_status">Status</string>
+    <string name="label_category_color">Kolor</string>
     <string name="label_category_questions_section">Pytania w tej kategorii</string>
-    <string name="label_category_questions_amount">Ilość pytań: </string>
+    <string name="label_category_questions_amount">Ilość pytań:</string>
+    <string name="label_created_on">Utworzono</string>
+    <string name="label_created_by">przez</string>
 
     <string name="hint_category_title">Nazwa kategorii</string>
-    <string name="hint_category_desc">Opis...</string>
+    <string name="hint_category_desc">Opis…</string>
 
     <string name="button_save">Zapisz</string>
-    <string name="button_edit_category_text">Edytuj</string>
+    <string name="button_edit">Edytuj</string>
+    <string name="button_change_color">Zmień kolor</string>
+    <string name="button_change_status">Zmień status</string>
     <string name="button_category_add_new_text">Nowe pytanie</string>
     <string name="button_category_add_from_database_text">Dodaj z bazy</string>
 
@@ -32,4 +42,9 @@
     <string name="alert_unsaved_changes_message">Zmiany zostaną utracone!</string>
     <string name="alert_unsaved_changes_negative_button">Wróć</string>
     <string name="alert_unsaved_changes_positive_button">OK</string>
+
+    <string name="status_draft">SZKIC</string>
+    <string name="status_in_progress">W TRAKCIE</string>
+    <string name="status_done">GOTOWE</string>
+    <string name="status_approved">ZATWIERDZONE</string>
 </resources>

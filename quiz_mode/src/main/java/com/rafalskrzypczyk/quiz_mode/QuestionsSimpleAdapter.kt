@@ -1,18 +1,14 @@
 package com.rafalskrzypczyk.quiz_mode
 
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.quiz_mode.models.Question
-import kotlinx.coroutines.delay
 
 class QuestionsSimpleAdapter(
-    private val questions: MutableList<Question>,
-    private val onQuestionsChanged: () -> Unit
+    private val questions: MutableList<Question>
 ) : RecyclerView.Adapter<QuestionsSimpleAdapter.QuestionSimpleViewHolder>() {
 
     inner class QuestionSimpleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){

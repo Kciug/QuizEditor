@@ -16,7 +16,10 @@
     <style name="Theme.QuizEditor.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="materialButtonStyle">@style/QuizEditorButton</item>
     </style>
-    <style name="Theme.QuizEditor.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.QuizEditor.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:navigationBarColor">@color/transparent</item>
+    </style>
     <style name="Theme.QuizEditor.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
