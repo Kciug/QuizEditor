@@ -1,7 +1,6 @@
 package com.rafalskrzypczyk.quiz_mode.models
 
-import com.rafalskrzypczyk.quiz_mode.CategoryStatus
-import java.time.LocalDateTime
+import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import java.util.Date
 
 data class Category (

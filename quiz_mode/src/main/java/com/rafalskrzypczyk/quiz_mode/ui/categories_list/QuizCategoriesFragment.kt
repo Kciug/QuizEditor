@@ -1,6 +1,5 @@
-package com.rafalskrzypczyk.quiz_mode.ui
+package com.rafalskrzypczyk.quiz_mode.ui.categories_list
 
-import com.rafalskrzypczyk.quiz_mode.CategoriesAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.models.Category
-import com.rafalskrzypczyk.quiz_mode.presenters.QuizCategoriesPresenter
+import com.rafalskrzypczyk.quiz_mode.ui.categeory_details.QuizCategoryDetailsFragment
 
 class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
     private var _binding: FragmentQuizCategoriesBinding? = null
@@ -61,13 +60,15 @@ class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
         val bundle = Bundle().apply {
             putInt("categoryId", categoryId)
         }
-        val bottomBarCategoryDetails = QuizCategoryDetailsFragment(bundle) { adapter.notifyItemChanged(listPosition) }
+        val bottomBarCategoryDetails =
+            QuizCategoryDetailsFragment(bundle) { adapter.notifyItemChanged(listPosition) }
 
         bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
     }
 
     private fun openNewCategorySheet(){
-        val bottomBarCategoryDetails = QuizCategoryDetailsFragment { adapter.notifyItemInserted(adapter.itemCount) }
+        val bottomBarCategoryDetails =
+            QuizCategoryDetailsFragment { adapter.notifyItemInserted(adapter.itemCount) }
         bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
     }
 

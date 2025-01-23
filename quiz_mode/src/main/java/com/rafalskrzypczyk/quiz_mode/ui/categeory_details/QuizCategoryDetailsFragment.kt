@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.ui
+package com.rafalskrzypczyk.quiz_mode.ui.categeory_details
 
 import android.app.AlertDialog
 import android.content.Context
@@ -19,15 +19,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.rafalskrzypczyk.quiz_mode.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.QuestionsSimpleAdapter
+import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.getColor
-import com.rafalskrzypczyk.quiz_mode.getTitle
+import com.rafalskrzypczyk.quiz_mode.utils.getColor
+import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
-import com.rafalskrzypczyk.quiz_mode.presenters.QuizCategoryDetailsPresenter
 
 /**
  * Fragment responsible for displaying and managing details of a quiz category.
@@ -48,6 +46,12 @@ class QuizCategoryDetailsFragment(
     val onDismissSheet: () -> Unit,
 ) : BottomSheetDialogFragment(), QuizCategoryDetailsView {
 
+    enum class ViewState{
+        VIEW,
+        EDIT,
+        NEW_ELEMENT
+    }
+
     private var _binding: FragmentQuizCategoryDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -58,6 +62,8 @@ class QuizCategoryDetailsFragment(
     private lateinit var adapter: QuestionsSimpleAdapter
 
     private var isInEditMode = false
+
+    private var viewState = ViewState.VIEW
 
     override fun onCreateView(
         inflater: LayoutInflater,

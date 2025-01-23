@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:clipToPadding="false"
-    tools:context=".ui.QuizCategoryDetailsFragment">
+    tools:context=".ui.categeory_details.QuizCategoryDetailsFragment">
 
 
     <!--  NAV BAR  -->

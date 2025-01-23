@@ -63,7 +63,7 @@
             android:layout_weight="1" />
 
         <!-- Status kategorii -->
-        <com.rafalskrzypczyk.quiz_mode.StatusIndicatorView
+        <com.rafalskrzypczyk.quiz_mode.ui.custom_views.StatusIndicatorView
             android:id="@+id/statusIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

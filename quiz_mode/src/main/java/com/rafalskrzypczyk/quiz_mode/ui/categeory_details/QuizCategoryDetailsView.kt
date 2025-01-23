@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.ui
+package com.rafalskrzypczyk.quiz_mode.ui.categeory_details
 
 import androidx.lifecycle.LiveData
 import com.rafalskrzypczyk.quiz_mode.models.Category

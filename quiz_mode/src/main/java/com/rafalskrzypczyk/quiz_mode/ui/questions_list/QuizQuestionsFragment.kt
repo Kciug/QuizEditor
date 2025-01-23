@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.ui
+package com.rafalskrzypczyk.quiz_mode.ui.questions_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rafalskrzypczyk.quiz_mode.QuestionsAdapter
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
 import com.rafalskrzypczyk.quiz_mode.models.Question
-import com.rafalskrzypczyk.quiz_mode.presenters.QuizQuestionsPresenter
 
 class QuizQuestionsFragment : Fragment(), QuizQuestionsView {
 
@@ -41,7 +39,9 @@ class QuizQuestionsFragment : Fragment(), QuizQuestionsView {
     }
 
     override fun displayAllQuestions(questions: List<Question>) {
-        adapter = QuestionsAdapter(questions)
+        adapter = QuestionsAdapter()
         binding.questionRecyclerView.adapter = adapter
+
+        adapter.submitList(questions)
     }
 }

@@ -1,86 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="@drawable/card_background">
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    android:elevation="15dp"
+    android:background="@drawable/container_pane">
 
     <!-- Pytanie -->
     <TextView
         android:id="@+id/question_text"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Which organ filters blood in the human body?"
+        android:text="@string/text_placeholder_long"
         android:textSize="16sp"
         android:ellipsize="end"
-        android:maxLines="2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:maxLines="2" />
 
-    <!-- Kategorie -->
-    <LinearLayout
-        android:id="@+id/categories_list"
+    <com.rafalskrzypczyk.quiz_mode.ui.custom_views.CategoryLabelView
+        android:id="@+id/category_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/question_text"
-        android:layout_marginTop="8dp">
-
-        <!-- Przykładowa kategoria 1 -->
-        <TextView
-            android:id="@+id/category_label_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@color/purple_200"
-            android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp"
-            android:text="General Knowledge"
-            android:textColor="#311B92"
-            android:textSize="12sp" />
-
-        <!-- Przykładowa kategoria 2 -->
-        <TextView
-            android:id="@+id/category_label_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Body"
-            android:textSize="12sp"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp"
-            android:textColor="@android:color/white"
-            android:background="@color/purple_700"
-            android:gravity="center" />
-    </LinearLayout>
+        android:layout_marginVertical="5dp"/>
 
     <!-- Ikona odpowiedzi i liczba -->
     <LinearLayout
         android:id="@+id/question_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/categories_list"
-        app:layout_constraintStart_toStartOf="parent">
+        android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/answers_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_answers_24"
-            android:contentDescription="@string/ic_desc_answers" />
+            android:contentDescription="@string/ic_desc_answers"
+            app:tint="?attr/colorPrimary" />
+
+        <TextView
+            android:id="@+id/answers_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text=""
+            android:textSize="14sp"
+            android:layout_marginStart="4dp"/>
 
         <TextView
             android:id="@+id/answers_count_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="4 Answers"
+            android:text="@string/label_answers_count_many"
             android:textSize="14sp"
             android:layout_marginStart="4dp"/>
 
@@ -96,10 +71,10 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_check_24"
             android:contentDescription="@string/ic_desc_validation_ok"
-            app:tint="@android:color/holo_green_light" />
+            app:tint="@color/green" />
     </LinearLayout>
 
     <!-- Status walidacji -->
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -27,6 +27,8 @@
     <string name="label_category_questions_amount">Ilość pytań:</string>
     <string name="label_created_on">Utworzono</string>
     <string name="label_created_by">przez</string>
+    <string name="label_answers_count_one">odpowiedź</string>
+    <string name="label_answers_count_many">odpowiedzi</string>
 
     <string name="hint_category_title">Nazwa kategorii</string>
     <string name="hint_category_desc">Opis…</string>

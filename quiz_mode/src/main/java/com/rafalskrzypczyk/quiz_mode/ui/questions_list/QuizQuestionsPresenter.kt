@@ -1,7 +1,6 @@
-package com.rafalskrzypczyk.quiz_mode.presenters
+package com.rafalskrzypczyk.quiz_mode.ui.questions_list
 
 import com.rafalskrzypczyk.quiz_mode.TestQuestions
-import com.rafalskrzypczyk.quiz_mode.ui.QuizQuestionsView
 
 class QuizQuestionsPresenter(
     private val view: QuizQuestionsView

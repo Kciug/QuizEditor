@@ -1,12 +1,11 @@
-package com.rafalskrzypczyk.quiz_mode.presenters
+package com.rafalskrzypczyk.quiz_mode.ui.categeory_details
 
 import android.icu.util.Calendar
 import androidx.lifecycle.MutableLiveData
-import com.rafalskrzypczyk.quiz_mode.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.TestCategories
 import com.rafalskrzypczyk.quiz_mode.TestQuestions
 import com.rafalskrzypczyk.quiz_mode.models.Category
-import com.rafalskrzypczyk.quiz_mode.ui.QuizCategoryDetailsView
 
 class QuizCategoryDetailsPresenter(
     private val view: QuizCategoryDetailsView

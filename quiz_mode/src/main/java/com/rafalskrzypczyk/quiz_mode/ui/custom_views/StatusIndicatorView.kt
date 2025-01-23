@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode
+package com.rafalskrzypczyk.quiz_mode.ui.custom_views
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.rafalskrzypczyk.quiz_mode.R
 
 class StatusIndicatorView @JvmOverloads constructor(
     context: Context,

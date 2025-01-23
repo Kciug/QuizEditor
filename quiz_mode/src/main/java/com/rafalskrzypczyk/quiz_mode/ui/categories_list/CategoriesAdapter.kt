@@ -1,12 +1,17 @@
-package com.rafalskrzypczyk.quiz_mode
+package com.rafalskrzypczyk.quiz_mode.ui.categories_list
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.quiz_mode.utils.GenericDiffCallback
+import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
+import com.rafalskrzypczyk.quiz_mode.R
+import com.rafalskrzypczyk.quiz_mode.ui.custom_views.StatusIndicatorView
+import com.rafalskrzypczyk.quiz_mode.utils.getColor
+import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 import com.rafalskrzypczyk.quiz_mode.models.Category
 
 //class CategoriesAdapter(
@@ -74,9 +79,10 @@ import com.rafalskrzypczyk.quiz_mode.models.Category
 class CategoriesAdapter(
     private val onCategoryClicked: (Category, Int) -> Unit,
     private val onAddClicked: () -> Unit
-) : ListAdapter<Category, RecyclerView.ViewHolder>(CategoryDiffCallback()) {
-
-    // ViewHolder dla elementu kategorii
+) : ListAdapter<Category, RecyclerView.ViewHolder>(GenericDiffCallback<Category>(
+    areItemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+    areContentsTheSame = { oldItem, newItem -> oldItem == newItem }
+)) {
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val categoryName: TextView = view.findViewById(R.id.categoryName)
         val categoryDescription: TextView = view.findViewById(R.id.categoryDescription)
@@ -126,7 +132,7 @@ class CategoriesAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CategoryViewHolder) {
-            val category = getItem(position) // Pobieranie kategorii z ListAdapter
+            val category = getItem(position)
             holder.bind(category, position)
         } else if (holder is AddButtonViewHolder) {
             holder.bind()
@@ -134,14 +140,4 @@ class CategoriesAdapter(
     }
 
     override fun getItemCount(): Int = currentList.size + 1
-}
-
-class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
-    override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean {
-        return oldItem == newItem
-    }
 }

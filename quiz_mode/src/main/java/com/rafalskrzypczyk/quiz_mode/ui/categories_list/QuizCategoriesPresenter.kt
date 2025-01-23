@@ -1,9 +1,8 @@
-package com.rafalskrzypczyk.quiz_mode.presenters
+package com.rafalskrzypczyk.quiz_mode.ui.categories_list
 
 import androidx.lifecycle.MutableLiveData
 import com.rafalskrzypczyk.quiz_mode.TestCategories
 import com.rafalskrzypczyk.quiz_mode.models.Category
-import com.rafalskrzypczyk.quiz_mode.ui.QuizCategoriesView
 
 class QuizCategoriesPresenter(
     private val view: QuizCategoriesView

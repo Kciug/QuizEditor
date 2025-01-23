@@ -1,7 +1,7 @@
-package com.rafalskrzypczyk.quiz_mode
+package com.rafalskrzypczyk.quiz_mode.utils
 
 import android.content.Context
-import android.graphics.Color
+import com.rafalskrzypczyk.quiz_mode.R
 
 enum class CategoryStatus {
     DRAFT,
