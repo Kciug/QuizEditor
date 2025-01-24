@@ -21,6 +21,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.rafalskrzypczyk.login_screen.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuizEditor.NoActionBar"
+            android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
+        <activity
             android:name=".ApplicationActivity"
             android:exported="false"
             android:theme="@style/Theme.QuizEditor.NoActionBar"
