@@ -1,4 +1,5 @@
 package com.rafalskrzypczyk.myapplication
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -10,8 +11,6 @@ class MainActivity : AppCompatActivity(), LoginHandler {
 
     private lateinit var binding: AppMainContainerBinding
 
-    private lateinit var navController: NavController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -19,7 +18,6 @@ class MainActivity : AppCompatActivity(), LoginHandler {
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
-        navController = navHostFragment.navController
     }
 
     override fun onStart() {
@@ -27,6 +25,7 @@ class MainActivity : AppCompatActivity(), LoginHandler {
     }
 
     override fun onLoginSuccess() {
-        navController.navigate(R.id.nav_editor)
+        val intent = Intent(this, ApplicationActivity::class.java)
+        startActivity(intent)
     }
 }

@@ -8,14 +8,6 @@
     android:gravity="center"
     tools:context=".LoginScreenFragment">
 
-    <!-- App Icon -->
-    <ImageView
-        android:id="@+id/appIcon"
-        android:layout_width="96dp"
-        android:layout_height="95dp"
-        android:layout_gravity="center"
-        android:contentDescription="@string/login_icon_desc"
-        android:src="@drawable/ic_launcher_foreground" />
 
     <!-- App Title -->
     <TextView

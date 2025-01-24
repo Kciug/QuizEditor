@@ -1,17 +1,14 @@
 package com.rafalskrzypczyk.myapplication
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.navigation.ui.navigateUp
 import com.google.android.material.navigation.NavigationView
 import com.rafalskrzypczyk.myapplication.databinding.ActivityMainBinding
 
