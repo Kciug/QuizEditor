@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:gravity="center"
+    tools:context=".LoginScreenFragment">
 
     <!-- App Icon -->
     <ImageView
         android:id="@+id/appIcon"
         android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:layout_height="95dp"
+        android:layout_gravity="center"
         android:contentDescription="@string/login_icon_desc"
-        android:layout_gravity="center" />
+        android:src="@drawable/ic_launcher_foreground" />
 
     <!-- App Title -->
     <TextView
@@ -35,7 +36,7 @@
         android:autofillHints="emailAddress"
         android:hint="@string/login_email_hint"
         android:inputType="textEmailAddress"
-        android:drawableStart="@drawable/ic_email_24"
+        android:drawableStart="@drawable/ic_email"
         android:drawablePadding="12dp"
         android:layout_marginTop="32dp"
         android:padding="12dp"

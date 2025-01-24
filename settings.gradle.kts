@@ -28,3 +28,4 @@ dependencyResolutionManagement {
 rootProject.name = "QuizEditor"
 include(":app")
 include(":quiz_mode")
+include(":login_screen")
