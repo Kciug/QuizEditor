@@ -8,7 +8,6 @@
     android:gravity="center"
     tools:context=".LoginActivity">
 
-
     <!-- App Title -->
     <TextView
         android:id="@+id/appTitle"
@@ -22,7 +21,7 @@
 
     <!-- Email Input -->
     <EditText
-        android:id="@+id/emailInput"
+        android:id="@+id/input_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="emailAddress"

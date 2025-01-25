@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_navigation"
+    app:startDestination="@id/navigation_login">
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.rafalskrzypczyk.login_screen.login.LoginFragment"
+        android:label="@string/nav_login"
+        tools:layout="@layout/fragment_login"/>
+
+    <fragment
+        android:id="@+id/navigation_reset_password"
+        android:name="com.rafalskrzypczyk.login_screen.ResetPasswordFragment"
+        android:label="@string/nav_reset_password"
+        tools:layout="@layout/fragment_reset_password"/>
+
+</navigation>
