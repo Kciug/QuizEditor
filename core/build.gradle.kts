@@ -6,16 +6,13 @@ plugins {
 apply<SharedGradleProjectConfig>()
 
 android {
-    namespace = "com.rafalskrzypczyk.quiz_mode"
+    namespace = "com.rafalskrzypczyk.core"
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 
 dependencies {
-    implementation(project(":core"))
-
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     coreKtx()
     ui()
     tests()

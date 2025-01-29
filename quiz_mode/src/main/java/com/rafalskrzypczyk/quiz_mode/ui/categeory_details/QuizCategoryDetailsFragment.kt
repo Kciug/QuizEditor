@@ -2,14 +2,11 @@ package com.rafalskrzypczyk.quiz_mode.ui.categeory_details
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
@@ -18,14 +15,14 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.utils.getColor
-import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
+import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.utils.getColor
+import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 
 /**
  * Fragment responsible for displaying and managing details of a quiz category.
@@ -43,20 +40,17 @@ import com.rafalskrzypczyk.quiz_mode.models.Question
  */
 class QuizCategoryDetailsFragment(
     val bundle: Bundle? = null,
-    val onDismissSheet: () -> Unit,
-) : BottomSheetDialogFragment(), QuizCategoryDetailsView {
+    onDismiss: () -> Unit,
+) : BaseBottomSheetFragment<FragmentQuizCategoryDetailsBinding>(
+    FragmentQuizCategoryDetailsBinding::inflate,
+    onDismiss
+), QuizCategoryDetailsView {
 
     enum class ViewState{
         VIEW,
         EDIT,
         NEW_ELEMENT
     }
-
-    private var _binding: FragmentQuizCategoryDetailsBinding? = null
-    private val binding get() = _binding!!
-
-    private var _bottomSheet: View? = null
-    private val bottomSheet get() = _bottomSheet!!
 
     private lateinit var presenter: QuizCategoryDetailsPresenter
     private lateinit var adapter: QuestionsSimpleAdapter
@@ -65,21 +59,10 @@ class QuizCategoryDetailsFragment(
 
     private var viewState = ViewState.VIEW
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentQuizCategoryDetailsBinding.inflate(inflater, container, false)
-        presenter = QuizCategoryDetailsPresenter(this)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        setupBottomSheetDialog()
+        presenter = QuizCategoryDetailsPresenter(this)
 
         val categoryId = bundle?.getInt("categoryId")
         if(categoryId == null) {
@@ -90,32 +73,7 @@ class QuizCategoryDetailsFragment(
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        onDismissSheet()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     // PRIVATE FUNCTIONS
-
-    /**
-     * Set up the [BottomSheetDialog][com.google.android.material.bottomsheet.BottomSheetDialog]
-     * with expanded state and height adjustments using [BottomSheetBehavior]
-     */
-    private fun setupBottomSheetDialog(){
-        bottomSheet.let {
-            it.layoutParams.height = (resources.displayMetrics.heightPixels * 0.97f).toInt()
-
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.skipCollapsed = true
-
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
-    }
 
     /**
      * Set up event listeners and input handling.

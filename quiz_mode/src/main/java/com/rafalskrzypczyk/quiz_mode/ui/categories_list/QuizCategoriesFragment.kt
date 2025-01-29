@@ -1,35 +1,27 @@
 package com.rafalskrzypczyk.quiz_mode.ui.categories_list
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.ui.categeory_details.QuizCategoryDetailsFragment
 
-class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
-    private var _binding: FragmentQuizCategoriesBinding? = null
-    private val binding get() = _binding!!
-
+class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
+    FragmentQuizCategoriesBinding::inflate), QuizCategoriesView
+{
     private lateinit var presenter: QuizCategoriesPresenter
     private lateinit var adapter: CategoriesAdapter
 
     private lateinit var navController: NavController
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentQuizCategoriesBinding.inflate(inflater, container, false)
-        val root = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
 
@@ -38,8 +30,6 @@ class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         presenter.loadCategories()
-
-        return root
     }
 
     override fun displayCategories(categories: LiveData<List<Category>>) {
@@ -70,10 +60,5 @@ class QuizCategoriesFragment : Fragment(), QuizCategoriesView {
         val bottomBarCategoryDetails =
             QuizCategoryDetailsFragment { adapter.notifyItemInserted(adapter.itemCount) }
         bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

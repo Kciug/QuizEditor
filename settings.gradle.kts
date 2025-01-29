@@ -1,12 +1,13 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
+//        {
+//            content {
+//                includeGroupByRegex("com\\.android.*")
+//                includeGroupByRegex("com\\.google.*")
+//                includeGroupByRegex("androidx.*")
+//            }
+//        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -29,3 +30,4 @@ rootProject.name = "QuizEditor"
 include(":app")
 include(":quiz_mode")
 include(":login_screen")
+include(":core")
