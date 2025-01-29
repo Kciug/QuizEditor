@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(project(":quiz_mode"))
     implementation(project(":login_screen"))
 
