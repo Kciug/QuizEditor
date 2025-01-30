@@ -7,18 +7,18 @@
         <item
             android:id="@+id/nav_quiz_mode"
             android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/menu_mode_quiz" />
+            android:title="@string/drawer_menu_title_quiz" />
         <item
             android:id="@+id/nav_swipe_quiz_mode"
             android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/menu_mode_swipe_quiz" />
+            android:title="@string/drawer_menu_title_swipe_quiz" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/menu_mode_calculations" />
+            android:title="@string/drawer_menu_title_calculations" />
         <item
             android:id="@+id/nav_mode_scenarios"
             android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/menu_mode_scenarios" />
+            android:title="@string/drawer_menu_title_scenarios" />
     </group>
 </menu>

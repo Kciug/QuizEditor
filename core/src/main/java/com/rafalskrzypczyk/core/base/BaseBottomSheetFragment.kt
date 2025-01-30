@@ -18,10 +18,24 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
     }
 
     private var _binding: VB? = null
-    val binding: VB get() = _binding ?: throw IllegalStateException("Binding is accessed before onCreateView() or after onDestroyView()")
+
+    /**
+     * Gets the view binding for this fragment.
+     *
+     * @throws IllegalStateException if accessed before `onCreateView` or after `onDestroyView`.
+     */
+    val binding: VB get() = _binding ?: throw
+    IllegalStateException("Binding is accessed before onCreateView() or after onDestroyView()")
 
     private var _bottomSheet: View? = null
-    val bottomSheet: View get() = _bottomSheet ?: throw IllegalStateException("BottomSheet is accessed before onViewCreated() or after onDestroyView()")
+
+    /**
+     * Gets the bottom sheet dialog for this fragment.
+     *
+     * @throws IllegalStateException if accessed before `onViewCreated` or after `onDestroyView`.
+     */
+    val bottomSheet: View get() = _bottomSheet ?: throw
+    IllegalStateException("BottomSheet is accessed before onViewCreated() or after onDestroyView()")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +43,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater(inflater)
+        onViewBound()
         return binding.root
     }
 
@@ -49,7 +64,12 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
         _binding = null
     }
 
-    fun setupBottomSheetDialog(){
+    /**
+     * Called after the view binding is initialized in `onCreateView`.
+     *
+     * Subclasses can override this method to change setup of bottom sheet dialog behavior.
+     */
+    protected open fun setupBottomSheetDialog(){
         bottomSheet.let {
             it.layoutParams.height = (resources.displayMetrics.heightPixels * HEIGHT_MODIFIER).toInt()
 
@@ -58,5 +78,14 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
 
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+    }
+
+    /**
+     * Called after the view binding is initialized in `onCreateView`.
+     *
+     * Subclasses can override this method to initialize view components.
+     */
+    protected open fun onViewBound(){
+        // Optional: Subclasses can override this to perform actions after binding is set.
     }
 }

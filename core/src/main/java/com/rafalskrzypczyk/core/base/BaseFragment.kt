@@ -9,11 +9,17 @@ import androidx.viewbinding.ViewBinding
 
 
 abstract class BaseFragment<VB: ViewBinding> (
-    private val bindingInflater: (inflater: LayoutInflater) -> VB
+    private val bindingInflater: (LayoutInflater) -> VB
 ) : Fragment() {
-
     private var _binding: VB? = null
-    val binding: VB get() = _binding ?: throw IllegalStateException("Binding is accessed before onCreateView() or after onDestroyView()")
+
+    /**
+     * Gets the view binding for this fragment.
+     *
+     * @throws IllegalStateException if accessed before `onCreateView()` or after `onDestroyView()`.
+     */
+    protected val binding: VB get() = _binding ?: throw
+    IllegalStateException("Binding is accessed before onCreateView() or after onDestroyView()")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,11 +27,21 @@ abstract class BaseFragment<VB: ViewBinding> (
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater(inflater)
+        onViewBound()
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    /**
+     * Called after the view binding is initialized in `onCreateView`.
+     *
+     * Subclasses can override this method to initialize view components.
+     */
+    protected open fun onViewBound() {
+        // Optional: Subclasses can override this to perform actions after binding is set.
     }
 }

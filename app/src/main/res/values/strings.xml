@@ -1,18 +1,13 @@
 <resources>
-    <string name="app_name">QuizEditor</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+<!--    <string name="navigation_drawer_open">Open navigation drawer</string>-->
+<!--    <string name="navigation_drawer_close">Close navigation drawer</string>-->
+<!--    -->
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_editor">Quiz Edytor</string>
+
+    <string name="nav_header_desc">Navigation header</string>
     <string name="nav_header_title">Zbigniew Drut</string>
     <string name="nav_header_role">Administrator</string>
     <string name="nav_header_subtitle">zbigniew.drut@twojastara.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_login">Login</string>
-    <string name="menu_mode_quiz">Tryb | Quiz</string>
-    <string name="menu_mode_swipe_quiz">Tryb | Swipe Quiz</string>
-    <string name="menu_mode_calculations">Tryb | Obliczenia</string>
-    <string name="menu_mode_scenarios">Tryb | Scenariusze</string>
-
-    <string name="menu_editor">Quiz Edytor</string>
 </resources>

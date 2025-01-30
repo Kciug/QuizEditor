@@ -1,8 +1,6 @@
 package com.rafalskrzypczyk.myapplication
 
-import android.os.Bundle
 import android.view.Menu
-import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,20 +8,15 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.myapplication.databinding.ActivityMainBinding
 
-class ApplicationActivity : AppCompatActivity() {
-
-    private var _binding: ActivityMainBinding? = null
-    private val binding get() = _binding!!
+class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
 
     lateinit var appBarConfiguration: AppBarConfiguration
 
-    override fun onCreate(savedInstanceState: Bundle?){
-        super.onCreate(savedInstanceState)
-
-        _binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewBound() {
+        super.onViewBound()
 
         setSupportActionBar(binding.appBarMain.toolbar)
 

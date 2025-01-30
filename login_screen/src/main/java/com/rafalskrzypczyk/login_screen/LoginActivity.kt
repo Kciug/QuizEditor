@@ -1,14 +1,10 @@
 package com.rafalskrzypczyk.login_screen
 
-import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
+import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.login_screen.databinding.ActivityLoginBinding
-import com.rafalskrzypczyk.login_screen.databinding.FragmentLoginBinding
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity : BaseCompatActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -16,13 +12,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Inflate the layout using ViewBinding
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Add the back pressed callback
+    override fun onViewBound() {
+        super.onViewBound()
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 

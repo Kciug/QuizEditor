@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_quiz_mode"
         android:name="com.rafalskrzypczyk.quiz_mode.ui.QuizModeFragment"
-        android:label="@string/menu_mode_quiz"
+        android:label="@string/drawer_menu_title_quiz"
         tools:layout="@layout/fragment_quiz_mode" />
 
 </navigation>

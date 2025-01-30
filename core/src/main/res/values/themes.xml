@@ -13,4 +13,15 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.QuizEditor.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.QuizEditor.DrawerBar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorPrimary">@color/purple_500</item>
+    </style>
+    <style name="Theme.QuizEditor.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:navigationBarColor">@color/transparent</item>
+    </style>
+    <style name="Theme.QuizEditor.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
