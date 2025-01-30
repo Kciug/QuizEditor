@@ -9,18 +9,10 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_login">Login</string>
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="menu_mode_quiz">Tryb | Quiz</string>
     <string name="menu_mode_swipe_quiz">Tryb | Swipe Quiz</string>
     <string name="menu_mode_calculations">Tryb | Obliczenia</string>
     <string name="menu_mode_scenarios">Tryb | Scenariusze</string>
 
-    <string name="login_icon_desc">App Icon</string>
-    <string name="login_email_hint">e-mail</string>
-    <string name="login_password_hint">hasło</string>
-    <string name="login_button_text">Zaloguj</string>
-    <string name="login_password_reset_text">Zapomniałem hasła</string>
     <string name="menu_editor">Quiz Edytor</string>
 </resources>

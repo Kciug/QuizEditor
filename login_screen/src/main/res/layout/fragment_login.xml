@@ -27,7 +27,7 @@
         android:autofillHints="emailAddress"
         android:hint="@string/login_email_hint"
         android:inputType="textEmailAddress"
-        android:drawableStart="@drawable/ic_email"
+        android:drawableStart="@drawable/ic_email_24"
         android:drawablePadding="12dp"
         android:layout_marginTop="32dp"
         android:padding="12dp"

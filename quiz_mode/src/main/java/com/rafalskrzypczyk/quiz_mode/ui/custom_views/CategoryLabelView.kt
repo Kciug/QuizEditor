@@ -27,7 +27,7 @@ class CategoryLabelView @JvmOverloads constructor(
 
         colorIndicatorBackground = colorIndicator.background as GradientDrawable
 
-        setColorAndText(context.getColor(R.color.red), context.getString(R.string.text_placeholder_short))
+        setColorAndText(context.getColor(R.color.red), context.getString(com.rafalskrzypczyk.core.R.string.text_placeholder_short))
     }
 
     fun setColorAndText(color: Int, text: String){

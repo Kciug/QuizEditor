@@ -22,7 +22,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_close_24"
+            android:src="@drawable/ic_close_24"
             android:contentDescription="@string/ic_desc_close"
             android:background="@android:color/transparent"
             app:tint="?attr/colorPrimary"/>

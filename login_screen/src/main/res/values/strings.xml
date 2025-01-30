@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Quiz Editor</string>
-
     <string name="login_icon_desc">App Icon</string>
     <string name="login_email_hint">e-mail</string>
     <string name="login_password_hint">hasło</string>
