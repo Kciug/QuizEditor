@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/container_pane"
+        android:background="@drawable/background_tile"
         android:clipToPadding="false"
         android:padding="10dp">
 
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/status_indicator"
+                android:background="@drawable/shape_rounded_color_indicator"
                 android:contentDescription="@string/content_desc_category_status_color" />
 
 
@@ -150,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/content_desc_category_color"
-                android:background="@drawable/status_indicator"/>
+                android:background="@drawable/shape_rounded_color_indicator"/>
 
             <TextView
                 android:id="@+id/category_status_indicator"
@@ -280,7 +280,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/container_pane">
+        android:background="@drawable/background_tile">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -293,7 +293,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/button_category_add_new_text" />
+                android:text="@string/button_add_new_question" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="1dp"
@@ -306,7 +306,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/button_category_add_from_database_text" />
+                android:text="@string/button_add_question_from_database" />
         </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider

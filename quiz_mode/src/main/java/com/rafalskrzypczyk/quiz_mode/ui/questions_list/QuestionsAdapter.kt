@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.rafalskrzypczyk.quiz_mode.utils.GenericDiffCallback
+import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.models.Question
@@ -52,7 +52,7 @@ class QuestionsAdapter(
     }
 
     inner class AddButtonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val button: View = view.findViewById(R.id.button_add_new)
+        private val button: View = view.findViewById(com.rafalskrzypczyk.core.R.id.button_add_new)
 
         fun bind() {
             //button.setOnClickListener { onAddClicked() }
@@ -74,7 +74,7 @@ class QuestionsAdapter(
             QuestionViewHolder(view)
         } else {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.card_add_new, parent, false)
+                .inflate(com.rafalskrzypczyk.core.R.layout.card_add_new, parent, false)
             AddButtonViewHolder(view)
         }
     }

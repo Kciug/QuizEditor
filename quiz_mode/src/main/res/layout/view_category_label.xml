@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:contentDescription="@string/content_desc_category_color"
-        android:background="@drawable/category_label_background" />
+        android:background="@drawable/background_category_label" />
 
     <TextView
         android:id="@+id/category_name"

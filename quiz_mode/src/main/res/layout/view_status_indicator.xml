@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:contentDescription="@string/content_desc_category_color"
-        android:background="@drawable/status_indicator" />
+        android:background="@drawable/shape_rounded_color_indicator" />
 
     <TextView
         android:id="@+id/category_status_indicator"

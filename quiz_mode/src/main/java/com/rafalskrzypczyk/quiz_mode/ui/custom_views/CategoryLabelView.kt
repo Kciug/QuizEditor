@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.utils.TextColorContrastHelper
+import com.rafalskrzypczyk.core.utils.TextColorContrastHelper
 
 class CategoryLabelView @JvmOverloads constructor(
     context: Context,
@@ -27,7 +27,7 @@ class CategoryLabelView @JvmOverloads constructor(
 
         colorIndicatorBackground = colorIndicator.background as GradientDrawable
 
-        setColorAndText(context.getColor(R.color.red), context.getString(com.rafalskrzypczyk.core.R.string.text_placeholder_short))
+        setColorAndText(context.getColor(com.rafalskrzypczyk.core.R.color.red), context.getString(com.rafalskrzypczyk.core.R.string.text_placeholder_short))
     }
 
     fun setColorAndText(color: Int, text: String){

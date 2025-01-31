@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.utils
+package com.rafalskrzypczyk.core.generic
 
 import androidx.recyclerview.widget.DiffUtil
 

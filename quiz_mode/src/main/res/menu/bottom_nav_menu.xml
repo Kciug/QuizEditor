@@ -4,11 +4,11 @@
     <item
         android:id="@+id/navigation_categories"
         android:icon="@drawable/ic_category_24"
-        android:title="@string/title_categories" />
+        android:title="@string/bottom_bar_title_categories" />
 
     <item
         android:id="@+id/navigation_questions"
         android:icon="@drawable/ic_questions_24"
-        android:title="@string/title_questions" />
+        android:title="@string/bottom_bar_title_questions" />
 
 </menu>

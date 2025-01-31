@@ -4,19 +4,15 @@
     <!-- icon descriptions -->
     <string name="ic_desc_app_icon">App Icon</string>
     <string name="ic_desc_back">Cofnij</string>
+    <string name="ic_desc_close">Zamknij</string>
+    <string name="ic_desc_edit">Edytuj</string>
+    <string name="ic_desc_add">Dodaj nowy</string>
 
-    <!-- app drawer -->
-    <string name="drawer_menu_title_quiz">Tryb | Quiz</string>
-    <string name="drawer_menu_title_swipe_quiz">Tryb | Swipe Quiz</string>
-    <string name="drawer_menu_title_calculations">Tryb | Obliczenia</string>
-    <string name="drawer_menu_title_scenarios">Tryb | Scenariusze</string>
-
-    <!-- login -->
-    <string name="hint_email">e-mail</string>
-    <string name="hint_password">hasło</string>
-    <string name="button_login">Zaloguj</string>
-    <string name="button_forgot_password">Zapomniałem hasła</string>
-    <string name="button_reset_password">Odzyskaj hasło</string>
+    <!-- buttons -->
+    <string name="button_save">Zapisz</string>
+    <string name="button_edit">Edytuj</string>
+    <string name="button_back">Wróć</string>
+    <string name="button_ok">OK</string>
 
     <string name="text_placeholder_short">Placeholder</string>
     <string name="text_placeholder_long">A bit longer placeholder for a fields that can store more content</string>

@@ -1,12 +1,9 @@
 <resources>
-    <string name="title_categories">Kategorie</string>
-    <string name="title_questions">Pytania</string>
+    <string name="bottom_bar_title_categories">Kategorie</string>
+    <string name="bottom_bar_title_questions">Pytania</string>
 
     <string name="ic_desc_answers">Odpowiedzi</string>
     <string name="ic_desc_validation_ok">Pytanie poprawne</string>
-    <string name="ic_desc_close">Zamknij</string>
-    <string name="ic_desc_edit_category">Edytuj</string>
-    <string name="ic_desc_add_new">Dodaj nowy element</string>
 
     <string name="content_desc_category_color">Kolor kategorii</string>
     <string name="content_desc_category_status_color">Kolor statusu kategorii</string>
@@ -26,12 +23,10 @@
     <string name="hint_category_title">Nazwa kategorii</string>
     <string name="hint_category_desc">Opis…</string>
 
-    <string name="button_save">Zapisz</string>
-    <string name="button_edit">Edytuj</string>
     <string name="button_change_color">Zmień kolor</string>
     <string name="button_change_status">Zmień status</string>
-    <string name="button_category_add_new_text">Nowe pytanie</string>
-    <string name="button_category_add_from_database_text">Dodaj z bazy</string>
+    <string name="button_add_new_question">Nowe pytanie</string>
+    <string name="button_add_question_from_database">Dodaj z bazy</string>
 
     <string name="alert_unsaved_changes_title">Uwaga</string>
     <string name="alert_unsaved_changes_message">Zmiany zostaną utracone!</string>

@@ -1,10 +1,10 @@
 <resources>
-<!--    <string name="navigation_drawer_open">Open navigation drawer</string>-->
-<!--    <string name="navigation_drawer_close">Close navigation drawer</string>-->
-<!--    -->
-    <string name="action_settings">Settings</string>
+    <string name="drawer_menu_title_quiz">Tryb | Quiz</string>
+    <string name="drawer_menu_title_swipe_quiz">Tryb | Swipe Quiz</string>
+    <string name="drawer_menu_title_calculations">Tryb | Obliczenia</string>
+    <string name="drawer_menu_title_scenarios">Tryb | Scenariusze</string>
 
-    <string name="menu_editor">Quiz Edytor</string>
+    <string name="action_settings">Settings</string>
 
     <string name="nav_header_desc">Navigation header</string>
     <string name="nav_header_title">Zbigniew Drut</string>

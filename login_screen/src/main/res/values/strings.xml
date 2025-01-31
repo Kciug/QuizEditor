@@ -1,4 +1,11 @@
 <resources>
     <string name="nav_login">Logowanie</string>
     <string name="nav_reset_password">Odzyskiwanie hasła</string>
+
+    <string name="hint_email">e-mail</string>
+    <string name="hint_password">hasło</string>
+
+    <string name="button_login">Zaloguj</string>
+    <string name="button_forgot_password">Zapomniałem hasła</string>
+    <string name="button_reset_password">Odzyskaj hasło</string>
 </resources>

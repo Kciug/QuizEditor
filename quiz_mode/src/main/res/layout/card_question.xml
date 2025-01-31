@@ -8,7 +8,7 @@
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
     android:elevation="15dp"
-    android:background="@drawable/container_pane">
+    android:background="@drawable/background_tile">
 
     <!-- Pytanie -->
     <TextView

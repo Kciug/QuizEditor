@@ -8,5 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="green">#299421</color>
+    <color name="red">#942121</color>
+
+    <color name="container_pane">#EBEBEB</color>
+
     <color name="transparent">#00000000</color>
 </resources>

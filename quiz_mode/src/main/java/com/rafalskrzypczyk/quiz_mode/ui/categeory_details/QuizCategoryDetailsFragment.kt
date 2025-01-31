@@ -200,7 +200,7 @@ class QuizCategoryDetailsFragment(
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                                      dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
                 val itemView = viewHolder.itemView
-                val backgroundDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.background_swipe_element)
+                val backgroundDrawable = AppCompatResources.getDrawable(requireContext(), com.rafalskrzypczyk.core.R.drawable.background_swipe_element)
                 backgroundDrawable?.setBounds(
                     (itemView.right + dX).toInt(),
                     itemView.top,
@@ -254,7 +254,9 @@ class QuizCategoryDetailsFragment(
 
         binding.editingButtonsSection.visibility = if(isInEditMode) View.VISIBLE else View.GONE
 
-        binding.buttonEditSave.text = if(isInEditMode) getString(R.string.button_save) else getString(R.string.button_edit)
+        binding.buttonEditSave.text =
+            if(isInEditMode) getString(com.rafalskrzypczyk.core.R.string.button_save)
+            else getString(com.rafalskrzypczyk.core.R.string.button_edit)
     }
 
     /**

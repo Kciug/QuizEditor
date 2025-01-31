@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.utils
+package com.rafalskrzypczyk.core.utils
 
 import android.graphics.Color
 
