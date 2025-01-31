@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_reset_password"
-        android:name="com.rafalskrzypczyk.login_screen.ResetPasswordFragment"
+        android:name="com.rafalskrzypczyk.login_screen.reset_password.ResetPasswordFragment"
         android:label="@string/nav_reset_password"
         tools:layout="@layout/fragment_reset_password"/>
 

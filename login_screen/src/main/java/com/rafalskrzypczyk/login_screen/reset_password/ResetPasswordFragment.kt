@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.login_screen
+package com.rafalskrzypczyk.login_screen.reset_password
 
 import android.os.Bundle
 import android.view.LayoutInflater
