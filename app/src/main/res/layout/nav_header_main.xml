@@ -12,7 +12,7 @@
     android:theme="@style/Theme.QuizEditor.DrawerBar"
     android:orientation="vertical"
     android:gravity="bottom"
-    android:backgroundTint="@color/purple_200">
+    android:backgroundTint="@color/primary">
 
     <ImageView
         android:layout_width="wrap_content"
