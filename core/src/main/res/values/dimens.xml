@@ -5,4 +5,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="tile_rounded_corner_radius">16dp</dimen>
+
+    <dimen name="disabled_alpha">1</dimen>
 </resources>

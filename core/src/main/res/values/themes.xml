@@ -17,7 +17,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="android:textViewStyle">@style/DefaultTextAppearance</item>
+        <item name="android:textViewStyle">@style/DefaultTextStyle</item>
+        <item name="editTextStyle">@style/DefaultTextInputStyle</item>
     </style>
     <style name="Theme.QuizEditor.DrawerBar" parent="ThemeOverlay.AppCompat.Dark">
         <item name="colorPrimary">@color/primary</item>

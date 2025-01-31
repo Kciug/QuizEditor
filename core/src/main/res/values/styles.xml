@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="DefaultTextAppearance" parent="TextAppearance.AppCompat">
+    <style name="DefaultTextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/text_primary</item>
+    </style>
+    <style name="DefaultTextInputStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/selector_color_edit_text</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
     </style>
 </resources>
