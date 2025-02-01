@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 import com.rafalskrzypczyk.quiz_mode.R
+import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
 
 //class QuestionsAdapter(private val questions: List<Question>) :
@@ -36,7 +37,8 @@ import com.rafalskrzypczyk.quiz_mode.models.Question
 //}
 
 class QuestionsAdapter(
-
+    private val onItemClicked: (Question, Int) -> Unit,
+    private val onAddClicked: () -> Unit
 ) : ListAdapter<Question, RecyclerView.ViewHolder>(GenericDiffCallback<Question>(
     areItemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
     areContentsTheSame = { oldItem, newItem -> oldItem == newItem }
@@ -45,9 +47,13 @@ class QuestionsAdapter(
         val questionText: TextView = view.findViewById(R.id.question_text)
         val questionAnswers: TextView = view.findViewById(R.id.answers_count)
 
-        fun bind(question: Question) {
+        fun bind(question: Question, position: Int) {
             questionText.text = question.text
             questionAnswers.text = String.format(question.answers.count().toString())
+
+            itemView.setOnClickListener {
+                onItemClicked(question, position)
+            }
         }
     }
 
@@ -55,7 +61,7 @@ class QuestionsAdapter(
         private val button: View = view.findViewById(com.rafalskrzypczyk.core.R.id.button_add_new)
 
         fun bind() {
-            //button.setOnClickListener { onAddClicked() }
+            button.setOnClickListener { onAddClicked() }
         }
     }
 
@@ -82,7 +88,7 @@ class QuestionsAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is QuestionViewHolder) {
             val question = getItem(position)
-            holder.bind(question)
+            holder.bind(question, position)
         } else if (holder is AddButtonViewHolder) {
             holder.bind()
         }

@@ -21,6 +21,7 @@ import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBind
 import com.rafalskrzypczyk.quiz_mode.models.Category
 import com.rafalskrzypczyk.quiz_mode.models.Question
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.utils.ViewState
 import com.rafalskrzypczyk.quiz_mode.utils.getColor
 import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 
@@ -45,12 +46,6 @@ class QuizCategoryDetailsFragment(
     FragmentQuizCategoryDetailsBinding::inflate,
     onDismiss
 ), QuizCategoryDetailsView {
-
-    enum class ViewState{
-        VIEW,
-        EDIT,
-        NEW_ELEMENT
-    }
 
     private lateinit var presenter: QuizCategoryDetailsPresenter
     private lateinit var adapter: QuestionsSimpleAdapter

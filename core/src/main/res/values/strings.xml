@@ -16,4 +16,5 @@
 
     <string name="text_placeholder_short">Placeholder</string>
     <string name="text_placeholder_long">A bit longer placeholder for a fields that can store more content</string>
+    <string name="text_placeholder_number">123</string>
 </resources>

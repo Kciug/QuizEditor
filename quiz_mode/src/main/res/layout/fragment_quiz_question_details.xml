@@ -46,7 +46,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pytanie"
+        android:text="@string/label_question"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginStart="8dp"
@@ -66,14 +66,13 @@
             android:layout_height="wrap_content"
             android:autofillHints="name"
             android:background="@color/transparent"
-            android:enabled="false"
             android:inputType="textMultiLine"
             android:minLines="1"
             android:maxLines="2"
-            android:hint="Tekst pytania"/>
+            android:hint="@string/hint_question_text"/>
 
         <LinearLayout
-            android:id="@+id/assigned_categories_section"
+            android:id="@+id/section_assigned_categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -83,9 +82,34 @@
                 android:layout_height="1dp"
                 android:layout_marginVertical="5dp"/>
 
-            <com.rafalskrzypczyk.quiz_mode.ui.custom_views.CategoryLabelView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/categories_recycler_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/view_category_label" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <ImageButton
+                    android:id="@+id/button_assign_category"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/ic_add_circle_outline_24"
+                    app:tint="?attr/colorPrimary"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -93,6 +117,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/section_creation_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -111,7 +136,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
-            android:text="2005-04-02"
+            android:text="@string/text_placeholder_short"
             android:textSize="10sp"/>
 
         <TextView
@@ -126,12 +151,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
-            android:text="Jan Pawel 2"
+            android:text="@string/text_placeholder_short"
             android:textSize="10sp"/>
     </LinearLayout>
 
     <!-- SEKCJA PYTAŃ -->
     <LinearLayout
+        android:id="@+id/section_answers_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -143,7 +169,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Odpowiedzi"
+            android:text="@string/label_answers"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -157,7 +183,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="4"
+            android:text="@string/text_placeholder_number"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -165,7 +191,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text=", poprawnych "
+            android:text="@string/label_correct_answers"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -173,14 +199,15 @@
             android:id="@+id/correct_answers_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="3dp"
             android:layout_gravity="center"
-            android:text="1"
+            android:text="@string/text_placeholder_number"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/questions_recycler_view"
+        android:id="@+id/answers_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
