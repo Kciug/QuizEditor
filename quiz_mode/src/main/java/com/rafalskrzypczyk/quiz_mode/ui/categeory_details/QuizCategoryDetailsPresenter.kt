@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.TestCategories
 import com.rafalskrzypczyk.quiz_mode.TestQuestions
-import com.rafalskrzypczyk.quiz_mode.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 
 class QuizCategoryDetailsPresenter(
     private val view: QuizCategoryDetailsView

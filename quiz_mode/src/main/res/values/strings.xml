@@ -39,8 +39,9 @@
     <string name="status_approved">ZATWIERDZONE</string>
     <string name="label_question">Pytanie</string>
     <string name="hint_question_text">Tekst pytania</string>
-    <string name="label_answers">Odpowiedzi</string>
-    <string name="label_correct_answers">, poprawnych</string>
+    <string name="label_answers">odpowiedzi</string>
+    <string name="label_correct_answers">poprawnych</string>
     <string name="hint_answer">Dodaj odpowiedź</string>
     <string name="label_correct_answer">Poprawna</string>
+    <string name="label_no_categories">Brak kategorii</string>
 </resources>

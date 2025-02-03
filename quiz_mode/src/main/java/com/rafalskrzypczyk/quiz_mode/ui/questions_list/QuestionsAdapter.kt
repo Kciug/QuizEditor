@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.models.Category
-import com.rafalskrzypczyk.quiz_mode.models.Question
+import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 
 //class QuestionsAdapter(private val questions: List<Question>) :
 //    RecyclerView.Adapter<QuestionsAdapter.QuestionViewHolder>()

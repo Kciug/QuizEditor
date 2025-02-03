@@ -4,39 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:clipToPadding="false">
-
+    android:padding="10dp">
 
     <!--  NAV BAR  -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/button_close"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_close_24"
-            android:contentDescription="@string/ic_desc_close"
             android:background="@android:color/transparent"
-            app:tint="?attr/colorPrimary"/>
+            android:contentDescription="@string/ic_desc_close"
+            android:src="@drawable/ic_close_24"
+            app:tint="?attr/colorPrimary" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="fill_horizontal"/>
+            android:layout_gravity="fill_horizontal"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/button_save"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/button_save"/>
+            android:text="@string/button_save" />
 
     </LinearLayout>
 
@@ -45,18 +44,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="5dp"
         android:text="@string/label_question"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginStart="8dp"
-        android:paddingBottom="5dp"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@drawable/background_tile"
         android:clipToPadding="false"
+        android:orientation="vertical"
         android:padding="10dp">
 
         <EditText
@@ -65,10 +64,10 @@
             android:layout_height="wrap_content"
             android:autofillHints="name"
             android:background="@color/transparent"
+            android:hint="@string/hint_question_text"
             android:inputType="textMultiLine"
-            android:minLines="1"
             android:maxLines="2"
-            android:hint="@string/hint_question_text"/>
+            android:minLines="1" />
 
         <LinearLayout
             android:id="@+id/section_assigned_categories"
@@ -79,32 +78,41 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginVertical="5dp"/>
+                android:layout_marginVertical="5dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/label_no_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/label_no_categories"
+                    android:textStyle="italic"
+                    android:textColor="@color/text_disabled"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categories_recycler_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/view_category_label"
-                    android:nestedScrollingEnabled="false" />
+                    tools:listitem="@layout/view_category_label" />
 
                 <ImageButton
                     android:id="@+id/button_assign_category"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
+                    android:background="@color/transparent"
                     android:contentDescription="@string/ic_desc_add"
                     android:src="@drawable/ic_add_circle_outline_24"
-                    android:background="@color/transparent"
-                    app:tint="?attr/colorPrimary"/>
+                    app:tint="?attr/colorPrimary" />
 
             </LinearLayout>
 
@@ -117,16 +125,16 @@
         android:id="@+id/section_creation_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
         android:gravity="center"
-        android:layout_marginTop="5dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:text="@string/label_created_on"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/created_on_label"
@@ -134,14 +142,14 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:text="@string/text_placeholder_short"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:text="@string/label_created_by"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/created_by_label"
@@ -149,7 +157,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:text="@string/text_placeholder_short"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
     </LinearLayout>
 
     <!-- SEKCJA PYTAŃ -->
@@ -157,66 +165,67 @@
         android:id="@+id/section_answers_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:layout_marginHorizontal="8dp"
+        android:orientation="horizontal"
         android:paddingBottom="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_answers"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/all_answers_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:paddingEnd="5dp"
             android:text="@string/text_placeholder_number"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_answers"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/label_correct_answers"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/correct_answers_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="3dp"
             android:layout_gravity="center"
+            android:paddingStart="3dp"
             android:text="@string/text_placeholder_number"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/section_answers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/background_tile">
+        android:background="@drawable/background_tile"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/answers_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:listitem="@layout/card_answer"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_answer" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -231,19 +240,19 @@
                 android:layout_weight="1"
                 android:autofillHints="name"
                 android:background="@color/transparent"
+                android:hint="@string/hint_answer"
                 android:inputType="textMultiLine"
-                android:minLines="1"
                 android:maxLines="2"
-                android:hint="@string/hint_answer"/>
+                android:minLines="1" />
 
             <ImageButton
                 android:id="@+id/button_add_answer"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:background="@color/transparent"
                 android:contentDescription="@string/ic_desc_add"
                 android:src="@drawable/ic_add_circle_outline_24"
-                android:background="@color/transparent"
-                app:tint="?attr/colorPrimary"/>
+                app:tint="?attr/colorPrimary" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

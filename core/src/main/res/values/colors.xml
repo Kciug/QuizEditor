@@ -24,4 +24,6 @@
     <color name="container_pane">#EBEBEB</color>
 
     <color name="transparent">#00000000</color>
+
+    <color name="bubble_background">#D9BABABA</color>
 </resources>

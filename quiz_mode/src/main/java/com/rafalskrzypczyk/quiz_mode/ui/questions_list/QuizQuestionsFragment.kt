@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
-import com.rafalskrzypczyk.quiz_mode.models.Question
+import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.ui.question_details.QuizQuestionDetailsFragment
 
 class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(FragmentQuizQuestionsBinding::inflate),

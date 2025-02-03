@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.rafalskrzypczyk.quiz_mode.models.Question
+import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 
 class QuestionsSimpleAdapter(
     private val questions: MutableList<Question>

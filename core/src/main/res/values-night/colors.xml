@@ -13,9 +13,11 @@
     <color name="text_disabled">#CCCCCC</color>
 
     <color name="green">#66BB6A</color>
-    <color name="red">#E57373</color>
+    <color name="red">#CA2828</color>
 
     <color name="container_pane">#282828</color>
 
     <color name="transparent">#00000000</color>
+
+    <color name="bubble_background">#D9434343</color>
 </resources>

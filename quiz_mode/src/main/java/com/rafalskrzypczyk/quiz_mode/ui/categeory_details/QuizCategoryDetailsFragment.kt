@@ -18,8 +18,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.models.Category
-import com.rafalskrzypczyk.quiz_mode.models.Question
+import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.utils.ViewState
 import com.rafalskrzypczyk.quiz_mode.utils.getColor

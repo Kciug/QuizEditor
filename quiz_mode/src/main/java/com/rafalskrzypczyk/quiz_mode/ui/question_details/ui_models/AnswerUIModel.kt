@@ -1,6 +1,6 @@
 package com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models
 
-import com.rafalskrzypczyk.quiz_mode.models.Answer
+import com.rafalskrzypczyk.quiz_mode.domain.models.Answer
 
 data class AnswerUIModel(
     val id: Int,

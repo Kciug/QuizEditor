@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.models
+package com.rafalskrzypczyk.quiz_mode.domain.models
 
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import java.util.Date

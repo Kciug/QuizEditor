@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
-import com.rafalskrzypczyk.quiz_mode.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.ui.categeory_details.QuizCategoryDetailsFragment
 
 class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(

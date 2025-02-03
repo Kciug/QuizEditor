@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.utils.KeyboardController
@@ -42,6 +43,7 @@ class QuizQuestionDetailsFragment(
         fieldQuestionText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                presenter.saveNewQuestion(fieldQuestionText.text.toString())
                 keyboardController.hideKeyboard(fieldQuestionText)
                 true
             } else false
@@ -96,6 +98,11 @@ class QuizQuestionDetailsFragment(
     }
 
     override fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>) {
+        if(categories.isEmpty()) {
+            binding.labelNoCategories.visibility = View.VISIBLE
+            return
+        }
+        binding.labelNoCategories.visibility = View.GONE
         categoriesPreviewAdapter.updateData(categories)
     }
 
@@ -113,6 +120,14 @@ class QuizQuestionDetailsFragment(
         ) { answer: AnswerUIModel, position: Int -> presenter.removeAnswer(answer, position) }
         binding.answersRecyclerView.adapter = answersListAdapter
         binding.answersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        if(binding.fieldQuestionText.hasFocus()) binding.fieldQuestionText.clearFocus()
+
+        binding.fieldQuestionText.addTextChangedListener(
+            afterTextChanged = {
+                presenter.updateQuestionText(it.toString())
+            }
+        )
 
         binding.buttonSave.visibility = View.GONE
         binding.sectionAssignedCategories.visibility = View.VISIBLE

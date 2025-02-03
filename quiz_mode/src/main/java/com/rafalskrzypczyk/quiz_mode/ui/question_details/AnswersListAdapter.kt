@@ -17,7 +17,7 @@ class AnswersListAdapter(
     private val onAnswerChanged: (AnswerUIModel) -> Unit,
     private val onAnswerRemoved: (AnswerUIModel, Int) -> Unit
 ) : RecyclerView.Adapter<AnswersListAdapter.ViewHolder>() {
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val answerText: EditText = itemView.findViewById(R.id.field_question_text)
         val correctSwitch: SwitchCompat = itemView.findViewById(R.id.switch_correct)
 
@@ -43,9 +43,13 @@ class AnswersListAdapter(
             )
         }
 
-        private fun showDeleteBubble(view: View, answer: AnswerUIModel){
+        private fun showDeleteBubble(view: View, answer: AnswerUIModel) {
             val inflater = LayoutInflater.from(view.context)
-            val bubbleView = inflater.inflate(com.rafalskrzypczyk.core.R.layout.bubble_delete, view.rootView as ViewGroup, false)
+            val bubbleView = inflater.inflate(
+                com.rafalskrzypczyk.core.R.layout.bubble_delete,
+                view.rootView as ViewGroup,
+                false
+            )
 
             val popupWindow = PopupWindow(
                 bubbleView,
@@ -57,13 +61,13 @@ class AnswersListAdapter(
             val location = IntArray(2)
             view.getLocationOnScreen(location)
 
-            val popupX = location[0] + (view.width / 2) - (bubbleView.measuredWidth / 2)
+            val popupX = location[0] + (view.width / 2) - bubbleView.measuredWidth * 2
             val popupY = location[1] - bubbleView.measuredHeight - 50
 
             popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, popupX, popupY)
             //popupWindow.showAsDropDown(view, 0, -view.height - 50)
 
-            bubbleView.setOnClickListener{
+            bubbleView.setOnClickListener {
                 onAnswerRemoved(answer, adapterPosition)
                 popupWindow.dismiss()
             }

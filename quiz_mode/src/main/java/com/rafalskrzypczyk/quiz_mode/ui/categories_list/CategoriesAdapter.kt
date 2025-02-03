@@ -12,7 +12,7 @@ import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.ui.custom_views.StatusIndicatorView
 import com.rafalskrzypczyk.quiz_mode.utils.getColor
 import com.rafalskrzypczyk.quiz_mode.utils.getTitle
-import com.rafalskrzypczyk.quiz_mode.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 
 //class CategoriesAdapter(
 //    private var categories: List<Category>,
