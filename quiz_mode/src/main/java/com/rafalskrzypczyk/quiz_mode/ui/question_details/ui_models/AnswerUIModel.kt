@@ -1,11 +1,11 @@
-package com.rafalskrzypczyk.quiz_mode.ui.view_models
+package com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models
 
 import com.rafalskrzypczyk.quiz_mode.models.Answer
 
 data class AnswerUIModel(
     val id: Int,
-    val answerText: String,
-    val isCorrect: Boolean
+    var answerText: String,
+    var isCorrect: Boolean
 )
 
 fun Answer.toPresentation() : AnswerUIModel {

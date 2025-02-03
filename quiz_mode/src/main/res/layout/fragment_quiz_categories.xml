@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.categories_list.QuizCategoriesFragment">
 
-    <!-- RecyclerView do wyświetlania kart kategorii -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryRecyclerView"
         android:layout_width="match_parent"

@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    android:clipToPadding="false"
-    tools:context=".ui.categeory_details.QuizCategoryDetailsFragment">
+    android:clipToPadding="false">
 
 
     <!--  NAV BAR  -->
@@ -61,7 +60,7 @@
         android:padding="10dp">
 
         <EditText
-            android:id="@+id/question_text_field"
+            android:id="@+id/field_question_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="name"
@@ -90,23 +89,21 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categories_recycler_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/view_category_label" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    tools:listitem="@layout/view_category_label"
+                    android:nestedScrollingEnabled="false" />
 
                 <ImageButton
                     android:id="@+id/button_assign_category"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/ic_desc_add"
                     android:src="@drawable/ic_add_circle_outline_24"
+                    android:background="@color/transparent"
                     app:tint="?attr/colorPrimary"/>
 
             </LinearLayout>
@@ -206,11 +203,48 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/answers_recycler_view"
+    <LinearLayout
+        android:id="@+id/section_answers"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/card_answer" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/background_tile">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/answers_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:listitem="@layout/card_answer"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/field_new_answer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints="name"
+                android:background="@color/transparent"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="2"
+                android:hint="@string/hint_answer"/>
+
+            <ImageButton
+                android:id="@+id/button_add_answer"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:contentDescription="@string/ic_desc_add"
+                android:src="@drawable/ic_add_circle_outline_24"
+                android:background="@color/transparent"
+                app:tint="?attr/colorPrimary"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
+

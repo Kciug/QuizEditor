@@ -1,12 +1,10 @@
 package com.rafalskrzypczyk.quiz_mode.ui.question_details
 
 import android.annotation.SuppressLint
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.quiz_mode.ui.custom_views.CategoryLabelView
-import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models.SimpleCategoryUIModel
 
 class CategoriesPreviewAdapter(

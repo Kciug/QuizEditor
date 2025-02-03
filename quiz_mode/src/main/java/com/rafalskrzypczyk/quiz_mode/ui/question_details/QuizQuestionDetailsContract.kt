@@ -2,12 +2,15 @@ package com.rafalskrzypczyk.quiz_mode.ui.question_details
 
 import android.os.Bundle
 import com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models.SimpleCategoryUIModel
-import com.rafalskrzypczyk.quiz_mode.ui.view_models.AnswerUIModel
+import com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models.AnswerUIModel
 
 interface QuizQuestionDetailsContract {
     interface View {
         fun displayQuestionText(questionText: String)
-        fun displayAnswersList(answers: List<AnswerUIModel>, answersCount: Int, correctAnswersCount: Int)
+        fun displayAnswersDetails(answersCount: Int, correctAnswersCount: Int)
+        fun displayAnswersList(answers: List<AnswerUIModel>)
+        fun addNewAnswer(answer: AnswerUIModel)
+        fun removeAnswer(answerPosition: Int)
         fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>)
         fun displayCreatedOn(date: String, user: String)
         fun setupView()
@@ -17,8 +20,8 @@ interface QuizQuestionDetailsContract {
         fun getData(bundle: Bundle?)
         fun saveNewQuestion(questionText: String)
         fun updateQuestionText(questionText: String)
-        fun addAnswer(answer: AnswerUIModel)
+        fun addAnswer(answerText: String)
         fun updateAnswer(answer: AnswerUIModel)
-        fun removeAnswer(answer: AnswerUIModel)
+        fun removeAnswer(answer: AnswerUIModel, answerPosition: Int)
     }
 }
