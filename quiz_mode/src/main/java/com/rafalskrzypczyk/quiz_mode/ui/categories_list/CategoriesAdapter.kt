@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.ui.categories_list
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -88,12 +89,14 @@ class CategoriesAdapter(
         val categoryDescription: TextView = view.findViewById(R.id.categoryDescription)
         val questionCount: TextView = view.findViewById(R.id.questionCount)
         val statusIndicator: StatusIndicatorView = view.findViewById(R.id.statusIndicator)
+        val iconCategoryColor: ImageView = view.findViewById(R.id.icon_category_color)
 
         fun bind(category: Category, position: Int) {
             categoryName.text = category.title
             categoryDescription.text = category.description
             questionCount.text = String.format(category.questionAmount.toString())
             statusIndicator.setColorAndText(category.status.getColor(itemView.context), category.status.getTitle(itemView.context))
+            iconCategoryColor.setColorFilter(category.color.toInt())
 
             itemView.setOnClickListener {
                 onCategoryClicked(category, position)

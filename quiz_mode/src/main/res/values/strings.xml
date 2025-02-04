@@ -44,4 +44,5 @@
     <string name="hint_answer">Dodaj odpowiedź</string>
     <string name="label_correct_answer">Poprawna</string>
     <string name="label_no_categories">Brak kategorii</string>
+    <string name="ic_desc_category_color">Kolor kategorii</string>
 </resources>

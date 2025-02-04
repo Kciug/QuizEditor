@@ -18,4 +18,5 @@
     <string name="text_placeholder_long">A bit longer placeholder for a fields that can store more content</string>
     <string name="text_placeholder_number">123</string>
     <string name="ic_desc_delete">Usuń</string>
+    <string name="ic_desc_search">Wyszukaj</string>
 </resources>

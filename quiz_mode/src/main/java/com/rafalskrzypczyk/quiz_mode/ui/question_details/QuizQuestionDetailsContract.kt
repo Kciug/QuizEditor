@@ -23,5 +23,6 @@ interface QuizQuestionDetailsContract {
         fun addAnswer(answerText: String)
         fun updateAnswer(answer: AnswerUIModel)
         fun removeAnswer(answer: AnswerUIModel, answerPosition: Int)
+        fun updateLinkedCategories()
     }
 }

@@ -9,35 +9,39 @@
     android:padding="10dp">
 
     <!--  NAV BAR  -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal">-->
 
-        <ImageButton
-            android:id="@+id/button_close"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/ic_desc_close"
-            android:src="@drawable/ic_close_24"
-            app:tint="?attr/colorPrimary" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/button_close"-->
+<!--            android:layout_width="35dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:contentDescription="@string/ic_desc_close"-->
+<!--            android:src="@drawable/ic_close_24"-->
+<!--            app:tint="?attr/colorPrimary" />-->
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="fill_horizontal"
-            android:layout_weight="1" />
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="fill_horizontal"-->
+<!--            android:layout_weight="1" />-->
 
-        <Button
-            android:id="@+id/button_save"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/button_save" />
+<!--        <Button-->
+<!--            android:id="@+id/button_save"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:text="@string/button_save" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
+
+    <include
+        android:id="@+id/bottom_sheet_bar"
+        layout="@layout/layout_bottom_sheet_bar" />
 
 
     <!--  SEKCJA DETALI  -->

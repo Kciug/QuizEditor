@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
+import com.rafalskrzypczyk.quiz_mode.ui.editable_picker.EditablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models.AnswerUIModel
 import com.rafalskrzypczyk.quiz_mode.ui.question_details.ui_models.SimpleCategoryUIModel
 
@@ -58,16 +59,19 @@ class QuizQuestionDetailsFragment(
             } else false
         }
 
-        binding.buttonClose.setOnClickListener {
+        binding.bottomSheetBar.buttonClose.setOnClickListener {
             dismiss()
         }
 
-        binding.buttonSave.setOnClickListener {
+        binding.bottomSheetBar.buttonSave.setOnClickListener {
             presenter.saveNewQuestion(binding.fieldQuestionText.text.toString())
         }
 
         binding.buttonAssignCategory.setOnClickListener {
+            val linkedCategoriesPicker =
+                EditablePickerFragment(presenter){ presenter.updateLinkedCategories() }
 
+            linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
         }
 
         binding.buttonAddAnswer.setOnClickListener {
@@ -129,7 +133,7 @@ class QuizQuestionDetailsFragment(
             }
         )
 
-        binding.buttonSave.visibility = View.GONE
+        binding.bottomSheetBar.buttonSave.visibility = View.GONE
         binding.sectionAssignedCategories.visibility = View.VISIBLE
         binding.sectionCreationDetails.visibility = View.VISIBLE
         binding.sectionAnswersDetails.visibility = View.VISIBLE
@@ -137,7 +141,7 @@ class QuizQuestionDetailsFragment(
     }
 
     override fun setupNewElementView() {
-        binding.buttonSave.visibility = View.VISIBLE
+        binding.bottomSheetBar.buttonSave.visibility = View.VISIBLE
         binding.sectionAssignedCategories.visibility = View.GONE
         binding.sectionCreationDetails.visibility = View.GONE
         binding.sectionAnswersDetails.visibility = View.GONE

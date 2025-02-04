@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlin.math.pow
 
 abstract class BaseBottomSheetFragment<VB: ViewBinding> (
     private val bindingInflater: (inflater: LayoutInflater) -> VB,
     private val onDismiss: () -> Unit = {}
 ) : BottomSheetDialogFragment() {
     companion object{
-        const val HEIGHT_MODIFIER = 0.97f
+        private var activeSheetsCount = 0
+        private const val HEIGHT_MODIFIER = 0.97f
     }
 
     private var _binding: VB? = null
@@ -43,6 +45,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater(inflater)
+        activeSheetsCount++
         onViewBound()
         return binding.root
     }
@@ -62,6 +65,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
         super.onDestroyView()
         _bottomSheet = null
         _binding = null
+        activeSheetsCount = maxOf(0, activeSheetsCount - 1)
     }
 
     /**
@@ -71,7 +75,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
      */
     protected open fun setupBottomSheetDialog(){
         bottomSheet.let {
-            it.layoutParams.height = (resources.displayMetrics.heightPixels * HEIGHT_MODIFIER).toInt()
+            it.layoutParams.height = (resources.displayMetrics.heightPixels * HEIGHT_MODIFIER.pow(activeSheetsCount)).toInt()
 
             val behavior = BottomSheetBehavior.from(it)
             behavior.skipCollapsed = true
