@@ -10,4 +10,7 @@ object Versions {
 
     const val NAVIGATION_FRAGMENT_KTX = "2.8.5"
     const val NAVIGATION_UI_KTX = "2.8.5"
+
+    const val HILT = "2.51.1"
+
 }

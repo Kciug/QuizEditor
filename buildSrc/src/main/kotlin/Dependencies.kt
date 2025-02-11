@@ -14,6 +14,10 @@ object Dependencies {
     const val JUNIT = "junit:junit:${Versions.JUNIT}"
     const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.JUNIT_VERSION}"
     const val ANDROIDX_ESPRESSO_CORE = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO_CORE}"
+
+    // HILT
+    const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
+    const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
 }
 
 fun DependencyHandler.coreKtx() = implementation(Dependencies.ANDROIDX_CORE_KTX)
@@ -30,4 +34,9 @@ fun DependencyHandler.tests() {
     test(Dependencies.JUNIT)
     androidTest(Dependencies.ANDROIDX_JUNIT)
     androidTest(Dependencies.ANDROIDX_ESPRESSO_CORE)
+}
+
+fun DependencyHandler.daggerHilt() {
+    implementation(Dependencies.HILT_ANDROID)
+    kapt(Dependencies.HILT_COMPILER)
 }

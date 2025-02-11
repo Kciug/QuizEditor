@@ -7,20 +7,20 @@
 
     <fragment
         android:id="@+id/navigation_categories"
-        android:name="com.rafalskrzypczyk.quiz_mode.ui.categories_list.QuizCategoriesFragment"
+        android:name="com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesFragment"
         android:label="@string/bottom_bar_title_categories"
         tools:layout="@layout/fragment_quiz_categories" />
 
 
     <fragment
         android:id="@+id/navigation_questions"
-        android:name="com.rafalskrzypczyk.quiz_mode.ui.questions_list.QuizQuestionsFragment"
+        android:name="com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuizQuestionsFragment"
         android:label="@string/bottom_bar_title_questions"
         tools:layout="@layout/fragment_quiz_questions" />
 
     <fragment
         android:id="@+id/navigation_category_details"
-        android:name="com.rafalskrzypczyk.quiz_mode.ui.categeory_details.QuizCategoryDetailsFragment"
+        android:name="com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsFragment"
         android:label="@string/bottom_bar_title_categories"
         tools:layout="@layout/fragment_quiz_category_details" />
 

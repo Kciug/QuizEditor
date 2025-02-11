@@ -19,4 +19,5 @@ dependencies {
     coreKtx()
     ui()
     tests()
+    daggerHilt()
 }

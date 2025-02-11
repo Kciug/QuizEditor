@@ -14,6 +14,8 @@ class SharedGradleProjectConfig : Plugin<Project> {
         project.apply {
             plugin("android-library")
             plugin("kotlin-android")
+            plugin("kotlin-kapt")
+            plugin("com.google.dagger.hilt.android")
         }
     }
 

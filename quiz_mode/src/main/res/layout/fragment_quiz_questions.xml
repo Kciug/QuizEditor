@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.questions_list.QuizQuestionsFragment">
+    tools:context=".presentation.questions_list.QuizQuestionsFragment">
 
     <!-- RecyclerView do wyświetlania kart pytań -->
     <androidx.recyclerview.widget.RecyclerView

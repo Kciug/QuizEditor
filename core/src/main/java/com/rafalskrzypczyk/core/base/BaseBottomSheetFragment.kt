@@ -11,8 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlin.math.pow
 
 abstract class BaseBottomSheetFragment<VB: ViewBinding> (
-    private val bindingInflater: (inflater: LayoutInflater) -> VB,
-    private val onDismiss: () -> Unit = {}
+    private val bindingInflater: (inflater: LayoutInflater) -> VB
 ) : BottomSheetDialogFragment() {
     companion object{
         private var activeSheetsCount = 0
@@ -20,6 +19,9 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
     }
 
     private var _binding: VB? = null
+
+    private var onDismiss: (() -> Unit)? = null
+
 
     /**
      * Gets the view binding for this fragment.
@@ -58,7 +60,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        onDismiss()
+        onDismiss?.invoke()
     }
 
     override fun onDestroyView() {
@@ -91,5 +93,9 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
      */
     protected open fun onViewBound(){
         // Optional: Subclasses can override this to perform actions after binding is set.
+    }
+
+    fun setOnDismiss(onDismissCallback: () -> Unit) {
+        onDismiss = onDismissCallback
     }
 }

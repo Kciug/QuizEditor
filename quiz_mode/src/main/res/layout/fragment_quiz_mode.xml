@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rafalskrzypczyk.quiz_mode.ui.QuizModeFragment">
+    tools:context="com.rafalskrzypczyk.quiz_mode.presentation.QuizModeFragment">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_quiz_mode_bottom_bar"
