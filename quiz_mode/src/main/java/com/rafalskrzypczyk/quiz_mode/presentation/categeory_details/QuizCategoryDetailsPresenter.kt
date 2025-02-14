@@ -24,12 +24,7 @@ class QuizCategoryDetailsPresenter(
     }
 
     fun createNewCategory(categoryTitle: String, categoryDescription: String, color: Long?){
-        _categoryLiveData.value = (Category(
-            id = TestCategories.cat.size + 1,
-            title = categoryTitle,
-            description = categoryDescription,
-            creationDate = Calendar.getInstance().time,
-        ))
+        _categoryLiveData.value = (Category.new(categoryTitle))
         view.displayCategoryDetails(category , TestQuestions.questions)
         category.value?.let { TestCategories.cat.add(it) }
     }

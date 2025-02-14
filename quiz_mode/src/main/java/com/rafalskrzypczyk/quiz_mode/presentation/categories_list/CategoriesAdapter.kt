@@ -94,7 +94,7 @@ class CategoriesAdapter(
         fun bind(category: Category, position: Int) {
             categoryName.text = category.title
             categoryDescription.text = category.description
-            questionCount.text = String.format(category.questionAmount.toString())
+            questionCount.text = String.format(category.linkedQuestions.count().toString())
             statusIndicator.setColorAndText(category.status.getColor(itemView.context), category.status.getTitle(itemView.context))
             iconCategoryColor.setColorFilter(category.color.toInt())
 

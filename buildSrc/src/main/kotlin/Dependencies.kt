@@ -14,6 +14,9 @@ object Dependencies {
     const val JUNIT = "junit:junit:${Versions.JUNIT}"
     const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.JUNIT_VERSION}"
     const val ANDROIDX_ESPRESSO_CORE = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO_CORE}"
+    const val COROUTINE_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.COROUTINE_TEST}"
+    const val MOCKK = "io.mockk:mockk:${Versions.MOCKK}"
+    const val TURBINE = "app.cash.turbine:turbine:${Versions.TURBINE}"
 
     // HILT
     const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
@@ -34,6 +37,9 @@ fun DependencyHandler.tests() {
     test(Dependencies.JUNIT)
     androidTest(Dependencies.ANDROIDX_JUNIT)
     androidTest(Dependencies.ANDROIDX_ESPRESSO_CORE)
+    testImplementation(Dependencies.COROUTINE_TEST)
+    testImplementation(Dependencies.MOCKK)
+    testImplementation(Dependencies.TURBINE)
 }
 
 fun DependencyHandler.daggerHilt() {

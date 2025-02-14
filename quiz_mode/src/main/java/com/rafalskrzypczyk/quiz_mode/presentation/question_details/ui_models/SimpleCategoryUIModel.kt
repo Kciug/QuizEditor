@@ -10,6 +10,6 @@ data class SimpleCategoryUIModel(
 fun Category.toPresentation() : SimpleCategoryUIModel {
     return SimpleCategoryUIModel(
         name = title,
-        color = color
+        color = color.toLong()
     )
 }

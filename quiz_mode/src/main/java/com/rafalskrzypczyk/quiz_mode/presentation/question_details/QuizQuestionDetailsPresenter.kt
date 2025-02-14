@@ -77,7 +77,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     override fun saveNewQuestion(questionText: String) {
         if (questionText.isEmpty()) return
         presenterScope.launch {
-            val response = repository.saveQuestion(Question.new(questionText))
+            val response = repository.saveQuestion(questionText)
             when (response) {
                 is Response.Success -> {
                     loadQuestion(response.data)
@@ -143,9 +143,12 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun onViewClosed() {
-        cachedQuestion?.let { repository.updateQuestion(it) }
+        presenterScope.launch{
+            cachedQuestion?.let { repository.updateQuestion(it) }
+        }
     }
 
+    // Picker Presenter
     override fun setPickerView(view: EditablePickerContract.View) {
         pickerView = view
     }
