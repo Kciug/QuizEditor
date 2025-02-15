@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.editable_picker
+package com.rafalskrzypczyk.quiz_mode.domain.models
 
 data class Checkable(
     val id: Int,

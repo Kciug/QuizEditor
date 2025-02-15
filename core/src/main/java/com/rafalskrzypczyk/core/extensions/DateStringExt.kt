@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.core.utils
+package com.rafalskrzypczyk.core.extensions
 
 import java.text.SimpleDateFormat
 import java.util.Date

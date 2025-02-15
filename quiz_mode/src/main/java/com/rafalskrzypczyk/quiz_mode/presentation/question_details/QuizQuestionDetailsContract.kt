@@ -20,6 +20,7 @@ interface QuizQuestionDetailsContract {
         fun getData(bundle: Bundle?)
         fun saveNewQuestion(questionText: String)
         fun updateQuestionText(questionText: String)
+        fun onQuestionTextSubmitted(questionText: String)
         fun addAnswer(answerText: String)
         fun updateAnswer(answer: AnswerUIModel)
         fun removeAnswer(answer: AnswerUIModel, answerPosition: Int)

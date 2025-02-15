@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.quiz_mode.data
 
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.extensions.updateById
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
@@ -58,14 +59,7 @@ class QuizModeRepositoryImpl @Inject constructor(
 
     override suspend fun updateCategory(category: Category): Response<Unit> {
         val response = firestoreApi.updateCategory(category.toDTO())
-        if (response is Response.Success) {
-            _cachedCategories?.let { list ->
-                val index = list.indexOfFirst { it.id == category.id }
-                if (index != -1) {
-                    list[index] = category
-                }
-            }
-        }
+        if (response is Response.Success) _cachedCategories?.updateById(category)
         return response
     }
 
@@ -102,33 +96,25 @@ class QuizModeRepositoryImpl @Inject constructor(
 
     override suspend fun updateQuestion(question: Question): Response<Unit> {
         val response = firestoreApi.updateQuestion(question.toDTO())
-        if (response is Response.Success) {
-            _cachedQuestions?.let { list ->
-                val index = list.indexOfFirst { it.id == question.id }
-                if (index != -1) {
-                    list[index] = question
-                }
-            }
-        }
+        if (response is Response.Success) _cachedQuestions?.updateById(question)
         return response
     }
 
-    override suspend fun saveQuestion(questionText: String): Response<Int> {
-        val newQuestion = Question.new(questionText)
-        val response = firestoreApi.addQuestion(newQuestion.toDTO())
+    override suspend fun saveQuestion(question: Question): Response<Unit> {
+        val response = firestoreApi.addQuestion(question.toDTO())
         return when (response) {
+            is Response.Success -> {
+                _cachedQuestions?.add(question)
+                Response.Success(Unit)
+            }
             is Response.Error -> Response.Error(response.error)
             is Response.Loading -> Response.Loading
-            is Response.Success -> {
-                _cachedQuestions?.add(newQuestion)
-                Response.Success(newQuestion.id)
-            }
         }
     }
 
-    override suspend fun deleteQuestion(questionId: Int): Response<Unit> {
-        val response = firestoreApi.deleteQuestion(questionId)
-        if (response is Response.Success) _cachedQuestions?.removeIf { it.id == questionId }
+    override suspend fun deleteQuestion(question: Question): Response<Unit> {
+        val response = firestoreApi.deleteQuestion(question.id)
+        if (response is Response.Success) _cachedQuestions?.remove(question)
         return response
     }
 }

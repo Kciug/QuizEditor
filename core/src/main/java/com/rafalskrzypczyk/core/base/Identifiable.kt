@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.core.base
 
-interface NamedEntity {
+interface Identifiable {
     val id: Int
-    var title: String
 }

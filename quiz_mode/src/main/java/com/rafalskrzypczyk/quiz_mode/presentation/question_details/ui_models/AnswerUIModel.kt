@@ -8,7 +8,7 @@ data class AnswerUIModel(
     var isCorrect: Boolean
 )
 
-fun Answer.toPresentation() : AnswerUIModel {
+fun Answer.toSimplePresentation() : AnswerUIModel {
     return AnswerUIModel(
         id = id,
         answerText = answerText,

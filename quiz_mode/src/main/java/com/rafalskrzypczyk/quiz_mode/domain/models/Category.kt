@@ -1,12 +1,13 @@
 package com.rafalskrzypczyk.quiz_mode.domain.models
 
-import com.rafalskrzypczyk.core.utils.generateId
+import com.rafalskrzypczyk.core.base.Identifiable
+import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.quiz_mode.data.CategoryDTO
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import java.util.Date
 
 data class Category(
-    val id: Int,
+    override val id: Int,
     var title: String,
     var description: String,
     val linkedQuestions: MutableList<Int>,
@@ -14,7 +15,7 @@ data class Category(
     var color: Int,
     val creationDate: Date,
     val createdBy: String
-) {
+) : Identifiable {
     companion object {
         fun new(title: String) = Category(
             id = Int.generateId(),

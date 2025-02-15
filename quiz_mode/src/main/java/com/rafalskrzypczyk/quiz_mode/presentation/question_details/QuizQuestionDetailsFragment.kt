@@ -45,7 +45,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         fieldQuestionText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter.updateQuestionText(fieldQuestionText.text.toString())
+                presenter.onQuestionTextSubmitted(fieldQuestionText.text.toString())
                 keyboardController.hideKeyboard(fieldQuestionText)
                 true
             } else false

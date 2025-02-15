@@ -1,18 +1,18 @@
 package com.rafalskrzypczyk.quiz_mode.domain.models
 
-import android.icu.util.Calendar
-import com.rafalskrzypczyk.core.utils.generateId
+import com.rafalskrzypczyk.core.base.Identifiable
+import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.quiz_mode.data.QuestionDTO
 import java.util.Date
 
 data class Question(
-    val id: Int,
+    override val id: Int,
     var text: String,
     val answers: MutableList<Answer>,
     val creationDate: Date,
     val createdBy: String,
     val linkedCategories: MutableList<Int>
-) {
+) : Identifiable {
     companion object {
         fun new(text: String): Question {
             return Question(

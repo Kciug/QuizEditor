@@ -15,6 +15,6 @@ interface QuizModeRepository {
     fun getAllQuestions(): Flow<Response<List<Question>>>
     fun getQuestionById(questionId: Int): Flow<Response<Question>>
     suspend fun updateQuestion(question: Question) : Response<Unit>
-    suspend fun saveQuestion(questionText: String) : Response<Int>
-    suspend fun deleteQuestion(questionId: Int) : Response<Unit>
+    suspend fun saveQuestion(question: Question) : Response<Unit>
+    suspend fun deleteQuestion(question: Question) : Response<Unit>
 }

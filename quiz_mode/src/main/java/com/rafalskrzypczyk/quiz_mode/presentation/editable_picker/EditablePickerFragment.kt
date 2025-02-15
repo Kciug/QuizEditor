@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentEditablePickerBinding
+import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
 class EditablePickerFragment(
     private val presenter: EditablePickerContract.Presenter

@@ -1,7 +1,9 @@
 package com.rafalskrzypczyk.quiz_mode.di
 
 import androidx.fragment.app.Fragment
-import com.rafalskrzypczyk.quiz_mode.data.QuizModeRepositoryMock
+import com.rafalskrzypczyk.quiz_mode.data.FirestoreApi
+import com.rafalskrzypczyk.quiz_mode.data.FirestoreApiMock
+import com.rafalskrzypczyk.quiz_mode.data.QuizModeRepositoryImpl
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsContract
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
@@ -22,7 +24,11 @@ import javax.inject.Singleton
 abstract class QuizModeModule {
     @Binds
     @Singleton
-    abstract fun bindRepository(repository: QuizModeRepositoryMock): QuizModeRepository
+    abstract fun bindFirestore(firestore: FirestoreApiMock) : FirestoreApi
+
+    @Binds
+    @Singleton
+    abstract fun bindRepository(repository: QuizModeRepositoryImpl): QuizModeRepository
 }
 
 @Module

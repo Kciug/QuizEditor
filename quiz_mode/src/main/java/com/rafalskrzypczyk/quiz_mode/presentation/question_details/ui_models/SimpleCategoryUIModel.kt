@@ -7,7 +7,7 @@ data class SimpleCategoryUIModel(
     val color: Long
 )
 
-fun Category.toPresentation() : SimpleCategoryUIModel {
+fun Category.toSimplePresentation() : SimpleCategoryUIModel {
     return SimpleCategoryUIModel(
         name = title,
         color = color.toLong()
