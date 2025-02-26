@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    tools:context=".presentation.categeory_details.QuizCategoryDetailsFragment">
+
+    <include
+        android:id="@+id/section_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/layout_bottom_sheet_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/label_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_category_details"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/section_navbar"/>
+
+    <include
+        android:id="@+id/section_category_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        layout="@layout/layout_category_details"
+        app:layout_constraintTop_toBottomOf="@id/label_category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <include
+        android:id="@+id/section_creation_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/layout_creation_details"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/section_category_details"/>
+
+    <TextView
+        android:id="@+id/label_questions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/section_creation_details"
+        app:layout_constraintStart_toStartOf="@id/label_category"
+        android:layout_marginTop="15dp"
+        android:text="@string/label_category_questions_section"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/category_questions_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/label_questions"
+        app:layout_constraintBottom_toBottomOf="@id/label_questions"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp"
+        android:text="@string/text_placeholder_number"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/section_questions_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        layout="@layout/layout_category_questions_list"
+        app:layout_constraintTop_toBottomOf="@id/label_questions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_edition_fields"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="section_creation_details, label_questions, category_questions_count,
+        section_questions_list"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

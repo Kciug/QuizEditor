@@ -2,37 +2,26 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
-    FragmentQuizCategoriesBinding::inflate), QuizCategoriesView
-{
-    private lateinit var presenter: QuizCategoriesPresenter
-    private lateinit var adapter: CategoriesAdapter
+    FragmentQuizCategoriesBinding::inflate
+), QuizCategoriesContract.View {
+    @Inject
+    lateinit var presenter: QuizCategoriesPresenter
 
-    private lateinit var navController: NavController
+    private lateinit var adapter: CategoriesAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        navController = findNavController()
-
-        presenter = QuizCategoriesPresenter(this)
-
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        presenter.loadCategories()
-    }
-
-    override fun displayCategories(categories: LiveData<List<Category>>) {
         adapter = CategoriesAdapter(
             onCategoryClicked = { category, position ->
                 openCategoryDetailsSheet(category.id, position)
@@ -41,24 +30,27 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
         )
         binding.categoryRecyclerView.adapter = adapter
 
-        categories.observe(viewLifecycleOwner, Observer {updatedCategories ->
-            adapter.submitList(updatedCategories)
-        })
+        presenter.loadCategories()
     }
 
-    private fun openCategoryDetailsSheet(categoryId: Int, listPosition: Int){
+    override fun displayCategories(categories: List<Category>) {
+        adapter.submitList(categories)
+    }
+
+    private fun openCategoryDetailsSheet(categoryId: Int, listPosition: Int) {
         val bundle = Bundle().apply {
             putInt("categoryId", categoryId)
         }
         val bottomBarCategoryDetails =
-            QuizCategoryDetailsFragment(bundle) { adapter.notifyItemChanged(listPosition) }
+            QuizCategoryDetailsFragment().apply { arguments = bundle }
+        bottomBarCategoryDetails.setOnDismiss { presenter.loadCategories() }
 
         bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
     }
 
-    private fun openNewCategorySheet(){
-        val bottomBarCategoryDetails =
-            QuizCategoryDetailsFragment { adapter.notifyItemInserted(adapter.itemCount) }
+    private fun openNewCategorySheet() {
+        val bottomBarCategoryDetails = QuizCategoryDetailsFragment()
+        bottomBarCategoryDetails.setOnDismiss { presenter.loadCategories() }
         bottomBarCategoryDetails.show(parentFragmentManager, "CategoryDetailsBS")
     }
 }

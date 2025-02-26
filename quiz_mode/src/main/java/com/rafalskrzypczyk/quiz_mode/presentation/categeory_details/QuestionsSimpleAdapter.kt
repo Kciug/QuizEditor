@@ -5,14 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
+import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 
-class QuestionsSimpleAdapter(
-    private val questions: MutableList<Question>
-) : RecyclerView.Adapter<QuestionsSimpleAdapter.QuestionSimpleViewHolder>() {
-
-    inner class QuestionSimpleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+class QuestionsSimpleAdapter : ListAdapter<Question, QuestionsSimpleAdapter.QuestionSimpleViewHolder>(
+    GenericDiffCallback(
+        itemsTheSame = { old, new -> old.id == new.id },
+        contentsTheSame = { old, new -> old == new }
+    )
+) {
+    inner class QuestionSimpleViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.text1)
     }
 
@@ -23,13 +26,6 @@ class QuestionsSimpleAdapter(
     }
 
     override fun onBindViewHolder(holder: QuestionSimpleViewHolder, position: Int) {
-        holder.textView.text = questions[position].text
-    }
-
-    override fun getItemCount() = questions.size
-
-    fun removeItem(position: Int){
-        questions.removeAt(position)
-        notifyItemRemoved(position)
+        holder.textView.text = getItem(position).text
     }
 }

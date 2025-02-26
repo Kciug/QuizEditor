@@ -44,22 +44,29 @@ class QuizModeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addCategory(categoryTitle: String): Response<Int> {
-        val newCategory = Category.new(categoryTitle)
-        val response = firestoreApi.addCategory(newCategory.toDTO())
+    override suspend fun addCategory(category: Category): Response<Unit> {
+        val response = firestoreApi.addCategory(category.toDTO())
         return when (response) {
+            is Response.Success -> {
+                _cachedCategories?.add(category)
+                Response.Success(Unit)
+            }
+
             is Response.Error -> Response.Error(response.error)
             is Response.Loading -> Response.Loading
-            is Response.Success -> {
-                _cachedCategories?.add(newCategory)
-                Response.Success(newCategory.id)
-            }
         }
     }
 
     override suspend fun updateCategory(category: Category): Response<Unit> {
-        val response = firestoreApi.updateCategory(category.toDTO())
-        if (response is Response.Success) _cachedCategories?.updateById(category)
+        var response = firestoreApi.updateCategory(category.toDTO())
+        if (response is Response.Success) {
+            _cachedCategories?.updateById(category)
+            category.linkedQuestions.forEach { questionId ->
+                _cachedQuestions?.find { it.id == questionId }?.takeIf {
+                    !it.linkedCategories.contains(category.id)
+                }?.linkedCategories?.add(category.id)
+            }
+        }
         return response
     }
 
@@ -95,8 +102,15 @@ class QuizModeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateQuestion(question: Question): Response<Unit> {
-        val response = firestoreApi.updateQuestion(question.toDTO())
-        if (response is Response.Success) _cachedQuestions?.updateById(question)
+        var response = firestoreApi.updateQuestion(question.toDTO())
+        if (response is Response.Success) {
+            _cachedQuestions?.updateById(question)
+            question.linkedCategories.forEach { categoryId ->
+                _cachedCategories?.find { it.id == categoryId }?.takeIf {
+                    !it.linkedQuestions.contains(question.id)
+                }?.linkedQuestions?.add(question.id)
+            }
+        }
         return response
     }
 
@@ -107,6 +121,7 @@ class QuizModeRepositoryImpl @Inject constructor(
                 _cachedQuestions?.add(question)
                 Response.Success(Unit)
             }
+
             is Response.Error -> Response.Error(response.error)
             is Response.Loading -> Response.Loading
         }

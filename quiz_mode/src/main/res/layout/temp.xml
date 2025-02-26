@@ -122,7 +122,7 @@
         android:id="@+id/section_creation_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="textView2,created_on_label,textView,created_by_label" />
+        app:constraint_referenced_ids="textView2,label_creation_date,textView,created_by_label" />
 
     <TextView
         android:id="@+id/textView2"
@@ -131,14 +131,14 @@
         android:paddingHorizontal="5dp"
         android:text="@string/label_created_on"
         android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/created_on_label"
+        app:layout_constraintEnd_toStartOf="@+id/label_creation_date"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/section_question_details" />
 
     <TextView
-        android:id="@+id/created_on_label"
+        android:id="@+id/label_creation_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="5dp"
@@ -158,7 +158,7 @@
         android:textSize="10sp"
         app:layout_constraintEnd_toStartOf="@+id/created_by_label"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/created_on_label"
+        app:layout_constraintStart_toEndOf="@+id/label_creation_date"
         app:layout_constraintTop_toTopOf="@+id/textView2" />
 
     <TextView

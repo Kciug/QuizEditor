@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.presentation.editable_picker.EditablePickerContract
-import com.rafalskrzypczyk.quiz_mode.presentation.editable_picker.EditablePickerFragment
+import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
+import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +23,9 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
     @Inject
     lateinit var presenter: QuizQuestionDetailsContract.Presenter
+
+    @Inject
+    lateinit var parentInteractor: QuizQuestionDetailsInteractor
 
     private lateinit var categoriesPreviewAdapter: CategoriesPreviewAdapter
     private lateinit var answersListAdapter: AnswersListAdapter
@@ -69,15 +72,19 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         }
 
         binding.buttonAssignCategory.setOnClickListener {
-            val linkedCategoriesPicker = EditablePickerFragment(presenter as EditablePickerContract.Presenter)
+            val linkedCategoriesPicker = CheckablePickerFragment(parentInteractor)
             linkedCategoriesPicker.setOnDismiss { presenter.updateLinkedCategories() }
-
             linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
         }
 
         binding.buttonAddAnswer.setOnClickListener {
             presenter.addAnswer(binding.fieldNewAnswer.text.toString())
         }
+    }
+
+    override fun onDestroy() {
+        presenter.onViewClosed()
+        super.onDestroy()
     }
 
     override fun displayQuestionText(questionText: String) {
@@ -108,11 +115,11 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
             return
         }
         binding.labelNoCategories.visibility = View.GONE
-        categoriesPreviewAdapter.updateData(categories)
+        categoriesPreviewAdapter.submitList(categories)
     }
 
     override fun displayCreatedOn(date: String, user: String) {
-        binding.createdOnLabel.text = date
+        binding.labelCreationDate.text = date
         binding.createdByLabel.text = user
     }
 

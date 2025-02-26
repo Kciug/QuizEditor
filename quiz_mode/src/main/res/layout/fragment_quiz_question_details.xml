@@ -141,7 +141,7 @@
             android:textSize="10sp" />
 
         <TextView
-            android:id="@+id/created_on_label"
+            android:id="@+id/label_creation_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"

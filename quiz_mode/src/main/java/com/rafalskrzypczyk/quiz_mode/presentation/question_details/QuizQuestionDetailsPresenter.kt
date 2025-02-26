@@ -22,7 +22,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
 
     override fun getData(bundle: Bundle?) {
         val questionId = bundle?.getInt("questionId")
-        if (questionId == null) {
+        if (questionId == null || questionId == 0) {
             view.setupNewElementView()
             val parentCategoryId = bundle?.getInt("parentCategoryId")
             if(parentCategoryId != null) interactor.setParentCategoryId(parentCategoryId)
@@ -106,43 +106,4 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             interactor.saveCachedQuestion()
         }
     }
-
-    // Picker Presenter
-//    override fun setPickerView(view: EditablePickerContract.View) {
-//        pickerView = view
-//    }
-//
-//    override fun getItemList() {
-//        presenterScope.launch {
-//            combine(
-//                repository.getAllCategories()
-//                    .filter { it is Response.Success }
-//                    .map { (it as Response.Success).data },
-//                searchQuery
-//            ) { categories, query ->
-//                categories.filter { it.title.contains(query, ignoreCase = true) }
-//            }.collectLatest { filteredCategories ->
-//                pickerView.displayData(filteredCategories.map {
-//                    Checkable(
-//                        id = it.id,
-//                        title = it.title,
-//                        isChecked = cachedQuestion?.linkedCategories?.contains(it.id) == false,
-//                        isLocked = parentCategoryId == it.id
-//                    )
-//                })
-//            }
-//        }
-//    }
-//
-//    override fun onItemSelected(selectedItem: Checkable) {
-//        cachedQuestion?.linkedCategories?.add(selectedItem.id)
-//    }
-//
-//    override fun onItemDeselected(deselectedItem: Checkable) {
-//        cachedQuestion?.linkedCategories?.remove(deselectedItem.id)
-//    }
-//
-//    override fun onSearchQueryChanged(query: String) {
-//        searchQuery.value = query
-//    }
 }

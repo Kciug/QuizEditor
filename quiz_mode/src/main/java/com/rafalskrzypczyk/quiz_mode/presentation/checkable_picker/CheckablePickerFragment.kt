@@ -1,30 +1,32 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.editable_picker
+package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentEditablePickerBinding
+import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractorContract
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
-class EditablePickerFragment(
-    private val presenter: EditablePickerContract.Presenter
+class CheckablePickerFragment (
+    private val parentInteractor: CheckablePickerInteractorContract
 ) : BaseBottomSheetFragment<FragmentEditablePickerBinding>(
     FragmentEditablePickerBinding::inflate
-), EditablePickerContract.View {
-    private lateinit var adapter: EditablePickerAdapter
+), CheckablePickerContract.View {
+    lateinit var presenter: CheckablePickerContract.Presenter
+
+    private lateinit var adapter: CheckablePickerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        presenter.setPickerView(this)
+        presenter = CheckablePickerPresenter(this, parentInteractor)
         presenter.getItemList()
     }
 
     override fun onViewBound() {
         super.onViewBound()
 
-        adapter = EditablePickerAdapter(
+        adapter = CheckablePickerAdapter(
             onItemSelected = { presenter.onItemSelected(it) },
             onItemDeselected = { presenter.onItemDeselected(it) }
         )

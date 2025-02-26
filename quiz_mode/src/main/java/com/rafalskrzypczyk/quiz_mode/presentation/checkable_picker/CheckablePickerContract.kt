@@ -1,13 +1,12 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.editable_picker
+package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
-interface EditablePickerContract {
+interface CheckablePickerContract {
     interface View{
         fun displayData(items: List<Checkable>)
     }
     interface Presenter{
-        fun setPickerView(view: View)
         fun getItemList()
         fun onItemSelected(selectedItem: Checkable)
         fun onItemDeselected(deselectedItem: Checkable)

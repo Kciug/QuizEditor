@@ -1,10 +1,13 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
+import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.extensions.updateById
 import com.rafalskrzypczyk.quiz_mode.domain.models.Answer
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -12,7 +15,7 @@ import javax.inject.Inject
 
 class QuizQuestionDetailsInteractor @Inject constructor(
     private val repository: QuizModeRepository
-) {
+) : CheckablePickerInteractorContract {
     private var cachedQuestion: Question? = null
     private var parentCategoryId: Int? = null
 
@@ -40,6 +43,9 @@ class QuizQuestionDetailsInteractor @Inject constructor(
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
         val newQuestion = Question.new(questionText)
+        if(parentCategoryId != null) {
+            newQuestion.linkedCategories.add(parentCategoryId!!)
+        }
         val response = repository.saveQuestion(newQuestion)
         return when (response) {
             is Response.Success -> {
@@ -84,18 +90,43 @@ class QuizQuestionDetailsInteractor @Inject constructor(
             .map { (it as Response.Success).data }
             .collectLatest { categories ->
                 linkedCategoriesToDisplay =
-                    categories.filter { cachedQuestion?.linkedCategories?.contains(it.id) == false }
+                    categories.filter { cachedQuestion?.linkedCategories?.contains(it.id) == true }
             }
         return linkedCategoriesToDisplay
     }
 
     fun answerCount() = cachedQuestion?.answers?.count() ?: 0
-
     fun correctAnswerCount() = cachedQuestion?.answers?.count { it.isCorrect } ?: 0
-
     fun getLastAnswer(): Answer = cachedQuestion!!.answers.last()
 
     suspend fun saveCachedQuestion() {
         cachedQuestion?.let { repository.updateQuestion(it) }
+    }
+
+    override fun getItemList(): Flow<List<Checkable>> {
+        return repository.getAllCategories().filter {
+            it is Response.Success
+        }.map {
+            (it as Response.Success).data.map { category ->
+                Checkable(
+                    id = category.id,
+                    title = category.title,
+                    isChecked = cachedQuestion?.linkedCategories?.contains(category.id) == true,
+                    isLocked = parentCategoryId == category.id
+                )
+            }
+        }
+    }
+
+    override fun onItemSelected(selectedItem: Checkable) {
+        Log.d("KURWA", "QuizQuestionDetailsInteractor: onItemSelected: $selectedItem")
+        cachedQuestion?.linkedCategories?.add(selectedItem.id)
+        Log.d("KURWA", cachedQuestion.toString())
+        Log.d("KURWA", cachedQuestion?.linkedCategories.toString())
+        Log.d("KURWA", "QuizQuestionDetailsInteractor: onItemSelected after linking: ${cachedQuestion?.linkedCategories?.toString()}")
+    }
+
+    override fun onItemDeselected(deselectedItem: Checkable) {
+        cachedQuestion?.linkedCategories?.remove(deselectedItem.id)
     }
 }

@@ -1,48 +1,91 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
-import android.icu.util.Calendar
-import androidx.lifecycle.MutableLiveData
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.TestCategories
-import com.rafalskrzypczyk.quiz_mode.TestQuestions
+import android.os.Bundle
+import android.util.Log
+import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class QuizCategoryDetailsPresenter(
-    private val view: QuizCategoryDetailsView
-) {
-    private val _categoryLiveData = MutableLiveData<Category>()
-    val category = _categoryLiveData
+class QuizCategoryDetailsPresenter @Inject constructor(
+    private val view: QuizCategoryDetailsContract.View,
+    private val interactor: QuizCategoryDetailsInteractor
+) : BasePresenter(), QuizCategoryDetailsContract.Presenter {
+    private var isDataLoaded = false
 
-    fun loadCategoryById(categoryId: Int) {
-        val fetched = TestCategories.cat.find {
-            it.id == categoryId
+    override fun getData(bundle: Bundle?) {
+        val categoryId = bundle?.getInt("categoryId")
+
+        if (categoryId == null) {
+            view.setupNewElementView()
+            return
         }
 
-        _categoryLiveData.value = (fetched ?: return)
-
-        view.displayCategoryDetails(category , TestQuestions.questions)
+        presenterScope.launch { displayCategoryData(interactor.getCategory(categoryId)) }
     }
 
-    fun createNewCategory(categoryTitle: String, categoryDescription: String, color: Long?){
-        _categoryLiveData.value = (Category.new(categoryTitle))
-        view.displayCategoryDetails(category , TestQuestions.questions)
-        category.value?.let { TestCategories.cat.add(it) }
-    }
+    private fun displayCategoryData(response: Response<Category>) {
+        when (response) {
+            is Response.Success -> {
+                isDataLoaded = true
+                updateUI(response.data)
+            }
 
-    fun updateCategoryDetails(categoryTitle: String, categoryDescription: String){
-        if(category.value == null){
-            createNewCategory(categoryTitle, categoryDescription, null)
+            is Response.Error -> {
+                Log.e("QuizCategoryDetailsPresenter", "Error: ${response.error}")
+            }
+
+            is Response.Loading -> {
+                Log.d("QuizCategoryDetailsPresenter", "Loading")
+            }
         }
-
-        _categoryLiveData.value?.let {
-            it.title = categoryTitle
-            it.description = categoryDescription
-        }
-        _categoryLiveData.value = category.value
     }
 
-    fun updateCategoryStatus(categoryStatus: CategoryStatus){
-        category.value?.status = categoryStatus
-        _categoryLiveData.value = category.value
+    private fun updateUI(category: Category) {
+        view.setupView()
+        view.displayCategoryDetails(category.title, category.description)
+        view.displayCategoryColor(category.color)
+        view.displayCategoryStatus(category.status)
+        view.displayQuestionCount(category.linkedQuestions.count())
+        updateQuestionList()
+    }
+
+    override fun createNewCategory(categoryTitle: String) {
+        presenterScope.launch { displayCategoryData(interactor.instantiateNewCategory(categoryTitle)) }
+    }
+
+    override fun updateCategoryTitle(categoryTitle: String) {
+        interactor.updateCategoryTitle(categoryTitle)
+    }
+
+    override fun updateCategoryDescription(categoryDescription: String) {
+        interactor.updateCategoryDescription(categoryDescription)
+    }
+
+    override fun updateCategoryColor(color: Int) {
+        interactor.updateColor(color)
+        view.displayCategoryColor(color)
+    }
+
+    override fun updateCategoryStatus(status: CategoryStatus) {
+        interactor.updateStatus(status)
+    }
+
+    override fun updateQuestionList() {
+        presenterScope.launch {
+            view.displayQuestionList(interactor.getLinkedQuestions())
+            view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
+        }
+    }
+
+    override fun getCategoryId(): Int = interactor.getCategoryId()
+
+    override fun getCategoryColor(): Int = interactor.getCategoryColor()
+
+    override fun onViewClosed() {
+        presenterScope.launch{ interactor.saveCachedCategory() }
     }
 }

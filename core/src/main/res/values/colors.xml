@@ -26,4 +26,6 @@
     <color name="transparent">#00000000</color>
 
     <color name="bubble_background">#D9BABABA</color>
+
+    <color name="color_picker_select_color">#A0A0A0</color>
 </resources>

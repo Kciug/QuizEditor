@@ -1,311 +1,181 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
-import android.app.AlertDialog
-import android.content.Context
-import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.PopupMenu
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
-import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment
+import com.rafalskrzypczyk.core.utils.KeyboardController
+import com.rafalskrzypczyk.quiz_mode.databinding.Temp2Binding
+import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
+import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.utils.ViewState
 import com.rafalskrzypczyk.quiz_mode.utils.getColor
 import com.rafalskrzypczyk.quiz_mode.utils.getTitle
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-/**
- * Fragment responsible for displaying and managing details of a quiz category.
- *
- * Allows users to:
- * - Add new category
- * - Edit an existing category details e.g. name and description.
- * - Add new questions to the category.
- * - Edit or delete existing questions.
- *
- * Receives the category ID as an argument.
- * Interacts with the [QuizCategoryDetailsPresenter] to manage category data.
- * @see Category
- * @see Question
- */
-class QuizCategoryDetailsFragment(
-    val bundle: Bundle? = null,
-    onDismiss: () -> Unit,
-) : BaseBottomSheetFragment<FragmentQuizCategoryDetailsBinding>(
-    FragmentQuizCategoryDetailsBinding::inflate
-), QuizCategoryDetailsView {
+@AndroidEntryPoint
+class QuizCategoryDetailsFragment : BaseBottomSheetFragment<Temp2Binding>(
+    Temp2Binding::inflate
+), QuizCategoryDetailsContract.View {
+    @Inject
+    lateinit var presenter: QuizCategoryDetailsContract.Presenter
+    @Inject
+    lateinit var parentInteractor: QuizCategoryDetailsInteractor
 
-    private lateinit var presenter: QuizCategoryDetailsPresenter
     private lateinit var adapter: QuestionsSimpleAdapter
 
-    private var isInEditMode = false
-
-    private var viewState = ViewState.VIEW
+    private lateinit var keyboardController: KeyboardController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        presenter = QuizCategoryDetailsPresenter(this)
-
-        val categoryId = bundle?.getInt("categoryId")
-        if(categoryId == null) {
-            displayNewCategorySheet()
-        } else {
-            presenter.loadCategoryById(categoryId)
-            setupBindings()
-        }
+        keyboardController = KeyboardController(requireContext())
+        presenter.getData(arguments)
     }
 
-    // PRIVATE FUNCTIONS
+    override fun onViewBound() {
+        super.onViewBound()
 
-    /**
-     * Set up event listeners and input handling.
-     */
-    private fun setupBindings(){
-        binding.buttonClose.setOnClickListener {
-            if (isInEditMode) {
-                displayWarningDialog { dialog?.dismiss() }
-            } else dialog?.dismiss()
+        binding.sectionNavbar.buttonClose.setOnClickListener {
+            dismiss()
         }
 
-        binding.buttonEditSave.setOnClickListener {
-            if(isInEditMode){
-                presenter.updateCategoryDetails(
-                    binding.categoryNameField.text.toString(),
-                    binding.categoryDescriptionField.text.toString()
-                )
+        binding.sectionNavbar.buttonSave.setOnClickListener {
+            presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
+        }
+
+        binding.sectionCategoryDetails.buttonChangeColor.setOnClickListener {
+            val bundle = Bundle().apply { putInt("currentColor", presenter.getCategoryColor()) }
+            val colorPickerFragment = ColorPickerDialogFragment().apply { arguments = bundle }
+            colorPickerFragment.show(parentFragmentManager, "ColorPickerDialog")
+        }
+
+        binding.sectionCategoryDetails.buttonChangeStatus.setOnClickListener {
+
+        }
+
+        binding.sectionQuestionsList.buttonNewQuestion.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("parentCategoryId", presenter.getCategoryId())
             }
-            switchEditing()
+            val newQuestionSheetFragment = QuizQuestionDetailsFragment().apply { arguments = bundle }
+            newQuestionSheetFragment.setOnDismiss { presenter.updateQuestionList() }
+            newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionFromCategoryBS")
         }
 
-        binding.changeStatusButton.setOnClickListener {
-            showStatusPopupMenu(it) {
-                updateStatus(it)
-            }
+        binding.sectionQuestionsList.buttonAddFromDb.setOnClickListener {
+            val linkedQuestionsPicker = CheckablePickerFragment(parentInteractor)
+            linkedQuestionsPicker.setOnDismiss { presenter.updateQuestionList() }
+            linkedQuestionsPicker.show(parentFragmentManager, "CategoriesPickerBS")
         }
-
-        setupCategoryFieldHandlers()
     }
 
-    /**
-     * Displays a popup menu anchored to the specified view, allowing the user to select a category status.
-     *
-     * @param anchor The view to which the popup menu should be anchored.
-     * @param onItemSelected A callback function that is invoked when a category status is selected.
-     *                       The selected [CategoryStatus] is passed as a parameter to this callback.
-     *
-     * @see CategoryStatus
-     */
-    private fun showStatusPopupMenu(anchor: View, onItemSelected: (CategoryStatus) -> Unit) {
-        val popupMenu = PopupMenu(requireContext(), anchor)
-
-        CategoryStatus.entries.forEach {
-            popupMenu.menu.add(it.getTitle(requireContext()))
-        }
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            val selectedStatus = CategoryStatus.entries.find { it.getTitle(requireContext()) == menuItem.title }
-            selectedStatus?.let {
-                onItemSelected(it)
-            }
-            true
-        }
-
-        popupMenu.show()
+    override fun onDestroy() {
+        presenter.onViewClosed()
+        super.onDestroy()
     }
 
-    /**
-     * Updates the status display button with the provided [CategoryStatus].
-     *
-     * This function updates the text of the button to reflect the new status and changes the background color of the button.
-     *
-     * @param status The new [CategoryStatus] to be displayed.
-     *
-     * @see CategoryStatus
-     */
-    private fun updateStatus(status: CategoryStatus){
-        presenter.updateCategoryStatus(status)
-    }
+    override fun setupView() {
+        binding.groupEditionFields.visibility = View.VISIBLE
+        binding.sectionCategoryDetails.gruopEditionFields.visibility = View.VISIBLE
+        binding.sectionNavbar.buttonSave.visibility = View.GONE
 
-    private fun updateStatusLabel(status: CategoryStatus){
-        val statusColor = status.getColor(requireContext())
-        setColorPreview(binding.categoryStatusColor, statusColor)
-        binding.categoryStatusIndicator.setTextColor(statusColor)
-        binding.categoryStatusIndicator.text = status.getTitle(requireContext())
-    }
+        adapter = QuestionsSimpleAdapter()
+        binding.sectionQuestionsList.questionsRecyclerView.adapter = adapter
 
-    private fun setColorPreview(view: View, color: Int){
-        val colorPreviewBackground = view.background as GradientDrawable
-        colorPreviewBackground.setColor(color)
-    }
+        val categoryTitle = binding.sectionCategoryDetails.categoryNameField
+        val categoryDescription = binding.sectionCategoryDetails.categoryDescriptionField
 
-    /**
-     * Set up input type and editor actions for category section fields.
-     */
-    private fun setupCategoryFieldHandlers() {
-        // Configure the category name field
-        binding.categoryNameField.imeOptions = EditorInfo.IME_ACTION_NEXT
-        binding.categoryNameField.setRawInputType(InputType.TYPE_CLASS_TEXT)
-
-        // Configure the category description field
-        binding.categoryDescriptionField.imeOptions = EditorInfo.IME_ACTION_DONE
-        binding.categoryDescriptionField.setRawInputType(InputType.TYPE_CLASS_TEXT)
-
-        // IME action listeners to move focus between fields
-        binding.categoryNameField.setOnEditorActionListener { _, actionId, _ ->
+        categoryTitle.imeOptions = EditorInfo.IME_ACTION_NEXT
+        categoryTitle.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        categoryTitle.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                binding.categoryDescriptionField.requestFocus()
+                categoryDescription.requestFocus()
                 true
             } else false
         }
 
-        binding.categoryDescriptionField.setOnEditorActionListener { _, actionId, _ ->
+        categoryDescription.imeOptions = EditorInfo.IME_ACTION_DONE
+        categoryDescription.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        categoryDescription.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard()
+                keyboardController.hideKeyboard(categoryDescription)
                 true
             } else false
         }
+
+        categoryTitle.addTextChangedListener(
+            afterTextChanged = {
+                presenter.updateCategoryTitle(categoryTitle.text.toString())
+            }
+        )
+        categoryDescription.addTextChangedListener(
+            afterTextChanged = {
+                presenter.updateCategoryDescription(categoryDescription.text.toString())
+            }
+        )
+
+        if(binding.sectionCategoryDetails.categoryNameField.hasFocus())
+            binding.sectionCategoryDetails.categoryNameField.clearFocus()
+
+        setFragmentResultListener("selectedColor") { requestKey, bundle ->
+            val result = bundle.getInt("selectedColor")
+            presenter.updateCategoryColor(result)
+        }
     }
 
-    /**
-     * Set up the RecyclerView for managing the list of questions, including swipe to delete functionality.
-     * @param questions List of questions to display in the RecyclerView.
-     */
-    private fun setupQuestionsListRecyclerView(questions: List<Question>){
-        val recyclerView = binding.questionsRecyclerView
-        adapter = QuestionsSimpleAdapter(questions.toMutableList())
+    override fun setupNewElementView() {
+        binding.groupEditionFields.visibility = View.GONE
+        binding.sectionCategoryDetails.gruopEditionFields.visibility = View.GONE
+        binding.sectionNavbar.buttonSave.visibility = View.VISIBLE
 
-        val swipeItemCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return false
-            }
-
-            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                     dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-                val itemView = viewHolder.itemView
-                val backgroundDrawable = AppCompatResources.getDrawable(requireContext(), com.rafalskrzypczyk.core.R.drawable.background_swipe_element)
-                backgroundDrawable?.setBounds(
-                    (itemView.right + dX).toInt(),
-                    itemView.top,
-                    itemView.right,
-                    itemView.bottom
-                )
-                backgroundDrawable?.draw(c)
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                adapter.removeItem(viewHolder.adapterPosition)
-            }
+        val categoryTitle = binding.sectionCategoryDetails.categoryNameField
+        categoryTitle.imeOptions = EditorInfo.IME_ACTION_DONE
+        categoryTitle.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        categoryTitle.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
+                keyboardController.hideKeyboard(categoryTitle)
+                true
+            } else false
         }
 
-        ItemTouchHelper(swipeItemCallback).attachToRecyclerView(recyclerView)
-        recyclerView.adapter = adapter
+        keyboardController.showKeyboardWithDelay(binding.sectionCategoryDetails.categoryNameField)
     }
 
-    /**
-     * Displays a new [Category] form for creating a new category.
-     * This includes enabling editing and showing the soft input keyboard.
-     */
-    private fun displayNewCategorySheet(){
-        setupBindings()
-        switchEditing()
-        showKeyboardWithDelay()
-        setupQuestionsListRecyclerView(mutableListOf())
+    override fun displayCategoryDetails(
+        categoryTitle: String,
+        categoryDescription: String
+    ) {
+        val detailsSection = binding.sectionCategoryDetails
+        detailsSection.categoryNameField.setText(categoryTitle)
+        detailsSection.categoryDescriptionField.setText(categoryDescription)
     }
 
-    /**
-     * Shows the keyboard with a slight delay to ensure it is shown after focus.
-     */
-    private fun showKeyboardWithDelay() {
-        binding.categoryNameField.postDelayed({
-            binding.categoryNameField.requestFocus()
-            val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.showSoftInput(binding.categoryNameField, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)
+    override fun displayCategoryColor(color: Int) {
+        val colorPreview = binding.sectionCategoryDetails.colorPreview.background as GradientDrawable
+        colorPreview.setColor(color)
     }
 
-    /**
-     * Enables editing for the category fields and hides the edit button.
-     */
-    private fun switchEditing(){
-        isInEditMode = !isInEditMode
-        disableHiding()
-
-        binding.categoryNameField.isEnabled = isInEditMode
-        binding.categoryDescriptionField.isEnabled = isInEditMode
-
-        binding.editingButtonsSection.visibility = if(isInEditMode) View.VISIBLE else View.GONE
-
-        binding.buttonEditSave.text =
-            if(isInEditMode) getString(com.rafalskrzypczyk.core.R.string.button_save)
-            else getString(com.rafalskrzypczyk.core.R.string.button_edit)
+    override fun displayCategoryStatus(status: CategoryStatus) {
+        binding.sectionCategoryDetails.indicatorStatus.setColorAndText(
+            status.getColor(requireContext()),
+            status.getTitle(requireContext())
+        )
     }
 
-    /**
-     * Disables the ability to hide the bottom sheet and prevents dragging.
-     */
-    private fun disableHiding() {
-        val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        sheetBehavior.isHideable = false
-        sheetBehavior.isDraggable = false
+    override fun displayQuestionCount(questionCount: Int) {
+        binding.categoryQuestionsCount.text = String.format(questionCount.toString())
     }
 
-    /**
-     * Displays a warning dialog for closing the sheet, when there are unsaved changes.
-     * @param onIgnore Callback to be executed when the user chooses to ignore the changes.
-     */
-    private fun displayWarningDialog(onIgnore: () -> Unit){
-        val builder = AlertDialog.Builder(requireContext())
-        builder
-            .setMessage(R.string.alert_unsaved_changes_message)
-            .setTitle(R.string.alert_unsaved_changes_title)
-            .setNegativeButton(R.string.alert_unsaved_changes_negative_button) { dialog, which ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(R.string.alert_unsaved_changes_positive_button) { dialog, which ->
-                onIgnore()
-            }
-        val warningDialog = builder.create()
-        warningDialog.show()
-    }
-
-    /**
-     * Hides the keyboard.
-     */
-    private fun hideKeyboard() {
-        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(binding.categoryNameField.windowToken, 0)
-    }
-
-    // IMPLEMENTATIONS
-
-    /**
-     * Override from interface [QuizCategoryDetailsView].
-     * Display the category details, including questions associated with the category.
-     * @param category The category to display.
-     * @param questions List of questions associated with the category.
-     */
-    override fun displayCategoryDetails(category: LiveData<Category>, questions: List<Question>) {
-        setupQuestionsListRecyclerView(questions)
-        binding.categoryQuestionsCount.text = String.format(adapter.itemCount.toString())
-        category.observe(viewLifecycleOwner){ newValue ->
-            binding.categoryNameField.setText(newValue.title)
-            binding.categoryDescriptionField.setText(newValue.description)
-            setColorPreview(binding.colorPreview, newValue.color.toInt())
-            updateStatusLabel(newValue.status)
-            binding.createdOnLabel.text = newValue.creationDate.toString()
-        }
+    override fun displayQuestionList(questions: List<Question>) {
+        adapter.submitList(questions)
     }
 }

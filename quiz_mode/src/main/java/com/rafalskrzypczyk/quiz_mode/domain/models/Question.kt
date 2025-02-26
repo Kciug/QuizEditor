@@ -21,7 +21,7 @@ data class Question(
                 answers = mutableListOf(),
                 creationDate = Date(),
                 createdBy = "Kurwa Chuj",
-                linkedCategories = mutableListOf()
+                linkedCategories = mutableListOf<Int>()
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.editable_picker
+package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -7,11 +7,11 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
-class EditablePickerAdapter(
+class CheckablePickerAdapter(
     private val items: MutableList<Checkable> = mutableListOf(),
     private val onItemSelected: (Checkable) -> Unit,
     private val onItemDeselected: (Checkable) -> Unit
-) : RecyclerView.Adapter<EditablePickerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<CheckablePickerAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val view = itemView as CheckBox

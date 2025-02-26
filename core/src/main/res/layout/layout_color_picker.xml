@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wybierz kolor"/>
+
+    <GridLayout
+        android:id="@+id/grid_predefinded_colors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="6"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:rowCount="2"
+        android:useDefaultMargins="true">
+
+    </GridLayout>
+
+    <!-- Color seek bar -->
+    <SeekBar
+        android:id="@+id/color_picker_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:max="361"
+        android:progress="180"/>
+
+    <ImageButton
+        android:id="@+id/button_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/baseline_check_24"
+        android:contentDescription="@string/ic_desc_color_picker_button_submitt"
+        android:background="@drawable/button_color_picker_unselected"/>
+
+</LinearLayout>

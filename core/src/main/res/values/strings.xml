@@ -19,4 +19,5 @@
     <string name="text_placeholder_number">123</string>
     <string name="ic_desc_delete">Usuń</string>
     <string name="ic_desc_search">Wyszukaj</string>
+    <string name="ic_desc_color_picker_button_submitt">Zatwierdź Kolor</string>
 </resources>

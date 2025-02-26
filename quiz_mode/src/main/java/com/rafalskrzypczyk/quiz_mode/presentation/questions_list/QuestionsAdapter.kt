@@ -7,51 +7,34 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
-import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-
-//class QuestionsAdapter(private val questions: List<Question>) :
-//    RecyclerView.Adapter<QuestionsAdapter.QuestionViewHolder>()
-//{
-//    // ViewHolder dla pojedynczego elementu
-//    class QuestionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-//        val questionText: TextView = view.findViewById(R.id.question_text)
-//        val questionAnswers: TextView = view.findViewById(R.id.answers_count_text)
-//    }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
-//        val view = LayoutInflater.from(parent.context)
-//            .inflate(R.layout.card_question, parent, false)
-//        return QuestionViewHolder(view)
-//    }
-//
-//    override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-//        val question = questions[position]
-//        holder.questionText.text = question.text
-//        holder.questionAnswers.text = "${question.answers.size} Answers"
-//    }
-//
-//    override fun getItemCount(): Int = questions.size
-//}
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuestionUIModel
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.CategoriesPreviewAdapter
+import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 
 class QuestionsAdapter(
-    private val onItemClicked: (Question, Int) -> Unit,
-    private val onAddClicked: () -> Unit
-) : ListAdapter<Question, RecyclerView.ViewHolder>(GenericDiffCallback<Question>(
-    areItemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-    areContentsTheSame = { oldItem, newItem -> oldItem == newItem }
+    private val onItemClicked: (QuestionUIModel) -> Unit,
+    private val onAddClicked: () -> Unit,
+) : ListAdapter<QuestionUIModel, RecyclerView.ViewHolder>(GenericDiffCallback<QuestionUIModel>(
+    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+    contentsTheSame = { oldItem, newItem ->
+        oldItem == newItem
+    }
 )) {
     inner class QuestionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val questionText: TextView = view.findViewById(R.id.question_text)
         val questionAnswers: TextView = view.findViewById(R.id.answers_count)
+        val categoryLabelsRecyclerView: RecyclerView = view.findViewById(R.id.categories_recycler_view)
 
-        fun bind(question: Question, position: Int) {
+        fun bind(question: QuestionUIModel) {
+            val categoryLabelsAdapter = CategoriesPreviewAdapter()
             questionText.text = question.text
-            questionAnswers.text = String.format(question.answers.count().toString())
+            questionAnswers.text = String.format(question.answersCount.toString())
+            categoryLabelsRecyclerView.adapter = categoryLabelsAdapter
+            categoryLabelsAdapter.submitList(question.linkedCategories)
 
             itemView.setOnClickListener {
-                onItemClicked(question, position)
+                onItemClicked(question)
             }
         }
     }
@@ -87,7 +70,7 @@ class QuestionsAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is QuestionViewHolder) {
             val question = getItem(position)
-            holder.bind(question, position)
+            holder.bind(question)
         } else if (holder is AddButtonViewHolder) {
             holder.bind()
         }
