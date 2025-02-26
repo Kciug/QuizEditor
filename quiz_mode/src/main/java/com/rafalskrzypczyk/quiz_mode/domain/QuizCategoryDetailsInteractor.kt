@@ -1,8 +1,8 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
+import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.utils.ResourceProvider
-import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
@@ -42,7 +42,7 @@ class QuizCategoryDetailsInteractor @Inject constructor(
 
     suspend fun instantiateNewCategory(categoryTitle: String): Response<Category> {
         val newCategory = Category.new(categoryTitle)
-        newCategory.color = resourceProvider.getColor(R.color.category_default_color)
+        newCategory.color = resourceProvider.getColor(R.color.colorable_default_color)
         val response = repository.addCategory(newCategory)
         return when (response) {
             is Response.Success -> {

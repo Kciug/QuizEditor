@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
-import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.CategoryLabelView
+import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 
 class CategoriesPreviewAdapter : ListAdapter<SimpleCategoryUIModel, CategoriesPreviewAdapter.ViewHolder>(
@@ -17,14 +17,14 @@ class CategoriesPreviewAdapter : ListAdapter<SimpleCategoryUIModel, CategoriesPr
         }
     )
 ) {
-    inner class ViewHolder(private val view: CategoryLabelView) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(private val view: ColorOutlinedLabelView) : RecyclerView.ViewHolder(view) {
         fun bind(item: SimpleCategoryUIModel) {
             view.setColorAndText(item.color.toInt(), item.name)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = CategoryLabelView(parent.context)
+        val view = ColorOutlinedLabelView(parent.context)
         return ViewHolder(view)
     }
 

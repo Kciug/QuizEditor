@@ -28,7 +28,7 @@
         android:layout_marginVertical="5dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/view_category_label"
+        tools:listitem="@layout/view_color_outlined_label"
         />
 
     <!-- Ikona odpowiedzi i liczba -->

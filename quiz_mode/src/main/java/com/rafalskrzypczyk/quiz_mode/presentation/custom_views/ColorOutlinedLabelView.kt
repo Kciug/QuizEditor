@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.core.utils.TextColorContrastHelper
+import com.rafalskrzypczyk.quiz_mode.R
 
-class CategoryLabelView @JvmOverloads constructor(
+class ColorOutlinedLabelView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -20,7 +20,7 @@ class CategoryLabelView @JvmOverloads constructor(
     private val colorIndicatorBackground: GradientDrawable
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_category_label, this, true)
+        LayoutInflater.from(context).inflate(R.layout.view_color_outlined_label, this, true)
 
         colorIndicator = findViewById(R.id.category_color)
         statusText = findViewById(R.id.category_name)

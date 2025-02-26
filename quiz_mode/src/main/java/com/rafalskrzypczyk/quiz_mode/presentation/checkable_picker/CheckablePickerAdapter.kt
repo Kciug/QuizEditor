@@ -1,10 +1,12 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import android.annotation.SuppressLint
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
 class CheckablePickerAdapter(
@@ -21,6 +23,11 @@ class CheckablePickerAdapter(
 
             view.isChecked = item.isChecked
             view.isEnabled = !item.isLocked
+
+            view.textSize = 16f
+            view.setPadding(7,0,0,0)
+            view.buttonTintList = view.context.getColorStateList(R.color.primary)
+            view.gravity = Gravity.CENTER_VERTICAL
 
             view.setOnCheckedChangeListener { _, isChecked ->
                 if(isChecked) onItemSelected(item) else onItemDeselected(item)

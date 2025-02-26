@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
@@ -10,7 +9,8 @@ import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment
 import com.rafalskrzypczyk.core.utils.KeyboardController
-import com.rafalskrzypczyk.quiz_mode.databinding.Temp2Binding
+import com.rafalskrzypczyk.quiz_mode.R
+import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
@@ -22,8 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class QuizCategoryDetailsFragment : BaseBottomSheetFragment<Temp2Binding>(
-    Temp2Binding::inflate
+class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategoryDetailsBinding>(
+    FragmentQuizCategoryDetailsBinding::inflate
 ), QuizCategoryDetailsContract.View {
     @Inject
     lateinit var presenter: QuizCategoryDetailsContract.Presenter
@@ -84,7 +84,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<Temp2Binding>(
 
     override fun setupView() {
         binding.groupEditionFields.visibility = View.VISIBLE
-        binding.sectionCategoryDetails.gruopEditionFields.visibility = View.VISIBLE
+        binding.sectionCategoryDetails.groupEditionFields.visibility = View.VISIBLE
         binding.sectionNavbar.buttonSave.visibility = View.GONE
 
         adapter = QuestionsSimpleAdapter()
@@ -133,7 +133,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<Temp2Binding>(
 
     override fun setupNewElementView() {
         binding.groupEditionFields.visibility = View.GONE
-        binding.sectionCategoryDetails.gruopEditionFields.visibility = View.GONE
+        binding.sectionCategoryDetails.groupEditionFields.visibility = View.GONE
         binding.sectionNavbar.buttonSave.visibility = View.VISIBLE
 
         val categoryTitle = binding.sectionCategoryDetails.categoryNameField
@@ -160,8 +160,10 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<Temp2Binding>(
     }
 
     override fun displayCategoryColor(color: Int) {
-        val colorPreview = binding.sectionCategoryDetails.colorPreview.background as GradientDrawable
-        colorPreview.setColor(color)
+        binding.sectionCategoryDetails.colorPreview.setColorAndText(
+            color,
+            requireContext().getString(R.string.label_category_color_preview)
+        )
     }
 
     override fun displayCategoryStatus(status: CategoryStatus) {

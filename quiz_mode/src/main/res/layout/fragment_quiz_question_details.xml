@@ -107,7 +107,7 @@
                     android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/view_category_label" />
+                    tools:listitem="@layout/view_color_outlined_label" />
 
                 <ImageButton
                     android:id="@+id/button_assign_category"

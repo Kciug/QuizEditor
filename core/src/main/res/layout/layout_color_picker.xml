@@ -41,7 +41,7 @@
         android:layout_gravity="end"
         android:layout_marginTop="15dp"
         android:src="@drawable/baseline_check_24"
-        android:contentDescription="@string/ic_desc_color_picker_button_submitt"
+        android:contentDescription="@string/ic_desc_submit"
         android:background="@drawable/button_color_picker_unselected"/>
 
 </LinearLayout>

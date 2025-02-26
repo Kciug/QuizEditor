@@ -96,7 +96,7 @@
                 app:layout_constraintEnd_toStartOf="@id/button_assign_category"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/button_assign_category"
-                tools:listitem="@layout/view_category_label"
+                tools:listitem="@layout/view_color_outlined_label"
                 android:nestedScrollingEnabled="false"/>
 
             <ImageButton

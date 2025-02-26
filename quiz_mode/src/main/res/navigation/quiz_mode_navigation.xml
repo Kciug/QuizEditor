@@ -22,6 +22,6 @@
         android:id="@+id/navigation_category_details"
         android:name="com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsFragment"
         android:label="@string/bottom_bar_title_categories"
-        tools:layout="@layout/fragment_quiz_category_details" />
+        tools:layout="@layout/asv" />
 
 </navigation>

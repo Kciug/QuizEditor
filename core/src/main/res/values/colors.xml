@@ -28,4 +28,5 @@
     <color name="bubble_background">#D9BABABA</color>
 
     <color name="color_picker_select_color">#A0A0A0</color>
+    <color name="colorable_default_color">#2196F3</color>
 </resources>

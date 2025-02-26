@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
-import com.rafalskrzypczyk.quiz_mode.databinding.FragmentEditablePickerBinding
+import com.rafalskrzypczyk.quiz_mode.databinding.FragmentCheckablePickerBinding
 import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractorContract
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
 class CheckablePickerFragment (
     private val parentInteractor: CheckablePickerInteractorContract
-) : BaseBottomSheetFragment<FragmentEditablePickerBinding>(
-    FragmentEditablePickerBinding::inflate
+) : BaseBottomSheetFragment<FragmentCheckablePickerBinding>(
+    FragmentCheckablePickerBinding::inflate
 ), CheckablePickerContract.View {
     lateinit var presenter: CheckablePickerContract.Presenter
 
@@ -35,8 +35,18 @@ class CheckablePickerFragment (
         binding.searchBar.addTextChangedListener(
             afterTextChanged = {
                 presenter.onSearchQueryChanged(it.toString())
+                binding.buttonClear.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
         )
+
+        binding.buttonSubmit.setOnClickListener {
+            dismiss()
+        }
+
+        binding.buttonClear.setOnClickListener{
+            binding.searchBar.text.clear()
+            presenter.onSearchQueryChanged(binding.searchBar.text.toString())
+        }
     }
 
     override fun displayData(items: List<Checkable>) {

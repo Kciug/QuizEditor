@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="bottom_bar_title_categories">Kategorie</string>
     <string name="bottom_bar_title_questions">Pytania</string>
 
@@ -13,6 +13,7 @@
     <string name="label_category_desc">Opis</string>
     <string name="label_category_status">Status</string>
     <string name="label_category_color">Kolor</string>
+    <string name="label_category_color_preview">KOLOR</string>
     <string name="label_category_questions_section">Pytania w tej kategorii</string>
     <string name="label_category_questions_amount">Ilość pytań:</string>
     <string name="label_created_on">Utworzono</string>
@@ -25,7 +26,7 @@
 
     <string name="button_change_color">Zmień kolor</string>
     <string name="button_change_status">Zmień status</string>
-    <string name="button_add_new_question">Nowe pytanie</string>
+    <string name="button_add_new_question" tools:ignore="Typos">Nowe pytanie</string>
     <string name="button_add_question_from_database">Dodaj z bazy</string>
 
     <string name="alert_unsaved_changes_title">Uwaga</string>
