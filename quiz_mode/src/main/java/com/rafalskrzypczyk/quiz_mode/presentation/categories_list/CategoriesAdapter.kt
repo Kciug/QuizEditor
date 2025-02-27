@@ -1,16 +1,17 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
+import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.StatusIndicatorView
+import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 import com.rafalskrzypczyk.quiz_mode.utils.getColor
 import com.rafalskrzypczyk.quiz_mode.utils.getTitle
@@ -21,22 +22,30 @@ class CategoriesAdapter(
 ) : ListAdapter<Category, RecyclerView.ViewHolder>(GenericDiffCallback<Category>(
     itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
     contentsTheSame = { oldItem, newItem ->
-        oldItem == newItem
+        oldItem == newItem &&
+        oldItem.linkedQuestions.count() == newItem.linkedQuestions.count()
     }
 )) {
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val categoryName: TextView = view.findViewById(R.id.categoryName)
-        val categoryDescription: TextView = view.findViewById(R.id.categoryDescription)
-        val questionCount: TextView = view.findViewById(R.id.questionCount)
-        val statusIndicator: StatusIndicatorView = view.findViewById(R.id.statusIndicator)
-        val iconCategoryColor: ImageView = view.findViewById(R.id.icon_category_color)
+        val categoryTitle: TextView = view.findViewById(R.id.label_category_title)
+        val categoryDescription: TextView = view.findViewById(R.id.label_category_description)
+        val questionCount: TextView = view.findViewById(R.id.category_questions_amount)
+        val questionCountLabel: TextView = view.findViewById(R.id.label_category_questions_amount)
+        val statusIndicator: ColorOutlinedLabelView = view.findViewById(R.id.category_status)
+        val colorPreview: View = view.findViewById(R.id.color_preview)
 
         fun bind(category: Category, position: Int) {
-            categoryName.text = category.title
+            categoryTitle.text = category.title
             categoryDescription.text = category.description
             questionCount.text = String.format(category.linkedQuestions.count().toString())
+            questionCountLabel.text = UITextHelpers.provideDeclinedNumberText(
+                category.linkedQuestions.count(),
+                itemView.context.getString(R.string.label_category_questions_amount_singular),
+                itemView.context.getString(R.string.label_category_questions_amount_few),
+                itemView.context.getString(R.string.label_category_questions_amount_many)
+            )
             statusIndicator.setColorAndText(category.status.getColor(itemView.context), category.status.getTitle(itemView.context))
-            iconCategoryColor.setColorFilter(category.color.toInt())
+            (colorPreview.background as GradientDrawable).setColor(category.color)
 
             itemView.setOnClickListener {
                 onCategoryClicked(category, position)
@@ -44,7 +53,6 @@ class CategoriesAdapter(
         }
     }
 
-    // ViewHolder dla przycisku dodawania nowej kategorii
     inner class AddButtonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val button: View = view.findViewById(com.rafalskrzypczyk.core.R.id.button_add_new)
 

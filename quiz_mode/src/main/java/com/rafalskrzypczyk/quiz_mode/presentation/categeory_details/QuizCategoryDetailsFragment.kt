@@ -2,8 +2,10 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
 import android.os.Bundle
 import android.text.InputType
+import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.PopupMenu
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
@@ -58,7 +60,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
         }
 
         binding.sectionCategoryDetails.buttonChangeStatus.setOnClickListener {
-
+            presenter.onChangeCategoryStatusClicked()
         }
 
         binding.sectionQuestionsList.buttonNewQuestion.setOnClickListener {
@@ -72,19 +74,22 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
 
         binding.sectionQuestionsList.buttonAddFromDb.setOnClickListener {
             val linkedQuestionsPicker = CheckablePickerFragment(parentInteractor)
-            linkedQuestionsPicker.setOnDismiss { presenter.updateQuestionList() }
+            linkedQuestionsPicker.setOnDismiss {
+                presenter.updateQuestionList()
+                presenter.saveUpdatedData()
+            }
             linkedQuestionsPicker.show(parentFragmentManager, "CategoriesPickerBS")
         }
     }
 
     override fun onDestroy() {
-        presenter.onViewClosed()
+        presenter.saveUpdatedData()
         super.onDestroy()
     }
 
     override fun setupView() {
         binding.groupEditionFields.visibility = View.VISIBLE
-        binding.sectionCategoryDetails.groupEditionFields.visibility = View.VISIBLE
+        binding.sectionCategoryDetails.groupDetailsEditionFields.visibility = View.VISIBLE
         binding.sectionNavbar.buttonSave.visibility = View.GONE
 
         adapter = QuestionsSimpleAdapter()
@@ -133,7 +138,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
 
     override fun setupNewElementView() {
         binding.groupEditionFields.visibility = View.GONE
-        binding.sectionCategoryDetails.groupEditionFields.visibility = View.GONE
+        binding.sectionCategoryDetails.groupDetailsEditionFields.visibility = View.GONE
         binding.sectionNavbar.buttonSave.visibility = View.VISIBLE
 
         val categoryTitle = binding.sectionCategoryDetails.categoryNameField
@@ -179,5 +184,19 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
 
     override fun displayQuestionList(questions: List<Question>) {
         adapter.submitList(questions)
+    }
+
+    override fun displayCategoryStatusMenu(options: List<CategoryStatus>) {
+        val statusPopupMenu = PopupMenu(requireContext(), binding.sectionCategoryDetails.buttonChangeStatus)
+        options.forEachIndexed{ index, it ->
+            statusPopupMenu.menu.add(Menu.NONE, index, Menu.NONE, it.getTitle(requireContext()))
+        }
+
+        statusPopupMenu.setOnMenuItemClickListener{ item ->
+            presenter.updateCategoryStatus(options[item.itemId])
+            true
+        }
+
+        statusPopupMenu.show()
     }
 }

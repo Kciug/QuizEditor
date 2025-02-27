@@ -13,6 +13,7 @@ interface QuizCategoryDetailsContract {
         fun displayCategoryStatus(status: CategoryStatus)
         fun displayQuestionCount(questionCount: Int)
         fun displayQuestionList(questions: List<Question>)
+        fun displayCategoryStatusMenu(options: List<CategoryStatus>)
     }
     interface Presenter {
         fun getData(bundle: Bundle?)
@@ -20,10 +21,11 @@ interface QuizCategoryDetailsContract {
         fun updateCategoryTitle(categoryTitle: String)
         fun updateCategoryDescription(categoryDescription: String)
         fun updateCategoryColor(color: Int)
+        fun onChangeCategoryStatusClicked()
         fun updateCategoryStatus(status: CategoryStatus)
         fun updateQuestionList()
         fun getCategoryId(): Int
         fun getCategoryColor(): Int
-        fun onViewClosed()
+        fun saveUpdatedData()
     }
 }

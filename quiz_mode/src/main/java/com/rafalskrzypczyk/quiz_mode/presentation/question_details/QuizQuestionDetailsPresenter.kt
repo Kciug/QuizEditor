@@ -101,7 +101,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun onViewClosed() {
+    override fun saveUpdatedData() {
         presenterScope.launch {
             interactor.saveCachedQuestion()
         }

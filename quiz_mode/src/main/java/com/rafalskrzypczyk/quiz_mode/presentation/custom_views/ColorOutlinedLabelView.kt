@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.rafalskrzypczyk.core.utils.TextColorContrastHelper
+import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
 
 class ColorOutlinedLabelView @JvmOverloads constructor(
@@ -32,7 +32,7 @@ class ColorOutlinedLabelView @JvmOverloads constructor(
 
     fun setColorAndText(color: Int, text: String){
         colorIndicatorBackground.setColor(color)
-        statusText.setTextColor(TextColorContrastHelper.Companion.getContrastingTextColor(color))
+        statusText.setTextColor(UITextHelpers.Companion.getContrastingTextColor(color))
 
         statusText.text = text
     }

@@ -73,11 +73,8 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     }
 
     fun getAvailableStatuses() : List<CategoryStatus> {
-        val currentStatus = cachedCategory?.status
-        return if(currentStatus == CategoryStatus.DONE)
-            listOf(CategoryStatus.APPROVED, CategoryStatus.NEED_REWORK)
-        else
-            listOf(CategoryStatus.DONE)
+        // TODO - add user role validation for all statuses
+        return CategoryStatus.entries
     }
 
     fun updateStatus(status: CategoryStatus) {
@@ -118,22 +115,16 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     }
 
     override fun onItemSelected(selectedItem: Checkable) {
-        cachedCategory?.linkedQuestions?.add(selectedItem.id)
-        autoUpdateStatus()
+        repository.bindQuestionWithCategory(selectedItem.id, cachedCategory?.id ?: -1)
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        cachedCategory?.linkedQuestions?.remove(deselectedItem.id)
-        autoUpdateStatus()
-    }
-
-    private fun autoUpdateStatus() {
-        val questionCount = cachedCategory?.linkedQuestions?.count() ?: 0
-        if(questionCount == 0) cachedCategory?.status = CategoryStatus.DRAFT
-        if(questionCount > 0) cachedCategory?.status = CategoryStatus.IN_PROGRESS
+        repository.unbindQuestionWithCategory(deselectedItem.id, cachedCategory?.id ?: -1)
     }
 
     fun getCategoryId(): Int = cachedCategory?.id ?: -1
 
     fun getCategoryColor(): Int = cachedCategory?.color ?: 0
+
+    fun getCategoryStatus(): CategoryStatus = cachedCategory?.status ?: CategoryStatus.DRAFT
 }

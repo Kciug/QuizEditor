@@ -73,7 +73,10 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
         binding.buttonAssignCategory.setOnClickListener {
             val linkedCategoriesPicker = CheckablePickerFragment(parentInteractor)
-            linkedCategoriesPicker.setOnDismiss { presenter.updateLinkedCategories() }
+            linkedCategoriesPicker.setOnDismiss {
+                presenter.updateLinkedCategories()
+                presenter.saveUpdatedData()
+            }
             linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
         }
 
@@ -83,7 +86,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     }
 
     override fun onDestroy() {
-        presenter.onViewClosed()
+        presenter.saveUpdatedData()
         super.onDestroy()
     }
 

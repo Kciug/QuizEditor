@@ -15,7 +15,9 @@
     <string name="label_category_color">Kolor</string>
     <string name="label_category_color_preview">KOLOR</string>
     <string name="label_category_questions_section">Pytania w tej kategorii</string>
-    <string name="label_category_questions_amount">Ilość pytań:</string>
+    <string name="label_category_questions_amount_singular">pytanie</string>
+    <string name="label_category_questions_amount_few">pytania</string>
+    <string name="label_category_questions_amount_many">pytań</string>
     <string name="label_created_on">Utworzono</string>
     <string name="label_created_by">przez</string>
     <string name="label_answers_count_one">odpowiedź</string>

@@ -70,8 +70,13 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         view.displayCategoryColor(color)
     }
 
+    override fun onChangeCategoryStatusClicked() {
+        view.displayCategoryStatusMenu(interactor.getAvailableStatuses())
+    }
+
     override fun updateCategoryStatus(status: CategoryStatus) {
         interactor.updateStatus(status)
+        view.displayCategoryStatus(interactor.getCategoryStatus())
     }
 
     override fun updateQuestionList() {
@@ -85,7 +90,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
 
     override fun getCategoryColor(): Int = interactor.getCategoryColor()
 
-    override fun onViewClosed() {
+    override fun saveUpdatedData() {
         presenterScope.launch{ interactor.saveCachedCategory() }
     }
 }

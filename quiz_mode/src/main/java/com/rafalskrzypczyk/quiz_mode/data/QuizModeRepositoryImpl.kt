@@ -59,14 +59,7 @@ class QuizModeRepositoryImpl @Inject constructor(
 
     override suspend fun updateCategory(category: Category): Response<Unit> {
         var response = firestoreApi.updateCategory(category.toDTO())
-        if (response is Response.Success) {
-            _cachedCategories?.updateById(category)
-            category.linkedQuestions.forEach { questionId ->
-                _cachedQuestions?.find { it.id == questionId }?.takeIf {
-                    !it.linkedCategories.contains(category.id)
-                }?.linkedCategories?.add(category.id)
-            }
-        }
+        if (response is Response.Success) _cachedCategories?.updateById(category)
         return response
     }
 
@@ -103,14 +96,7 @@ class QuizModeRepositoryImpl @Inject constructor(
 
     override suspend fun updateQuestion(question: Question): Response<Unit> {
         var response = firestoreApi.updateQuestion(question.toDTO())
-        if (response is Response.Success) {
-            _cachedQuestions?.updateById(question)
-            question.linkedCategories.forEach { categoryId ->
-                _cachedCategories?.find { it.id == categoryId }?.takeIf {
-                    !it.linkedQuestions.contains(question.id)
-                }?.linkedQuestions?.add(question.id)
-            }
-        }
+        if (response is Response.Success) _cachedQuestions?.updateById(question)
         return response
     }
 
@@ -131,5 +117,23 @@ class QuizModeRepositoryImpl @Inject constructor(
         val response = firestoreApi.deleteQuestion(question.id)
         if (response is Response.Success) _cachedQuestions?.remove(question)
         return response
+    }
+
+    override fun bindQuestionWithCategory(questionId: Int, categoryId: Int) {
+        val question = _cachedQuestions?.find { it.id == questionId }
+        val category = _cachedCategories?.find { it.id == categoryId }
+        if (question == null || category == null) return
+
+        question.linkedCategories.add(categoryId)
+        category.linkedQuestions.add(questionId)
+    }
+
+    override fun unbindQuestionWithCategory(questionId: Int, categoryId: Int) {
+        val question = _cachedQuestions?.find { it.id == questionId }
+        val category = _cachedCategories?.find { it.id == categoryId }
+        if (question == null || category == null) return
+
+        question.linkedCategories.remove(categoryId)
+        category.linkedQuestions.remove(questionId)
     }
 }

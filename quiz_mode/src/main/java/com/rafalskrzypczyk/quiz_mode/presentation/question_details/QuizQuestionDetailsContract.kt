@@ -1,8 +1,8 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
 import android.os.Bundle
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 
 interface QuizQuestionDetailsContract {
     interface View {
@@ -25,6 +25,6 @@ interface QuizQuestionDetailsContract {
         fun updateAnswer(answer: AnswerUIModel)
         fun removeAnswer(answer: AnswerUIModel, answerPosition: Int)
         fun updateLinkedCategories()
-        fun onViewClosed()
+        fun saveUpdatedData()
     }
 }

@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.extensions.updateById
 import com.rafalskrzypczyk.quiz_mode.domain.models.Answer
@@ -43,13 +42,13 @@ class QuizQuestionDetailsInteractor @Inject constructor(
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
         val newQuestion = Question.new(questionText)
-        if(parentCategoryId != null) {
-            newQuestion.linkedCategories.add(parentCategoryId!!)
-        }
         val response = repository.saveQuestion(newQuestion)
         return when (response) {
             is Response.Success -> {
                 cachedQuestion = newQuestion
+                if(parentCategoryId != null) {
+                    repository.bindQuestionWithCategory(newQuestion.id, parentCategoryId!!)
+                }
                 Response.Success(newQuestion)
             }
 
@@ -119,14 +118,10 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     override fun onItemSelected(selectedItem: Checkable) {
-        Log.d("KURWA", "QuizQuestionDetailsInteractor: onItemSelected: $selectedItem")
-        cachedQuestion?.linkedCategories?.add(selectedItem.id)
-        Log.d("KURWA", cachedQuestion.toString())
-        Log.d("KURWA", cachedQuestion?.linkedCategories.toString())
-        Log.d("KURWA", "QuizQuestionDetailsInteractor: onItemSelected after linking: ${cachedQuestion?.linkedCategories?.toString()}")
+        repository.bindQuestionWithCategory(cachedQuestion?.id ?: -1, selectedItem.id)
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        cachedQuestion?.linkedCategories?.remove(deselectedItem.id)
+        repository.unbindQuestionWithCategory(cachedQuestion?.id ?: -1, deselectedItem.id)
     }
 }

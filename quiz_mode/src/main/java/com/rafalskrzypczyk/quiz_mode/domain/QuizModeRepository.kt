@@ -17,4 +17,7 @@ interface QuizModeRepository {
     suspend fun updateQuestion(question: Question) : Response<Unit>
     suspend fun saveQuestion(question: Question) : Response<Unit>
     suspend fun deleteQuestion(question: Question) : Response<Unit>
+
+    fun bindQuestionWithCategory(questionId: Int, categoryId: Int)
+    fun unbindQuestionWithCategory(questionId: Int, categoryId: Int)
 }
