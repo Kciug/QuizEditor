@@ -1,14 +1,13 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.PopupWindow
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 
@@ -21,12 +20,16 @@ class AnswersListAdapter(
         val answerText: EditText = itemView.findViewById(R.id.field_question_text)
         val correctSwitch: SwitchCompat = itemView.findViewById(R.id.switch_correct)
 
+        val deleteBubbleManager = DeleteBubbleManager(itemView.context)
+
         fun bind(answer: AnswerUIModel) {
             answerText.setText(answer.answerText)
             correctSwitch.isChecked = answer.isCorrect
 
             itemView.setOnLongClickListener { view ->
-                showDeleteBubble(view, answer)
+                deleteBubbleManager.showDeleteBubble(view) {
+                    onAnswerRemoved(answer, adapterPosition)
+                }
                 true
             }
 
@@ -41,36 +44,6 @@ class AnswersListAdapter(
                     onAnswerChanged(answer)
                 }
             )
-        }
-
-        private fun showDeleteBubble(view: View, answer: AnswerUIModel) {
-            val inflater = LayoutInflater.from(view.context)
-            val bubbleView = inflater.inflate(
-                com.rafalskrzypczyk.core.R.layout.bubble_delete,
-                view.rootView as ViewGroup,
-                false
-            )
-
-            val popupWindow = PopupWindow(
-                bubbleView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true
-            )
-
-            val location = IntArray(2)
-            view.getLocationOnScreen(location)
-
-            val popupX = location[0] + (view.width / 2) - bubbleView.measuredWidth * 2
-            val popupY = location[1] - bubbleView.measuredHeight - 50
-
-            popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, popupX, popupY)
-            //popupWindow.showAsDropDown(view, 0, -view.height - 50)
-
-            bubbleView.setOnClickListener {
-                onAnswerRemoved(answer, adapterPosition)
-                popupWindow.dismiss()
-            }
         }
     }
 

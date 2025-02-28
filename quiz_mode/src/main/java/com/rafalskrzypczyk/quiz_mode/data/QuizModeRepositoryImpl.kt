@@ -65,7 +65,7 @@ class QuizModeRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCategory(categoryId: Int): Response<Unit> {
         val response = firestoreApi.deleteCategory(categoryId)
-        if (response is Response.Success) _cachedCategories?.removeIf { it.id == categoryId }
+        if (response is Response.Success) _cachedCategories?.removeIf{ it.id == categoryId }
         return response
     }
 
@@ -113,9 +113,9 @@ class QuizModeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteQuestion(question: Question): Response<Unit> {
-        val response = firestoreApi.deleteQuestion(question.id)
-        if (response is Response.Success) _cachedQuestions?.remove(question)
+    override suspend fun deleteQuestion(questionId: Int): Response<Unit> {
+        val response = firestoreApi.deleteQuestion(questionId)
+        if (response is Response.Success) _cachedQuestions?.removeIf{ it.id == questionId }
         return response
     }
 

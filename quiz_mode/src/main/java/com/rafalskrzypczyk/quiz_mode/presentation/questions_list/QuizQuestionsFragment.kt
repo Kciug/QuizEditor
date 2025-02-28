@@ -26,6 +26,9 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
             onItemClicked = { question ->
                 openQuestionDetailsSheet(question.id)
             },
+            onItemDeleted = { question ->
+                presenter.removeQuestion(question)
+            },
             onAddClicked = { openNewQuestionSheet() }
         )
         binding.questionRecyclerView.adapter = adapter

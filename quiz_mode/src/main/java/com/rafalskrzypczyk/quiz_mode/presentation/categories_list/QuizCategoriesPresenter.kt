@@ -40,14 +40,14 @@ class QuizCategoriesPresenter @Inject constructor(
     }
 
     override fun removeCategory(category: Category) {
-//        presenterScope.launch {
-//            val response = repository.deleteCategory(category)
-//            if (response is Response.Error) Log.e(
-//                "QuizQuestionsPresenter",
-//                "Error: ${response.error}"
-//            )
-//            loadCategories()
-//        }
+        presenterScope.launch {
+            val response = repository.deleteCategory(category.id)
+            if (response is Response.Error) Log.e(
+                "QuizQuestionsPresenter",
+                "Error: ${response.error}"
+            )
+            loadCategories()
+        }
     }
 
     override fun onSearchQueryChanged(query: String) {

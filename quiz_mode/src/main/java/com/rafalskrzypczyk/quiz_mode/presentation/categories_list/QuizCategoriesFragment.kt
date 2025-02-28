@@ -23,9 +23,8 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
         super.onViewCreated(view, savedInstanceState)
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = CategoriesAdapter(
-            onCategoryClicked = { category, position ->
-                openCategoryDetailsSheet(category.id, position)
-            },
+            onCategoryClicked = { openCategoryDetailsSheet(it.id) },
+            onCategoryRemoved = { presenter.removeCategory(it) },
             onAddClicked = { openNewCategorySheet() },
         )
         binding.categoryRecyclerView.adapter = adapter
@@ -37,7 +36,7 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
         adapter.submitList(categories)
     }
 
-    private fun openCategoryDetailsSheet(categoryId: Int, listPosition: Int) {
+    private fun openCategoryDetailsSheet(categoryId: Int) {
         val bundle = Bundle().apply {
             putInt("categoryId", categoryId)
         }

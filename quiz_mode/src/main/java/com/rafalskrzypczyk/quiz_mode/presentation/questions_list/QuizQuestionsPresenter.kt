@@ -72,14 +72,14 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     override fun removeQuestion(question: QuestionUIModel) {
-//        presenterScope.launch {
-//            val response = repository.deleteQuestion(question)
-//            if (response is Response.Error) Log.e(
-//                "QuizQuestionsPresenter",
-//                "Error: ${response.error}"
-//            )
-//            loadQuestions()
-//        }
+        presenterScope.launch {
+            val response = repository.deleteQuestion(question.id)
+            if (response is Response.Error) Log.e(
+                "QuizQuestionsPresenter",
+                "Error: ${response.error}"
+            )
+            loadQuestions()
+        }
     }
 
     override fun onSearchQueryChanged(query: String) {

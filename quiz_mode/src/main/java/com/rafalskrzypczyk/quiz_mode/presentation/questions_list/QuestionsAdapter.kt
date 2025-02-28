@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuestionUIModel
@@ -14,6 +15,7 @@ import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 
 class QuestionsAdapter(
     private val onItemClicked: (QuestionUIModel) -> Unit,
+    private val onItemDeleted: (QuestionUIModel) -> Unit,
     private val onAddClicked: () -> Unit,
 ) : ListAdapter<QuestionUIModel, RecyclerView.ViewHolder>(GenericDiffCallback<QuestionUIModel>(
     itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
@@ -26,12 +28,21 @@ class QuestionsAdapter(
         val questionAnswers: TextView = view.findViewById(R.id.answers_count)
         val categoryLabelsRecyclerView: RecyclerView = view.findViewById(R.id.categories_recycler_view)
 
+        val deleteBubbleManager = DeleteBubbleManager(view.context)
+
         fun bind(question: QuestionUIModel) {
             val categoryLabelsAdapter = CategoriesPreviewAdapter()
             questionText.text = question.text
             questionAnswers.text = String.format(question.answersCount.toString())
             categoryLabelsRecyclerView.adapter = categoryLabelsAdapter
             categoryLabelsAdapter.submitList(question.linkedCategories)
+
+            itemView.setOnLongClickListener { view ->
+                deleteBubbleManager.showDeleteBubble(view) {
+                    onItemDeleted(question)
+                }
+                true
+            }
 
             itemView.setOnClickListener {
                 onItemClicked(question)

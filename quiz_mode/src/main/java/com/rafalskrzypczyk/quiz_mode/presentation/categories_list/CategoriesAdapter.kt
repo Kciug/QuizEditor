@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
@@ -17,7 +18,8 @@ import com.rafalskrzypczyk.quiz_mode.utils.getColor
 import com.rafalskrzypczyk.quiz_mode.utils.getTitle
 
 class CategoriesAdapter(
-    private val onCategoryClicked: (Category, Int) -> Unit,
+    private val onCategoryClicked: (Category) -> Unit,
+    private val onCategoryRemoved: (Category) -> Unit,
     private val onAddClicked: () -> Unit
 ) : ListAdapter<Category, RecyclerView.ViewHolder>(GenericDiffCallback<Category>(
     itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
@@ -34,7 +36,9 @@ class CategoriesAdapter(
         val statusIndicator: ColorOutlinedLabelView = view.findViewById(R.id.category_status)
         val colorPreview: View = view.findViewById(R.id.color_preview)
 
-        fun bind(category: Category, position: Int) {
+        val deleteBubbleManager = DeleteBubbleManager(itemView.context)
+
+        fun bind(category: Category) {
             categoryTitle.text = category.title
             categoryDescription.text = category.description
             questionCount.text = String.format(category.linkedQuestions.count().toString())
@@ -47,8 +51,15 @@ class CategoriesAdapter(
             statusIndicator.setColorAndText(category.status.getColor(itemView.context), category.status.getTitle(itemView.context))
             (colorPreview.background as GradientDrawable).setColor(category.color)
 
+            itemView.setOnLongClickListener { view ->
+                deleteBubbleManager.showDeleteBubble(view) {
+                    onCategoryRemoved(category)
+                }
+                true
+            }
+
             itemView.setOnClickListener {
-                onCategoryClicked(category, position)
+                onCategoryClicked(category)
             }
         }
     }
@@ -84,7 +95,7 @@ class CategoriesAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CategoryViewHolder) {
             val category = getItem(position)
-            holder.bind(category, position)
+            holder.bind(category)
         } else if (holder is AddButtonViewHolder) {
             holder.bind()
         }
