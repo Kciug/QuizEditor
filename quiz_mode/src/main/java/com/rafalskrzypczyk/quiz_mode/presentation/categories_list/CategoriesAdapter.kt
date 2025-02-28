@@ -13,9 +13,9 @@ import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
-import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
-import com.rafalskrzypczyk.quiz_mode.utils.getColor
-import com.rafalskrzypczyk.quiz_mode.utils.getTitle
+import com.rafalskrzypczyk.quiz_mode.presentation.ListItemType
+import com.rafalskrzypczyk.quiz_mode.domain.getColor
+import com.rafalskrzypczyk.quiz_mode.domain.getTitle
 
 class CategoriesAdapter(
     private val onCategoryClicked: (Category) -> Unit,

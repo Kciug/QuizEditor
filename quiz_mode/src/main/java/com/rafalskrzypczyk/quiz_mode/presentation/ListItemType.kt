@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.utils
+package com.rafalskrzypczyk.quiz_mode.presentation
 
 enum class ListItemType(val value: Int) {
     TYPE_ELEMENT(0),

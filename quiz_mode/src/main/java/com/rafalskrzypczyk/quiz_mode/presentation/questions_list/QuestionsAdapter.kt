@@ -3,15 +3,15 @@ package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuestionUIModel
+import com.rafalskrzypczyk.quiz_mode.presentation.ListItemType
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.CategoriesPreviewAdapter
-import com.rafalskrzypczyk.quiz_mode.utils.ListItemType
 
 class QuestionsAdapter(
     private val onItemClicked: (QuestionUIModel) -> Unit,
@@ -26,7 +26,10 @@ class QuestionsAdapter(
     inner class QuestionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val questionText: TextView = view.findViewById(R.id.question_text)
         val questionAnswers: TextView = view.findViewById(R.id.answers_count)
+        val questionAnswersText: TextView = view.findViewById(R.id.answers_count_text)
         val categoryLabelsRecyclerView: RecyclerView = view.findViewById(R.id.categories_recycler_view)
+        val validationMessage: TextView = view.findViewById(R.id.validation_message)
+        val validationIcon: ImageView = view.findViewById(R.id.validation_icon)
 
         val deleteBubbleManager = DeleteBubbleManager(view.context)
 
@@ -36,6 +39,14 @@ class QuestionsAdapter(
             questionAnswers.text = String.format(question.answersCount.toString())
             categoryLabelsRecyclerView.adapter = categoryLabelsAdapter
             categoryLabelsAdapter.submitList(question.linkedCategories)
+
+            questionAnswersText.text = if (question.answersCount == 1) itemView.context.getString(R.string.label_answers_count_one)
+            else itemView.context.getString(R.string.label_answers_count_many)
+
+            validationMessage.text = itemView.context.getString(question.validationMessage.message)
+            validationIcon.setImageResource(question.validationMessage.icon)
+            validationMessage.setTextColor(itemView.context.getColor(question.validationMessage.color))
+            validationIcon.setColorFilter(itemView.context.getColor(question.validationMessage.color))
 
             itemView.setOnLongClickListener { view ->
                 deleteBubbleManager.showDeleteBubble(view) {

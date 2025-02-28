@@ -1,85 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:background="@drawable/background_tile"
     android:padding="10dp"
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
-    android:elevation="15dp"
-    android:background="@drawable/background_tile">
+    android:elevation="5dp">
 
-    <!-- Pytanie -->
     <TextView
         android:id="@+id/question_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/text_placeholder_long"
         android:textSize="16sp"
-        android:ellipsize="end"
-        android:maxLines="2" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categories_recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="5dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/view_color_outlined_label"
-        />
+        app:layout_constraintTop_toBottomOf="@id/question_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Ikona odpowiedzi i liczba -->
-    <LinearLayout
-        android:id="@+id/question_details"
+    <TextView
+        android:id="@+id/answers_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:text="@string/text_placeholder_number"
+        android:textSize="14sp"
+        android:textColor="@color/primary"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/categories_recycler_view"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_answers_24"
-            android:contentDescription="@string/ic_desc_answers"
-            app:tint="?attr/colorPrimary" />
+    <TextView
+        android:id="@+id/answers_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_answers_count_many"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:layout_marginStart="3dp"
+        app:layout_constraintTop_toTopOf="@id/answers_count"
+        app:layout_constraintBottom_toBottomOf="@id/answers_count"
+        app:layout_constraintStart_toEndOf="@id/answers_count"/>
 
-        <TextView
-            android:id="@+id/answers_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text=""
-            android:textSize="14sp"
-            android:layout_marginStart="4dp"/>
+    <ImageView
+        android:id="@+id/validation_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_check_outlined_24"
+        android:contentDescription="@string/ic_desc_validation_ok"
+        app:tint="@color/green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/answers_count"
+        app:layout_constraintBottom_toBottomOf="@id/answers_count"/>
 
-        <TextView
-            android:id="@+id/answers_count_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/label_answers_count_many"
-            android:textSize="14sp"
-            android:layout_marginStart="4dp"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <ImageView
-            android:id="@+id/validation_status"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_check_24"
-            android:contentDescription="@string/ic_desc_validation_ok"
-            app:tint="@color/green" />
-    </LinearLayout>
-
-    <!-- Status walidacji -->
+    <TextView
+        android:id="@+id/validation_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/question_validation_ok"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:layout_marginEnd="3dp"
+        app:layout_constraintTop_toTopOf="@id/answers_count"
+        app:layout_constraintBottom_toBottomOf="@id/answers_count"
+        app:layout_constraintEnd_toStartOf="@id/validation_icon"/>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

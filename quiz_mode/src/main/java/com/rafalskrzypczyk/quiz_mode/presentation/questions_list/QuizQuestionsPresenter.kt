@@ -5,8 +5,6 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuestionUIModel
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.toUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.utils
+package com.rafalskrzypczyk.quiz_mode.domain
 
 import android.content.Context
 import com.rafalskrzypczyk.quiz_mode.R

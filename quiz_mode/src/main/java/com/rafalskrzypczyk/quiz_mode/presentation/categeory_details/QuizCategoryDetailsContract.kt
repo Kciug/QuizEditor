@@ -2,7 +2,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
 import android.os.Bundle
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 
 interface QuizCategoryDetailsContract {
     interface View {

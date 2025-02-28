@@ -1,7 +1,7 @@
 package com.rafalskrzypczyk.quiz_mode.data
 
 import android.graphics.Color
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import java.util.Date
 
 data class CategoryDTO(

@@ -17,9 +17,9 @@ import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.utils.getColor
-import com.rafalskrzypczyk.quiz_mode.utils.getTitle
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.getColor
+import com.rafalskrzypczyk.quiz_mode.domain.getTitle
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

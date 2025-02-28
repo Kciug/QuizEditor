@@ -6,7 +6,7 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

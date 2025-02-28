@@ -6,7 +6,6 @@ import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter

@@ -5,7 +5,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuestionUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

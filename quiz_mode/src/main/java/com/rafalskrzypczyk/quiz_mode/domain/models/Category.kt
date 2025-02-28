@@ -3,7 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.domain.models
 import com.rafalskrzypczyk.core.base.Identifiable
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.quiz_mode.data.CategoryDTO
-import com.rafalskrzypczyk.quiz_mode.utils.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import java.util.Date
 
 data class Category(

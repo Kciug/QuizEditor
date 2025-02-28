@@ -3,7 +3,7 @@
     <string name="bottom_bar_title_questions">Pytania</string>
 
     <string name="ic_desc_answers">Odpowiedzi</string>
-    <string name="ic_desc_validation_ok">Pytanie poprawne</string>
+    <string name="ic_desc_validation_ok">Status walidacji</string>
 
     <string name="content_desc_category_color">Kolor kategorii</string>
     <string name="content_desc_category_status_color">Kolor statusu kategorii</string>
@@ -49,4 +49,8 @@
     <string name="label_correct_answer">Poprawna</string>
     <string name="label_no_categories">Brak kategorii</string>
     <string name="ic_desc_category_color">Kolor kategorii</string>
+
+    <string name="question_validation_ok">OK</string>
+    <string name="question_validation_missing_answers">Brak odpowiedzi</string>
+    <string name="question_validation_no_correct_answer">Brak poprawnej odpowiedzi</string>
 </resources>
