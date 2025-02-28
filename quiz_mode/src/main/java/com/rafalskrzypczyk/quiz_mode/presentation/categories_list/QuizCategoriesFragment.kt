@@ -21,13 +21,16 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewCategories.layoutManager = LinearLayoutManager(requireContext())
         adapter = CategoriesAdapter(
             onCategoryClicked = { openCategoryDetailsSheet(it.id) },
             onCategoryRemoved = { presenter.removeCategory(it) },
             onAddClicked = { openNewCategorySheet() },
         )
-        binding.categoryRecyclerView.adapter = adapter
+        binding.recyclerViewCategories.adapter = adapter
+
+        binding.searchBar.setOnTextChanged { presenter.onSearchQueryChanged(it) }
+        binding.searchBar.setOnClearClick { presenter.onSearchQueryChanged("") }
 
         presenter.loadCategories()
     }

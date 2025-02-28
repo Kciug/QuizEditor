@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditText
+        android:id="@+id/search_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_search_24"
+        android:drawableTint="?attr/colorPrimary"
+        android:hint="Szukaj"
+        android:inputType="text"
+        android:autofillHints="name"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        android:background="@drawable/background_tile"/>
+
+    <ImageButton
+        android:id="@+id/button_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:src="@drawable/ic_close_24"
+        app:tint="?attr/colorPrimary"
+        android:backgroundTint="@color/transparent"
+        android:contentDescription="Wyczyść wyszukiwanie"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/search_field"
+        app:layout_constraintTop_toTopOf="@id/search_field"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

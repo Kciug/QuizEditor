@@ -2,7 +2,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentCheckablePickerBinding
 import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractorContract
@@ -32,20 +31,11 @@ class CheckablePickerFragment (
         )
         binding.recyclerView.adapter = adapter
 
-        binding.searchBar.addTextChangedListener(
-            afterTextChanged = {
-                presenter.onSearchQueryChanged(it.toString())
-                binding.buttonClear.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
-            }
-        )
+        binding.searchBar.setOnTextChanged { presenter.onSearchQueryChanged(it) }
+        binding.searchBar.setOnClearClick { presenter.onSearchQueryChanged("") }
 
         binding.buttonSubmit.setOnClickListener {
             dismiss()
-        }
-
-        binding.buttonClear.setOnClickListener{
-            binding.searchBar.text.clear()
-            presenter.onSearchQueryChanged(binding.searchBar.text.toString())
         }
     }
 

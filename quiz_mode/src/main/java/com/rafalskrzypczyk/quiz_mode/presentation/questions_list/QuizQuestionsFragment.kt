@@ -21,7 +21,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.questionRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewQuestions.layoutManager = LinearLayoutManager(requireContext())
         adapter = QuestionsAdapter(
             onItemClicked = { question ->
                 openQuestionDetailsSheet(question.id)
@@ -31,7 +31,10 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
             },
             onAddClicked = { openNewQuestionSheet() }
         )
-        binding.questionRecyclerView.adapter = adapter
+        binding.recyclerViewQuestions.adapter = adapter
+
+        binding.searchBar.setOnTextChanged { presenter.onSearchQueryChanged(it) }
+        binding.searchBar.setOnClearClick { presenter.onSearchQueryChanged("") }
 
         presenter.loadQuestions()
     }
