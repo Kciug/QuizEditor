@@ -7,4 +7,7 @@
         <item name="android:textColor">@color/selector_color_edit_text</item>
         <item name="android:textColorHint">@color/text_secondary</item>
     </style>
+    <style name="ActionButtonStyle" parent="Widget.AppCompat.ActionButton">
+        <item name="android:tint">@color/primary</item>
+    </style>
 </resources>

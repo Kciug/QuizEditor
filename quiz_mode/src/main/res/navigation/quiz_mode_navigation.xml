@@ -18,10 +18,4 @@
         android:label="@string/bottom_bar_title_questions"
         tools:layout="@layout/fragment_quiz_questions" />
 
-    <fragment
-        android:id="@+id/navigation_category_details"
-        android:name="com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsFragment"
-        android:label="@string/bottom_bar_title_categories"
-        tools:layout="@layout/asv" />
-
 </navigation>

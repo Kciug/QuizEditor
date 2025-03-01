@@ -15,10 +15,10 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width = "match_parent"
-            android:background="@color/transparent"
+            android:theme="@style/Theme.QuizEditor.AppBarOverlay"
             app:popupTheme="@style/Theme.QuizEditor.PopupOverlay"
             android:layout_height = "?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_menu_24"/>
+            app:navigationIcon="@drawable/ic_menu_24" />
 
   </com.google.android.material.appbar.AppBarLayout>
 

@@ -1,9 +1,12 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseFragment
+import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsFragment
@@ -19,6 +22,8 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     private lateinit var adapter: CategoriesAdapter
 
+    private lateinit var activity: ActionBarBuilder
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerViewCategories.layoutManager = LinearLayoutManager(requireContext())
@@ -33,6 +38,22 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
         binding.searchBar.setOnClearClick { presenter.onSearchQueryChanged("") }
 
         presenter.loadCategories()
+
+        activity = requireActivity() as ActionBarBuilder
+        activity.setupActionBarMenu(R.menu.action_bar_quiz_mode) { actionMenuCallback(it) }
+    }
+
+    private fun actionMenuCallback(item: MenuItem): Boolean{
+        return when (item.itemId) {
+            R.id.action_filter_and_sort -> {
+                true
+            }
+            R.id.action_add_new -> {
+                openNewCategorySheet()
+                true
+            }
+            else -> false
+        }
     }
 
     override fun displayCategories(categories: List<Category>) {
