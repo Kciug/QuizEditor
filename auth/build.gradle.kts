@@ -13,10 +13,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
-
     coreKtx()
-    ui()
     tests()
     daggerHilt()
+    firebaseAuth()
 }

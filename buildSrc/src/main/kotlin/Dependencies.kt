@@ -21,6 +21,12 @@ object Dependencies {
     // HILT
     const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
     const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
+
+    //FIREBASE BOM
+    const val FIREBASE_BOM = "com.google.firebase:firebase-bom:${Versions.FIREBASE_BOM}"
+
+    //FIREBASE AUTH
+    const val FIREBASE_AUTH = "com.google.firebase:firebase-auth-ktx"
 }
 
 fun DependencyHandler.coreKtx() = implementation(Dependencies.ANDROIDX_CORE_KTX)
@@ -45,4 +51,9 @@ fun DependencyHandler.tests() {
 fun DependencyHandler.daggerHilt() {
     implementation(Dependencies.HILT_ANDROID)
     kapt(Dependencies.HILT_COMPILER)
+}
+
+fun DependencyHandler.firebaseAuth() {
+    implementation(platform(Dependencies.FIREBASE_BOM))
+    implementation(Dependencies.FIREBASE_AUTH)
 }

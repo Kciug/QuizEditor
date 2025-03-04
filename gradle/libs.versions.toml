@@ -33,4 +33,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "safeArgs"}
+android-library = { id = "com.android.library", version.ref = "agp" }
 
