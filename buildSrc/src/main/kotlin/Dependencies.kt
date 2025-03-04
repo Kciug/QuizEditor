@@ -27,6 +27,10 @@ object Dependencies {
 
     //FIREBASE AUTH
     const val FIREBASE_AUTH = "com.google.firebase:firebase-auth-ktx"
+    const val FIREBASE_FIRESTORE = "com.google.firebase:firebase-firestore-ktx"
+
+    // Json serializer
+    const val KOTLINX_SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.SERIALIZATION_JSON}"
 }
 
 fun DependencyHandler.coreKtx() = implementation(Dependencies.ANDROIDX_CORE_KTX)
@@ -53,7 +57,12 @@ fun DependencyHandler.daggerHilt() {
     kapt(Dependencies.HILT_COMPILER)
 }
 
-fun DependencyHandler.firebaseAuth() {
+fun DependencyHandler.firebase() {
     implementation(platform(Dependencies.FIREBASE_BOM))
     implementation(Dependencies.FIREBASE_AUTH)
+    implementation(Dependencies.FIREBASE_FIRESTORE)
+}
+
+fun DependencyHandler.kotlinxSerialization() {
+    implementation(Dependencies.KOTLINX_SERIALIZATION_JSON)
 }

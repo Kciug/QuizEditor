@@ -17,4 +17,6 @@ object Versions {
     const val HILT = "2.55"
 
     const val FIREBASE_BOM = "33.10.0"
+
+    const val SERIALIZATION_JSON = "1.8.0"
 }

@@ -22,4 +22,6 @@
     <string name="ic_desc_submit">Zatwierdź</string>
     <string name="ic_desc_filter">Filtruj</string>
     <string name="ic_desc_sort">Sortuj</string>
+
+    <string name="unknow_error">Nieznany błąd.</string>
 </resources>

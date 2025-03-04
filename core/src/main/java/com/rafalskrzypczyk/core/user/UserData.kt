@@ -1,5 +1,8 @@
-package com.rafalskrzypczyk.auth.domain
+package com.rafalskrzypczyk.core.user
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class UserData(
     val id: String,
     val email: String,

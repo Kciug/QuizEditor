@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.auth.domain
 
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.user.UserData
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
