@@ -17,25 +17,48 @@ class QuizQuestionsPresenter @Inject constructor(
     private val repository: QuizModeRepository
 ) : BasePresenter(), QuizQuestionsContract.Presenter {
     private val searchQuery = MutableStateFlow("")
+    private val sortOption = MutableStateFlow<QuestionSort.SortOptions>(QuestionSort.defaultSortOption)
+    private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.defaultSortType)
+    private val filterType = MutableStateFlow<QuestionFilter>(QuestionFilter.defaultFilter)
 
     override fun loadQuestions() {
         presenterScope.launch {
             combine(
                 repository.getAllQuestions(),
-                searchQuery
-            ) { response, query ->
+                searchQuery,
+                sortOption,
+                sortType,
+                filterType
+            ) { response, query, sortOption, sortType, filterType ->
                 when (response) {
                     is Response.Success -> {
-                        Response.Success(response.data.filter {
-                            it.text.contains(
-                                query,
-                                ignoreCase = true
-                            )
-                        })
+                        var questions = response.data.filter { it.text.contains(query, ignoreCase = true) }
+
+                        questions = when (sortOption) {
+                            QuestionSort.SortOptions.ByDate -> questions.sortedBy { it.creationDate }
+                            QuestionSort.SortOptions.ByAnswersAmount -> questions.sortedBy { it.answers.count() }
+                            QuestionSort.SortOptions.ByTitle -> questions.sortedBy { it.text }
+                        }
+                        if(sortType == QuestionSort.SortTypes.Descending) questions = questions.reversed()
+
+                        questions = when(filterType){
+                            QuestionFilter.None -> questions
+                            QuestionFilter.WithAnswers -> questions.filter { it.answers.isNotEmpty() }
+                            QuestionFilter.WithCategories -> questions.filter { it.linkedCategories.isNotEmpty() }
+                            QuestionFilter.WithCorrectAnswers -> questions.filter { it.answers.any { it.isCorrect } }
+                            QuestionFilter.WithoutAnswers -> questions.filter { it.answers.isEmpty()}
+                            QuestionFilter.WithoutCategories -> questions.filter { it.linkedCategories.isEmpty() }
+                            QuestionFilter.WithoutCorrectAnswers -> questions.filter { it.answers.any { it.isCorrect.not() } || it.answers.isEmpty() }
+                        }
+                        Response.Success(questions)
                     }
 
-                    is Response.Error -> response
-                    is Response.Loading -> Response.Loading
+                    is Response.Error -> {
+                        response
+                    }
+                    is Response.Loading -> {
+                        Response.Loading
+                    }
                 }
             }.collect { filteredResponse ->
                 when (filteredResponse) {
@@ -80,7 +103,25 @@ class QuizQuestionsPresenter @Inject constructor(
         }
     }
 
-    override fun onSearchQueryChanged(query: String) {
+    override fun searchBy(query: String) {
         searchQuery.value = query
     }
+
+    override fun sortByOption(sort: QuestionSort.SortOptions) {
+        sortOption.value = sort
+    }
+
+    override fun sortByType(sort: QuestionSort.SortTypes) {
+        sortType.value = sort
+    }
+
+    override fun filterBy(filter: QuestionFilter) {
+        filterType.value = filter
+    }
+
+    override fun getCurrentSortOption(): QuestionSort.SortOptions = sortOption.value
+
+    override fun getCurrentSortType(): QuestionSort.SortTypes = sortType.value
+
+    override fun getCurrentFilter(): QuestionFilter = filterType.value
 }

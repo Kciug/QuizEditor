@@ -9,6 +9,12 @@ interface QuizCategoriesContract {
     interface Presenter {
         fun loadCategories()
         fun removeCategory(category: Category)
-        fun onSearchQueryChanged(query: String)
+        fun searchBy(query: String)
+        fun sortByOption(sort: CategorySort.SortOptions)
+        fun sortByType(sort: CategorySort.SortTypes)
+        fun filterBy(filter: CategoryFilters)
+        fun getCurrentSortOption(): CategorySort.SortOptions
+        fun getCurrentSortType(): CategorySort.SortTypes
+        fun getCurrentFilter(): CategoryFilters
     }
 }

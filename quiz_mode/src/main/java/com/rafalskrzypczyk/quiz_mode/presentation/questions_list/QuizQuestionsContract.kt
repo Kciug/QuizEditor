@@ -7,6 +7,12 @@ interface QuizQuestionsContract{
     interface Presenter {
         fun loadQuestions()
         fun removeQuestion(question: QuestionUIModel)
-        fun onSearchQueryChanged(query: String)
+        fun searchBy(query: String)
+        fun sortByOption(sort: QuestionSort.SortOptions)
+        fun sortByType(sort: QuestionSort.SortTypes)
+        fun filterBy(filter: QuestionFilter)
+        fun getCurrentSortOption(): QuestionSort.SortOptions
+        fun getCurrentSortType(): QuestionSort.SortTypes
+        fun getCurrentFilter(): QuestionFilter
     }
 }

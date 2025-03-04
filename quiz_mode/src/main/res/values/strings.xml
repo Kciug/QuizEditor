@@ -53,4 +53,25 @@
     <string name="question_validation_ok">OK</string>
     <string name="question_validation_missing_answers">Brak odpowiedzi</string>
     <string name="question_validation_no_correct_answer">Brak poprawnej odpowiedzi</string>
+
+
+    <string name="sort_title_order">Kolejność</string>
+    <string name="sort_ascending">Rosnąco</string>
+    <string name="sort_descending">Malejąco</string>
+    <string name="sort_by_date">Najnowsze</string>
+    <string name="sort_by_title">Alfabetycznie</string>
+    <string name="sort_by_questions_amount">Ilość Pytań</string>
+    <string name="sort_by_answers_amount">Ilość Odpowiedzi</string>
+
+    <string name="filter_none">Brak</string>
+    <string name="filter_by_having_questions">Z Pytaniami</string>
+    <string name="filter_by_no_questions">Bez Pytań</string>
+    <string name="filter_by_status">Status</string>
+    <string name="filter_by_migrated">Na produkcji</string>
+    <string name="filter_by_having_categories">Z Kategoriami</string>
+    <string name="filter_by_no_categories">Bez Kategorii</string>
+    <string name="filter_by_having_answers">Z Odpowiedziami</string>
+    <string name="filter_by_no_answers">Bez Odpowiedzi</string>
+    <string name="filter_by_correct_answers">Z Poprawnymi Odpowiedziami</string>
+    <string name="filter_by_no_correct_answers">Bez Poprawnych Odpowiedzi</string>
 </resources>
