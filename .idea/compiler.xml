@@ -2,7 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="QuizEditor.auth" target="21" />
       <module name="QuizEditor.quiz_mode_arch" target="21" />
     </bytecodeTargetLevel>
   </component>

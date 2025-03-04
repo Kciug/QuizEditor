@@ -6,13 +6,15 @@ plugins {
 apply<SharedGradleProjectConfig>()
 
 android {
-    namespace = "com.rafalskrzypczyk.quiz_mode"
+    namespace = "com.rafalskrzypczyk.auth"
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 
 dependencies {
+    implementation(project(":core"))
+
     coreKtx()
     tests()
     daggerHilt()

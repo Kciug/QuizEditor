@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "598304068046",
+    "project_id": "mediquiz-eb7f9",
+    "storage_bucket": "mediquiz-eb7f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598304068046:android:520472cdc111ce89391b9f",
+        "android_client_info": {
+          "package_name": "com.rafalskrzypczyk.mediquiz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmHFdAyFEndoS_fYnkkUtbw5ZW1VmIBEs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598304068046:android:0ed79ab89c1d6f19391b9f",
+        "android_client_info": {
+          "package_name": "com.rafalskrzypczyk.quizeditor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmHFdAyFEndoS_fYnkkUtbw5ZW1VmIBEs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

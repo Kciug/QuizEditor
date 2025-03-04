@@ -3,14 +3,15 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.rafalskrzypczyk.myapplication"
+    namespace = "com.rafalskrzypczyk.quizeditor"
     compileSdk = ProjectConfig.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.rafalskrzypczyk.myapplication"
+        applicationId = "com.rafalskrzypczyk.quizeditor"
         minSdk = ProjectConfig.MIN_SDK
         targetSdk = ProjectConfig.TARGET_SDK
         versionCode = ProjectConfig.VERSION_CODE
