@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.myapplication
+package com.rafalskrzypczyk.quizeditor
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

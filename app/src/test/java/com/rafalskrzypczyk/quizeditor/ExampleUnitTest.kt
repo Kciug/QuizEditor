@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.myapplication
+package com.rafalskrzypczyk.quizeditor
 
 import org.junit.Test
 

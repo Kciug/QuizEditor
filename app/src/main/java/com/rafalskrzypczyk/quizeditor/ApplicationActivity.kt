@@ -1,7 +1,9 @@
-package com.rafalskrzypczyk.myapplication
+package com.rafalskrzypczyk.quizeditor
 
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -9,16 +11,20 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.rafalskrzypczyk.auth.domain.AuthRepository
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
-import com.rafalskrzypczyk.myapplication.databinding.ActivityMainBinding
+import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMainBinding::inflate), ActionBarBuilder {
 
     lateinit var appBarConfiguration: AppBarConfiguration
 
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     private var actionMenuRes: Int? = null
     private var actionMenuCallback: ((MenuItem) -> Boolean)? = null
@@ -26,12 +32,22 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     override fun onViewBound() {
         super.onViewBound()
 
+        val buttonLogout = binding.drawerNavView.getHeaderView(0).findViewById<Button>(R.id.btn_logout_temp)
+        buttonLogout.setOnClickListener{
+            authRepository.signOut()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.drawerNavView
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
         val navController = navHostFragment.navController
+
+
 
         appBarConfiguration = AppBarConfiguration(setOf(
             R.id.nav_quiz_mode, R.id.nav_swipe_quiz_mode, R.id.nav_slideshow), drawerLayout)
