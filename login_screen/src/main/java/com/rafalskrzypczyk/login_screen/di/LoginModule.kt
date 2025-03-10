@@ -1,10 +1,8 @@
 package com.rafalskrzypczyk.login_screen.di
 
 import android.app.Activity
-import androidx.fragment.app.Fragment
 import com.rafalskrzypczyk.login_screen.SuccessLoginHandler
 import com.rafalskrzypczyk.login_screen.login.LoginContract
-import com.rafalskrzypczyk.login_screen.login.LoginFragment
 import com.rafalskrzypczyk.login_screen.login.LoginPresenter
 import dagger.Binds
 import dagger.Module
@@ -26,19 +24,7 @@ object QuizQuestionDetailsActivityModule {
 
 @Module
 @InstallIn(FragmentComponent::class)
-object QuizQuestionDetailsFragmentModule{
-    @Provides
-    fun provideLoginFragment(fragment: Fragment): LoginFragment {
-        return fragment as LoginFragment
-    }
-}
-
-@Module
-@InstallIn(FragmentComponent::class)
 abstract class QuizQuestionsModule {
-    @Binds
-    abstract fun bindFragment(fragment: LoginFragment): LoginContract.View
-
     @Binds
     abstract fun bindPresenter(presenter: LoginPresenter): LoginContract.Presenter
 }

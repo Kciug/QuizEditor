@@ -6,5 +6,9 @@ interface BaseContract {
         fun showError(message: String)
     }
 
-    interface Presenter
+    interface Presenter<V : View> {
+        fun onAttach(view: V)
+        fun onViewCreated()
+        fun onDestroy()
+    }
 }

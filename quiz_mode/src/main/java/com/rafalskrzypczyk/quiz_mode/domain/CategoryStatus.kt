@@ -1,32 +1,34 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
-import android.content.Context
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import com.rafalskrzypczyk.quiz_mode.R
 
-enum class CategoryStatus {
-    DRAFT,
-    IN_PROGRESS,
-    DONE,
-    APPROVED,
-    NEED_REWORK
+enum class CategoryStatus(@StringRes val title: Int, @ColorRes val color: Int) {
+    DRAFT(R.string.status_draft, R.color.status_draft),
+    IN_PROGRESS(R.string.status_in_progress, R.color.status_in_progress),
+    DONE(R.string.status_done, R.color.status_done),
+    APPROVED(R.string.status_approved, R.color.status_approved),
+    NEED_REWORK(R.string.status_need_rework, R.color.status_need_rework)
 }
 
-fun CategoryStatus.getTitle(context: Context) : String {
+fun CategoryStatus.toTitleString() : String {
     return when(this) {
-        CategoryStatus.DRAFT -> context.getString(R.string.status_draft)
-        CategoryStatus.IN_PROGRESS -> context.getString(R.string.status_in_progress)
-        CategoryStatus.DONE -> context.getString(R.string.status_done)
-        CategoryStatus.APPROVED -> context.getString(R.string.status_approved)
-        CategoryStatus.NEED_REWORK -> context.getString(R.string.status_need_rework)
+        CategoryStatus.DRAFT -> "Draft"
+        CategoryStatus.IN_PROGRESS -> "In Progress"
+        CategoryStatus.DONE -> "Done"
+        CategoryStatus.APPROVED -> "Approved"
+        CategoryStatus.NEED_REWORK -> "Needs Rework"
     }
 }
 
-fun CategoryStatus.getColor(context: Context) : Int {
+fun String.toCategoryStatus() : CategoryStatus {
     return when(this) {
-        CategoryStatus.DRAFT -> context.getColor(R.color.status_draft)
-        CategoryStatus.IN_PROGRESS -> context.getColor(R.color.status_in_progress)
-        CategoryStatus.DONE -> context.getColor(R.color.status_done)
-        CategoryStatus.APPROVED -> context.getColor(R.color.status_approved)
-        CategoryStatus.NEED_REWORK -> context.getColor(R.color.status_need_rework)
+        "Draft" -> CategoryStatus.DRAFT
+        "In Progress" -> CategoryStatus.IN_PROGRESS
+        "Done" -> CategoryStatus.DONE
+        "Approved" -> CategoryStatus.APPROVED
+        "Needs Rework" -> CategoryStatus.NEED_REWORK
+        else -> CategoryStatus.DRAFT
     }
 }

@@ -1,30 +1,55 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toFilterOption
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSortOption
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSortType
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class QuizQuestionsPresenter @Inject constructor(
-    private val view: QuizQuestionsContract.View,
-    private val repository: QuizModeRepository
-) : BasePresenter(), QuizQuestionsContract.Presenter {
+    private val repository: QuizModeRepository,
+    dispatcher: CoroutineDispatcher
+) : BasePresenter<QuizQuestionsContract.View>(), QuizQuestionsContract.Presenter {
+    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
+
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<QuestionSort.SortOptions>(QuestionSort.defaultSortOption)
     private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.defaultSortType)
     private val filterType = MutableStateFlow<QuestionFilter>(QuestionFilter.defaultFilter)
 
-    override fun loadQuestions() {
+    override fun onViewCreated() {
+        super.onViewCreated()
+
         presenterScope.launch {
-            combine(
+            val combinedData = combine(
                 repository.getAllQuestions(),
+                repository.getUpdatedQuestions()
+            ) { response, questions ->
+                when (response) {
+                    is Response.Success -> Response.Success(questions)
+                    is Response.Error -> response
+                    is Response.Loading -> Response.Loading
+                }
+            }
+
+
+            combine(
+                combinedData,
                 searchQuery,
                 sortOption,
                 sortType,
@@ -53,22 +78,16 @@ class QuizQuestionsPresenter @Inject constructor(
                         Response.Success(questions)
                     }
 
-                    is Response.Error -> {
-                        response
-                    }
-                    is Response.Loading -> {
-                        Response.Loading
-                    }
+                    is Response.Error -> response
+
+                    is Response.Loading -> Response.Loading
+
                 }
             }.collect { filteredResponse ->
                 when (filteredResponse) {
                     is Response.Success -> displayQuestionsList(filteredResponse.data)
-                    is Response.Error -> Log.e(
-                        "QuizQuestionsPresenter",
-                        "Error: ${filteredResponse.error}"
-                    )
-
-                    is Response.Loading -> Log.d("QuizQuestionsPresenter", "Loading")
+                    is Response.Error -> view.showError(filteredResponse.error)
+                    is Response.Loading -> view.showLoading()
                 }
             }
         }
@@ -78,16 +97,11 @@ class QuizQuestionsPresenter @Inject constructor(
         view.displayQuestions(questions.map { it.toUIModel(getCategoryForQuestion(it.linkedCategories)) })
     }
 
-    private fun getCategoryForQuestion(categoryIds: List<Int>): List<SimpleCategoryUIModel> {
+    private fun getCategoryForQuestion(categoryIds: List<Long>): List<SimpleCategoryUIModel> {
         val simpleCategoriesList = mutableListOf<SimpleCategoryUIModel>()
-        presenterScope.launch {
-            categoryIds.forEach { id ->
-                repository.getCategoryById(id).collect { response ->
-                    if (response is Response.Success) {
-                        simpleCategoriesList.add(response.data.toSimplePresentation())
-                    }
-                }
-            }
+        categoryIds.forEach { id ->
+            val response = repository.getCategoryById(id)
+            if(response is Response.Success) simpleCategoriesList.add(response.data.toSimplePresentation())
         }
         return simpleCategoriesList
     }
@@ -95,11 +109,7 @@ class QuizQuestionsPresenter @Inject constructor(
     override fun removeQuestion(question: QuestionUIModel) {
         presenterScope.launch {
             val response = repository.deleteQuestion(question.id)
-            if (response is Response.Error) Log.e(
-                "QuizQuestionsPresenter",
-                "Error: ${response.error}"
-            )
-            loadQuestions()
+            if (response is Response.Error) view.showError(response.error)
         }
     }
 
@@ -107,21 +117,33 @@ class QuizQuestionsPresenter @Inject constructor(
         searchQuery.value = query
     }
 
-    override fun sortByOption(sort: QuestionSort.SortOptions) {
-        sortOption.value = sort
+    override fun onSortMenuOpened() {
+        view.displaySortMenu(
+            sortOptions = QuestionSort.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
+            sortTypes = QuestionSort.getSortTypes().map { it.toSelectableMenuItem(sortOption.value == it) }
+        )
     }
 
-    override fun sortByType(sort: QuestionSort.SortTypes) {
-        sortType.value = sort
+    override fun onFilterMenuOpened() {
+        view.displayFilterMenu(
+            filterOptions = QuestionFilter.getFilters().map { it.toSelectableMenuItem(filterType.value == it) }
+        )
     }
 
-    override fun filterBy(filter: QuestionFilter) {
-        filterType.value = filter
+    override fun sortByOption(sort: SelectableMenuItem) {
+        sortOption.value = sort.toSortOption() ?: QuestionSort.defaultSortOption
     }
 
-    override fun getCurrentSortOption(): QuestionSort.SortOptions = sortOption.value
+    override fun sortByType(sort: SelectableMenuItem) {
+        sortType.value = sort.toSortType() ?: QuestionSort.defaultSortType
+    }
 
-    override fun getCurrentSortType(): QuestionSort.SortTypes = sortType.value
+    override fun filterBy(filter: SelectableMenuItem) {
+        filterType.value = filter.toFilterOption() ?: QuestionFilter.defaultFilter
+    }
 
-    override fun getCurrentFilter(): QuestionFilter = filterType.value
+    override fun onDestroy() {
+        presenterScope.cancel()
+        super.onDestroy()
+    }
 }

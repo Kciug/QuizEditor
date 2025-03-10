@@ -1,8 +1,16 @@
 package com.rafalskrzypczyk.core.base
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+abstract class BasePresenter<V: BaseContract.View> : BaseContract.Presenter<V> {
+    private var _view: V? = null
+    val view: V get() = _view!!
 
-abstract class BasePresenter {
-    val presenterScope = CoroutineScope(Dispatchers.Main)
+    override fun onAttach(view: V) {
+        _view = view
+    }
+
+    override fun onViewCreated() {}
+
+    override fun onDestroy() {
+        _view = null
+    }
 }

@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
 import androidx.annotation.StringRes
+import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.R
 
 sealed class CategorySort {
@@ -20,5 +21,21 @@ sealed class CategorySort {
 
         fun getSortOptions() = listOf(SortOptions.ByDate, SortOptions.ByTitle, SortOptions.ByQuestionsAmount)
         fun getSortTypes() = listOf(SortTypes.Ascending, SortTypes.Descending)
+
+        fun SortOptions.toSelectableMenuItem(isSelected: Boolean) : SelectableMenuItem = SelectableMenuItem(
+            itemHashCode = this.hashCode(),
+            title = title,
+            isSelected = isSelected
+        )
+
+        fun SortTypes.toSelectableMenuItem(isSelected: Boolean) : SelectableMenuItem = SelectableMenuItem(
+            itemHashCode = hashCode(),
+            title = title,
+            isSelected = isSelected
+        )
+
+        fun SelectableMenuItem.toSortOption() : SortOptions? = getSortOptions().find { it.hashCode() == this.itemHashCode }
+
+        fun SelectableMenuItem.toSortType() : SortTypes? = getSortTypes().find { it.hashCode() == this.itemHashCode }
     }
 }

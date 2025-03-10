@@ -2,8 +2,8 @@ package com.rafalskrzypczyk.core.extensions
 
 import java.util.Calendar
 
-fun Int.Companion.generateId() : Int {
+fun Long.Companion.generateId() : Long {
     val timestamp = Calendar.getInstance().timeInMillis
     val randomPart = (0..100).random()
-    return timestamp.toInt() + randomPart
+    return timestamp + randomPart
 }

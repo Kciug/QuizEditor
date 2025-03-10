@@ -4,7 +4,7 @@ import com.rafalskrzypczyk.core.base.BaseContract
 
 interface LoginContract {
     interface View : BaseContract.View
-    interface Presenter : BaseContract.Presenter {
+    interface Presenter : BaseContract.Presenter<View> {
         fun login(email: String, password: String)
     }
 }

@@ -40,7 +40,7 @@ class AuthRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            send(Response.Error(e.localizedMessage ?: resourcesProvider.getString(R.string.unknow_error)))
+            send(Response.Error(e.localizedMessage ?: resourcesProvider.getString(R.string.error_unknown)))
         }
     }
 
@@ -55,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
                 trySend(
                     Response.Error(
                         it.exception?.localizedMessage
-                            ?: resourcesProvider.getString(R.string.unknow_error)
+                            ?: resourcesProvider.getString(R.string.error_unknown)
                     )
                 )
             }.addOnSuccessListener {

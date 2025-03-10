@@ -1,43 +1,70 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
-import android.util.Log
+import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractorContract
+import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CheckablePickerPresenter (
-    private val view: CheckablePickerContract.View,
-    private val interactor: CheckablePickerInteractorContract
-) : BasePresenter(), CheckablePickerContract.Presenter {
+class CheckablePickerPresenter @Inject constructor (
+    dispatcher: CoroutineDispatcher,
+) : BasePresenter<CheckablePickerContract.View>(), CheckablePickerContract.Presenter {
+    private lateinit var interactor: CheckablePickerInteractor
+
+    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
+
     private val searchQuery = MutableStateFlow("")
 
-    override fun getItemList() {
+    override fun onViewCreated() {
+        super.onViewCreated()
+
         presenterScope.launch {
             combine(
                 interactor.getItemList(),
                 searchQuery
-            ){ items, query ->
-                items.filter { it.title.contains(query, ignoreCase = true) }
+            ){ response, query ->
+                when (response) {
+                    is Response.Success -> Response.Success(response.data.filter { it.title.contains(query, ignoreCase = true) })
+                    is Response.Error -> response
+                    is Response.Loading -> response
+                }
             }.collectLatest {
-                view.displayData(it)
+                when (it) {
+                    is Response.Success -> view.displayData(it.data)
+                    is Response.Error -> view.showError(it.error)
+                    is Response.Loading -> view.showLoading()
+                }
             }
         }
     }
 
+    override fun attachInteractor(interactor: CheckablePickerInteractor) {
+        this.interactor = interactor
+    }
+
     override fun onItemSelected(selectedItem: Checkable) {
-        Log.d("KURWA", "CheckablePickerPresenter: onItemSelected: $selectedItem")
-        interactor.onItemSelected(selectedItem)
+        presenterScope.launch{ interactor.onItemSelected(selectedItem) }
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        interactor.onItemDeselected(deselectedItem)
+        presenterScope.launch{ interactor.onItemDeselected(deselectedItem) }
     }
 
     override fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
+    }
+
+    override fun onDestroy() {
+        presenterScope.cancel()
+        super.onDestroy()
     }
 }

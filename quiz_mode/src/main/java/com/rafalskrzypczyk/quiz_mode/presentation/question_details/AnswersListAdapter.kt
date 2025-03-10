@@ -6,16 +6,26 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
+import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 
 class AnswersListAdapter(
-    private val answers: MutableList<AnswerUIModel> = mutableListOf(),
     private val onAnswerChanged: (AnswerUIModel) -> Unit,
-    private val onAnswerRemoved: (AnswerUIModel, Int) -> Unit
-) : RecyclerView.Adapter<AnswersListAdapter.ViewHolder>() {
+    private val onAnswerRemoved: (AnswerUIModel) -> Unit
+) : ListAdapter<AnswerUIModel, AnswersListAdapter.ViewHolder>(
+    GenericDiffCallback<AnswerUIModel>(
+        itemsTheSame = { oldItem, newItem ->
+            oldItem.id == newItem.id
+        },
+        contentsTheSame = { oldItem, newItem ->
+            oldItem == newItem
+        }
+    )
+) {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val answerText: EditText = itemView.findViewById(R.id.field_question_text)
         val correctSwitch: SwitchCompat = itemView.findViewById(R.id.switch_correct)
@@ -28,7 +38,7 @@ class AnswersListAdapter(
 
             itemView.setOnLongClickListener { view ->
                 deleteBubbleManager.showDeleteBubble(view) {
-                    onAnswerRemoved(answer, adapterPosition)
+                    onAnswerRemoved(answer)
                 }
                 true
             }
@@ -47,36 +57,12 @@ class AnswersListAdapter(
         }
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.card_answer, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
-    ) {
-        holder.bind(answers[position])
-    }
-
-    override fun getItemCount(): Int = answers.size
-
-    fun updateData(newAnswers: List<AnswerUIModel>) {
-        answers.clear()
-        answers.addAll(newAnswers)
-        notifyItemRangeInserted(0, newAnswers.size - 1)
-    }
-
-    fun itemAdded(addedAnswer: AnswerUIModel) {
-        answers.add(addedAnswer)
-        notifyItemInserted(answers.size)
-    }
-
-    fun itemRemoved(removedIndex: Int) {
-        answers.removeAt(removedIndex)
-        notifyItemRemoved(removedIndex)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 }

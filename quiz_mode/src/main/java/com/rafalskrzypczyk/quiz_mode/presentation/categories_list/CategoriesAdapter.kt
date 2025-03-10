@@ -12,10 +12,8 @@ import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.quiz_mode.presentation.ListItemType
-import com.rafalskrzypczyk.quiz_mode.domain.getColor
-import com.rafalskrzypczyk.quiz_mode.domain.getTitle
+import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 
 class CategoriesAdapter(
     private val onCategoryClicked: (Category) -> Unit,
@@ -48,7 +46,10 @@ class CategoriesAdapter(
                 itemView.context.getString(R.string.label_category_questions_amount_few),
                 itemView.context.getString(R.string.label_category_questions_amount_many)
             )
-            statusIndicator.setColorAndText(category.status.getColor(itemView.context), category.status.getTitle(itemView.context))
+            statusIndicator.setColorAndText(
+                itemView.context.getColor(category.status.color),
+                itemView.context.getString(category.status.title)
+            )
             (colorPreview.background as GradientDrawable).setColor(category.color)
 
             itemView.setOnLongClickListener { view ->

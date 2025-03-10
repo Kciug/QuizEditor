@@ -4,7 +4,7 @@ import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 
 data class QuestionUIModel (
-    val id: Int,
+    val id: Long,
     var text: String,
     val answersCount: Int,
     val linkedCategories: List<SimpleCategoryUIModel>,

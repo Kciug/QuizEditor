@@ -4,27 +4,38 @@ import android.os.Bundle
 import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toSelectableMenuItem
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class QuizCategoryDetailsPresenter @Inject constructor(
-    private val view: QuizCategoryDetailsContract.View,
-    private val interactor: QuizCategoryDetailsInteractor
-) : BasePresenter(), QuizCategoryDetailsContract.Presenter {
+    private val interactor: QuizCategoryDetailsInteractor,
+    dispatcher: CoroutineDispatcher,
+) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
+    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
+
     private var isDataLoaded = false
 
     override fun getData(bundle: Bundle?) {
-        val categoryId = bundle?.getInt("categoryId")
+        val categoryId = bundle?.getLong("categoryId")
 
         if (categoryId == null) {
             view.setupNewElementView()
             return
         }
 
-        presenterScope.launch { displayCategoryData(interactor.getCategory(categoryId)) }
+        presenterScope.launch {
+            interactor.getCategory(categoryId).collectLatest { displayCategoryData(it) }
+        }
     }
 
     private fun displayCategoryData(response: Response<Category>) {
@@ -35,11 +46,11 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             }
 
             is Response.Error -> {
-                Log.e("QuizCategoryDetailsPresenter", "Error: ${response.error}")
+                view.showError(response.error)
             }
 
             is Response.Loading -> {
-                Log.d("QuizCategoryDetailsPresenter", "Loading")
+                view.showLoading()
             }
         }
     }
@@ -54,7 +65,10 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun createNewCategory(categoryTitle: String) {
-        presenterScope.launch { displayCategoryData(interactor.instantiateNewCategory(categoryTitle)) }
+        presenterScope.launch {
+            Log.d("KURWA", "CatDetailsPresenter:createNewCategory: working")
+            displayCategoryData(interactor.instantiateNewCategory(categoryTitle))
+        }
     }
 
     override fun updateCategoryTitle(categoryTitle: String) {
@@ -65,32 +79,59 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         interactor.updateCategoryDescription(categoryDescription)
     }
 
+    override fun onChangeColor() {
+        view.displayColorPicker(interactor.getCategoryColor())
+    }
+
     override fun updateCategoryColor(color: Int) {
         interactor.updateColor(color)
         view.displayCategoryColor(color)
     }
 
-    override fun onChangeCategoryStatusClicked() {
-        view.displayCategoryStatusMenu(interactor.getAvailableStatuses())
+    override fun onChangeCategoryStatus() {
+        view.displayCategoryStatusMenu(
+            CategoryStatus.entries
+                .map { it.toSelectableMenuItem(it == interactor.getCategoryStatus()) }
+        )
     }
 
-    override fun updateCategoryStatus(status: CategoryStatus) {
-        interactor.updateStatus(status)
-        view.displayCategoryStatus(interactor.getCategoryStatus())
+    override fun updateCategoryStatus(status: SelectableMenuItem) {
+        val newStatus = CategoryStatus.entries.find { it.hashCode() == status.itemHashCode }
+        newStatus?.let {
+            interactor.updateStatus(newStatus)
+            view.displayCategoryStatus(newStatus)
+        }
     }
 
     override fun updateQuestionList() {
         presenterScope.launch {
-            view.displayQuestionList(interactor.getLinkedQuestions())
-            view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
+            interactor.getLinkedQuestions().collectLatest {
+                when (it) {
+                    is Response.Success -> {
+                        view.displayQuestionList(it.data)
+                        view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
+                    }
+
+                    is Response.Error -> view.showError(it.error)
+                    is Response.Loading -> view.showLoading()
+                }
+            }
         }
     }
 
-    override fun getCategoryId(): Int = interactor.getCategoryId()
+    override fun onQuestionFromList() {
+        view.displayQuestionsPicker()
+    }
 
-    override fun getCategoryColor(): Int = interactor.getCategoryColor()
+    override fun onNewQuestion() {
+        view.displayNewQuestionSheet(interactor.getCategoryId())
+    }
 
-    override fun saveUpdatedData() {
-        presenterScope.launch{ interactor.saveCachedCategory() }
+    override fun onDestroy() {
+        super.onDestroy()
+        presenterScope.launch {
+            interactor.saveCachedCategory()
+            presenterScope.cancel()
+        }
     }
 }

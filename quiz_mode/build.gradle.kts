@@ -14,6 +14,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":firestore"))
 
     coreKtx()
     ui()

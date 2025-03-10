@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
+import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
@@ -32,9 +34,15 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
     private lateinit var keyboardController: KeyboardController
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        presenter.onAttach(this)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         keyboardController = KeyboardController(requireContext())
+        presenter.onViewCreated()
         presenter.getData(arguments)
     }
 
@@ -58,7 +66,8 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         fieldNewAnswer.setRawInputType(InputType.TYPE_CLASS_TEXT)
         fieldNewAnswer.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                keyboardController.hideKeyboard(fieldNewAnswer)
+                presenter.addAnswer(fieldNewAnswer.text.toString())
+                //keyboardController.hideKeyboard(fieldNewAnswer)
                 true
             } else false
         }
@@ -72,12 +81,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         }
 
         binding.buttonAssignCategory.setOnClickListener {
-            val linkedCategoriesPicker = CheckablePickerFragment(parentInteractor)
-            linkedCategoriesPicker.setOnDismiss {
-                presenter.updateLinkedCategories()
-                presenter.saveUpdatedData()
-            }
-            linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
+            presenter.onAssignCategory()
         }
 
         binding.buttonAddAnswer.setOnClickListener {
@@ -86,7 +90,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     }
 
     override fun onDestroy() {
-        presenter.saveUpdatedData()
+        presenter.onDestroy()
         super.onDestroy()
     }
 
@@ -100,21 +104,17 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     }
 
     override fun displayAnswersList(answers: List<AnswerUIModel>) {
-        answersListAdapter.updateData(answers)
+        answersListAdapter.submitList(answers)
     }
 
-    override fun addNewAnswer(answer: AnswerUIModel) {
-        answersListAdapter.itemAdded(answer)
-        binding.fieldNewAnswer.setText("")
-    }
-
-    override fun removeAnswer(answerPosition: Int) {
-        answersListAdapter.itemRemoved(answerPosition)
+    override fun updateInputOnAnswerAdded() {
+        binding.fieldNewAnswer.text.clear()
     }
 
     override fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>) {
         if(categories.isEmpty()) {
             binding.labelNoCategories.visibility = View.VISIBLE
+            categoriesPreviewAdapter.submitList(categories)
             return
         }
         binding.labelNoCategories.visibility = View.GONE
@@ -131,8 +131,9 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         binding.categoriesRecyclerView.adapter = categoriesPreviewAdapter
 
         answersListAdapter = AnswersListAdapter(
-            onAnswerChanged = { presenter.updateAnswer(it) }
-        ) { answer: AnswerUIModel, position: Int -> presenter.removeAnswer(answer, position) }
+            onAnswerChanged = { presenter.updateAnswer(it) },
+            onAnswerRemoved = { presenter.removeAnswer(it) }
+        )
         binding.answersRecyclerView.adapter = answersListAdapter
         binding.answersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -159,5 +160,17 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         binding.sectionAnswers.visibility = View.GONE
 
         keyboardController.showKeyboardWithDelay(binding.fieldQuestionText)
+    }
+
+    override fun displayCategoryPicker() {
+        val linkedCategoriesPicker = CheckablePickerFragment(parentInteractor)
+        linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
+    }
+
+    override fun showLoading() {
+    }
+
+    override fun showError(message: String) {
+        ErrorDialog(requireContext(), message).show()
     }
 }

@@ -1,52 +1,34 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
 import com.rafalskrzypczyk.core.api_result.Response
-import com.rafalskrzypczyk.core.extensions.updateById
 import com.rafalskrzypczyk.quiz_mode.domain.models.Answer
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class QuizQuestionDetailsInteractor @Inject constructor(
-    private val repository: QuizModeRepository
-) : CheckablePickerInteractorContract {
+    private val repository: QuizModeRepository,
+) : CheckablePickerInteractor {
     private var cachedQuestion: Question? = null
-    private var parentCategoryId: Int? = null
+    private var parentCategoryId: Long? = null
 
-    suspend fun getQuestion(questionId: Int): Response<Question> {
-        var response: Response<Question> = Response.Loading
-        repository.getQuestionById(questionId).collectLatest {
-            when (it) {
-                is Response.Success -> {
-                    cachedQuestion = it.data
-                    response = Response.Success(it.data)
-                }
-
-                is Response.Error -> {
-                    response = Response.Error(it.error)
-                }
-
-                is Response.Loading -> {
-                    response = Response.Loading
-
-                }
-            }
-        }
-        return response
+    fun getQuestion(questionId: Long): Flow<Response<Question>> = flow {
+        val fetchedQuestion = repository.getQuestionById(questionId)
+        if (fetchedQuestion is Response.Success) cachedQuestion = fetchedQuestion.data
+        emit(fetchedQuestion)
     }
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
         val newQuestion = Question.new(questionText)
-        val response = repository.saveQuestion(newQuestion)
+        val response = repository.addQuestion(newQuestion)
         return when (response) {
             is Response.Success -> {
                 cachedQuestion = newQuestion
-                if(parentCategoryId != null) {
+                if (parentCategoryId != null) {
                     repository.bindQuestionWithCategory(newQuestion.id, parentCategoryId!!)
                 }
                 Response.Success(newQuestion)
@@ -62,7 +44,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
         }
     }
 
-    fun setParentCategoryId(categoryId: Int) {
+    fun setParentCategoryId(categoryId: Long) {
         parentCategoryId = categoryId
     }
 
@@ -74,54 +56,64 @@ class QuizQuestionDetailsInteractor @Inject constructor(
         cachedQuestion?.answers?.add(Answer.new(text))
     }
 
-    fun updateAnswer(answer: Answer) {
-        cachedQuestion?.answers?.updateById(answer)
+    fun updateAnswer(answerId: Long, answerText: String, answerIsCorrect: Boolean) {
+        cachedQuestion?.answers?.find { it.id == answerId }
+            ?.let { it.answerText = answerText; it.isCorrect = answerIsCorrect }
     }
 
-    fun removeAnswer(answer: Answer) {
-        cachedQuestion?.answers?.remove(answer)
+    fun removeAnswer(answerId: Long) {
+        val answerToRemove = cachedQuestion?.answers?.find { it.id == answerId } ?: return
+        cachedQuestion?.answers?.remove(answerToRemove)
     }
 
-    suspend fun getLinkedCategories(): List<Category> {
-        var linkedCategoriesToDisplay = listOf<Category>()
-        repository.getAllCategories()
-            .filter { it is Response.Success }
-            .map { (it as Response.Success).data }
-            .collectLatest { categories ->
-                linkedCategoriesToDisplay =
-                    categories.filter { cachedQuestion?.linkedCategories?.contains(it.id) == true }
+    fun getLinkedCategories(): Flow<Response<List<Category>>> {
+        return repository.getAllCategories()
+            .map {
+                when (it) {
+                    is Response.Success -> Response.Success(it.data.filter { cachedQuestion?.linkedCategories?.contains(it.id) == true })
+
+                    is Response.Error -> Response.Error(it.error)
+                    is Response.Loading -> Response.Loading
+                }
             }
-        return linkedCategoriesToDisplay
     }
 
     fun answerCount() = cachedQuestion?.answers?.count() ?: 0
+
     fun correctAnswerCount() = cachedQuestion?.answers?.count { it.isCorrect } ?: 0
-    fun getLastAnswer(): Answer = cachedQuestion!!.answers.last()
+
+    fun getAnswers() = cachedQuestion?.answers ?: emptyList()
 
     suspend fun saveCachedQuestion() {
         cachedQuestion?.let { repository.updateQuestion(it) }
     }
 
-    override fun getItemList(): Flow<List<Checkable>> {
-        return repository.getAllCategories().filter {
-            it is Response.Success
-        }.map {
-            (it as Response.Success).data.map { category ->
-                Checkable(
-                    id = category.id,
-                    title = category.title,
-                    isChecked = cachedQuestion?.linkedCategories?.contains(category.id) == true,
-                    isLocked = parentCategoryId == category.id
-                )
+    override fun getItemList(): Flow<Response<List<Checkable>>> {
+        return repository.getAllCategories().map {
+            when (it) {
+                is Response.Success -> Response.Success(it.data.map { Checkable(
+                    id = it.id,
+                    title = it.title,
+                    isChecked = cachedQuestion?.linkedCategories?.contains(it.id) == true,
+                    isLocked = parentCategoryId?.equals(it.id) == true,
+                ) })
+                is Response.Error -> Response.Error(it.error)
+                is Response.Loading -> Response.Loading
             }
         }
     }
 
-    override fun onItemSelected(selectedItem: Checkable) {
-        repository.bindQuestionWithCategory(cachedQuestion?.id ?: -1, selectedItem.id)
+    override suspend fun onItemSelected(selectedItem: Checkable) {
+        repository.bindQuestionWithCategory(
+            questionId = cachedQuestion?.id ?: -1,
+            categoryId = selectedItem.id
+        )
     }
 
-    override fun onItemDeselected(deselectedItem: Checkable) {
-        repository.unbindQuestionWithCategory(cachedQuestion?.id ?: -1, deselectedItem.id)
+    override suspend fun onItemDeselected(deselectedItem: Checkable) {
+        repository.unbindQuestionWithCategory(
+            questionId = cachedQuestion?.id ?: -1,
+            categoryId = deselectedItem.id
+        )
     }
 }

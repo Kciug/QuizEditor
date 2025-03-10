@@ -1,37 +1,39 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
 import android.os.Bundle
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toDomain
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.map
 
 class QuizQuestionDetailsPresenter @Inject constructor(
-    private val view: QuizQuestionDetailsContract.View,
-    private val interactor: QuizQuestionDetailsInteractor
-) : BasePresenter(), QuizQuestionDetailsContract.Presenter {
+    private val interactor: QuizQuestionDetailsInteractor,
+    dispatcher: CoroutineDispatcher
+) : BasePresenter<QuizQuestionDetailsContract.View>(), QuizQuestionDetailsContract.Presenter {
+    private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
     private var isQuestionLoaded = false
 
     override fun getData(bundle: Bundle?) {
-        val questionId = bundle?.getInt("questionId")
-        if (questionId == null || questionId == 0) {
+        val questionId = bundle?.getLong("questionId")
+        if (questionId == null || questionId == 0.toLong()) {
             view.setupNewElementView()
-            val parentCategoryId = bundle?.getInt("parentCategoryId")
+            val parentCategoryId = bundle?.getLong("parentCategoryId")
             if(parentCategoryId != null) interactor.setParentCategoryId(parentCategoryId)
             return
         }
 
-        presenterScope.launch {
-            presentQuestion(interactor.getQuestion(questionId))
-        }
+        presenterScope.launch { interactor.getQuestion(questionId).collectLatest { presentQuestion(it) } }
     }
 
     private fun presentQuestion(response: Response<Question>) {
@@ -41,13 +43,8 @@ class QuizQuestionDetailsPresenter @Inject constructor(
                 updateUI(response.data)
             }
 
-            is Response.Error -> {
-                Log.e("QuizQuestionDetailsPresenter", "Error: ${response.error}")
-            }
-
-            is Response.Loading -> {
-                Log.d("QuizQuestionDetailsPresenter", "Loading")
-            }
+            is Response.Error -> view.showError(response.error)
+            is Response.Loading -> view.showLoading()
         }
     }
 
@@ -57,7 +54,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
         view.displayAnswersDetails(
             question.answers.count(),
             question.answers.count { it.isCorrect })
-        view.displayAnswersList(question.answers.map { it.toSimplePresentation() })
+        displayAnswersList()
         view.displayCreatedOn(String.formatDate(question.creationDate), question.createdBy)
         updateLinkedCategories()
     }
@@ -79,31 +76,48 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     override fun addAnswer(answerText: String) {
         if (answerText.isEmpty()) return
         interactor.addAnswer(answerText)
-        view.addNewAnswer(interactor.getLastAnswer().toSimplePresentation())
         view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
+        displayAnswersList()
     }
 
     override fun updateAnswer(answer: AnswerUIModel) {
         if(answer.answerText.isEmpty()) return
-        interactor.updateAnswer(answer.toDomain())
+        interactor.updateAnswer(answer.id, answer.answerText, answer.isCorrect)
         view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
+        displayAnswersList()
     }
 
-    override fun removeAnswer(answer: AnswerUIModel, answerPosition: Int) {
-        interactor.removeAnswer(answer.toDomain())
+    override fun removeAnswer(answer: AnswerUIModel) {
+        interactor.removeAnswer(answer.id)
         view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
-        view.removeAnswer(answerPosition)
+        displayAnswersList()
+    }
+
+    private fun displayAnswersList() {
+        view.displayAnswersList(interactor.getAnswers().map { it.toSimplePresentation() })
     }
 
     override fun updateLinkedCategories() {
         presenterScope.launch {
-            view.displayLinkedCategories(interactor.getLinkedCategories().map { it.toSimplePresentation() })
+            interactor.getLinkedCategories().collectLatest {
+                when (it) {
+                    is Response.Success -> view.displayLinkedCategories(it.data.map { it.toSimplePresentation() })
+                    is Response.Error -> view.showError(it.error)
+                    is Response.Loading -> view.showLoading()
+                }
+            }
         }
     }
 
-    override fun saveUpdatedData() {
+    override fun onAssignCategory() {
+        view.displayCategoryPicker()
+    }
+
+    override fun onDestroy() {
         presenterScope.launch {
             interactor.saveCachedQuestion()
+            presenterScope.cancel()
         }
+        super.onDestroy()
     }
 }

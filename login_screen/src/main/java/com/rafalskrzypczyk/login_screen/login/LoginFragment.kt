@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.login_screen.login
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -20,9 +21,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private lateinit var navController: NavController
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        presenter.onAttach(this)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter.onViewCreated()
         navController = findNavController()
+    }
+
+    override fun onViewBound() {
+        super.onViewBound()
 
         binding.loginButton.setOnClickListener {
             presenter.login(binding.inputEmail.text.toString(), binding.passwordInput.text.toString())
@@ -31,6 +42,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         binding.resetPassword.setOnClickListener {
             navController.navigate(R.id.navigation_reset_password)
         }
+    }
+
+    override fun onDestroyView() {
+        presenter.onDestroy()
+        super.onDestroyView()
     }
 
     override fun showLoading() {
