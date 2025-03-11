@@ -24,8 +24,9 @@
     <string name="ic_desc_sort">Sortuj</string>
 
     <string name="error_unknown">Nieznany błąd.</string>
-    <string name="error_not_found_category">Nie znaleziono kategorii o podanym id</string>
-    <string name="error_not_found_question">Nie znaleziono pytania o podanym id</string>
+    <string name="error_no_data">Nie znaleziono danych.</string>
+    <string name="error_not_found_category">Nie znaleziono kategorii o podanym id.</string>
+    <string name="error_not_found_question">Nie znaleziono pytania o podanym id.</string>
 
     <string name="sort_by_label">Sortuj po</string>
     <string name="sort_type_label">Kolejność</string>
