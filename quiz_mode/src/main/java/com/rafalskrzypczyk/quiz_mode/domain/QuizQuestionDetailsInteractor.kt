@@ -6,20 +6,30 @@ import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class QuizQuestionDetailsInteractor @Inject constructor(
     private val repository: QuizModeRepository,
+    private val dataUpdateManager: DataUpdateManager
 ) : CheckablePickerInteractor {
     private var cachedQuestion: Question? = null
     private var parentCategoryId: Long? = null
 
-    fun getQuestion(questionId: Long): Flow<Response<Question>> = flow {
-        val fetchedQuestion = repository.getQuestionById(questionId)
-        if (fetchedQuestion is Response.Success) cachedQuestion = fetchedQuestion.data
-        emit(fetchedQuestion)
+    fun getQuestion(questionId: Long): Flow<Response<Question>> = repository.getQuestionById(questionId).map {
+        when (it) {
+            is Response.Success -> {
+                cachedQuestion = it.data
+                Response.Success(cachedQuestion!!)
+            }
+            is Response.Error -> Response.Error(it.error)
+            is Response.Loading -> Response.Loading
+        }
+    }
+
+    fun getUpdatedQuestion(): Flow<Question?> = repository.getUpdatedQuestions().map {
+        it.find { it.id == cachedQuestion?.id }?.let { cachedQuestion = it }
+        cachedQuestion
     }
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
@@ -28,9 +38,6 @@ class QuizQuestionDetailsInteractor @Inject constructor(
         return when (response) {
             is Response.Success -> {
                 cachedQuestion = newQuestion
-                if (parentCategoryId != null) {
-                    repository.bindQuestionWithCategory(newQuestion.id, parentCategoryId!!)
-                }
                 Response.Success(newQuestion)
             }
 
@@ -42,6 +49,14 @@ class QuizQuestionDetailsInteractor @Inject constructor(
                 Response.Loading
             }
         }
+    }
+
+    fun bindWithParentCategory() {
+        if(parentCategoryId == null) return
+        dataUpdateManager.bindQuestionWithCategory(
+            questionId = cachedQuestion?.id ?: -1,
+            categoryId = parentCategoryId ?: -1
+        )
     }
 
     fun setParentCategoryId(categoryId: Long) {
@@ -71,7 +86,6 @@ class QuizQuestionDetailsInteractor @Inject constructor(
             .map {
                 when (it) {
                     is Response.Success -> Response.Success(it.data.filter { cachedQuestion?.linkedCategories?.contains(it.id) == true })
-
                     is Response.Error -> Response.Error(it.error)
                     is Response.Loading -> Response.Loading
                 }
@@ -84,8 +98,8 @@ class QuizQuestionDetailsInteractor @Inject constructor(
 
     fun getAnswers() = cachedQuestion?.answers ?: emptyList()
 
-    suspend fun saveCachedQuestion() {
-        cachedQuestion?.let { repository.updateQuestion(it) }
+    fun saveCachedQuestion() {
+        cachedQuestion?.let { dataUpdateManager.updateQuestion(cachedQuestion!!) }
     }
 
     override fun getItemList(): Flow<Response<List<Checkable>>> {
@@ -103,15 +117,15 @@ class QuizQuestionDetailsInteractor @Inject constructor(
         }
     }
 
-    override suspend fun onItemSelected(selectedItem: Checkable) {
-        repository.bindQuestionWithCategory(
+    override fun onItemSelected(selectedItem: Checkable) {
+        dataUpdateManager.bindQuestionWithCategory(
             questionId = cachedQuestion?.id ?: -1,
             categoryId = selectedItem.id
         )
     }
 
-    override suspend fun onItemDeselected(deselectedItem: Checkable) {
-        repository.unbindQuestionWithCategory(
+    override fun onItemDeselected(deselectedItem: Checkable) {
+        dataUpdateManager.unbindQuestionWithCategory(
             questionId = cachedQuestion?.id ?: -1,
             categoryId = deselectedItem.id
         )

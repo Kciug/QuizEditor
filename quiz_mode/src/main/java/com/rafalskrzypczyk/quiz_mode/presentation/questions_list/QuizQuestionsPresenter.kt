@@ -1,11 +1,11 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
+import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
-import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toFilterOption
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toSelectableMenuItem
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class QuizQuestionsPresenter @Inject constructor(
     private val repository: QuizModeRepository,
-    dispatcher: CoroutineDispatcher
+    @MainDispatcher dispatcher: CoroutineDispatcher
 ) : BasePresenter<QuizQuestionsContract.View>(), QuizQuestionsContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
@@ -47,8 +47,7 @@ class QuizQuestionsPresenter @Inject constructor(
                 }
             }
 
-
-            combine(
+            val filteredData = combine(
                 combinedData,
                 searchQuery,
                 sortOption,
@@ -77,33 +76,45 @@ class QuizQuestionsPresenter @Inject constructor(
                         }
                         Response.Success(questions)
                     }
-
                     is Response.Error -> response
-
                     is Response.Loading -> Response.Loading
 
                 }
+            }
+
+            combine(
+                filteredData,
+                repository.getAllCategories()
+            ) { filteredResponse, categories ->
+                when (filteredResponse) {
+                    is Response.Success -> {
+                        when (categories) {
+                            is Response.Success -> Response.Success(
+                                filteredResponse.data.map { question ->
+                                    question.toUIModel(categories.data.filter {
+                                        it.linkedQuestions.contains(question.id)
+                                    }.map { it.toSimplePresentation() })
+                                })
+
+                            is Response.Error -> categories
+                            is Response.Loading -> categories
+                        }
+                    }
+
+                    is Response.Error -> filteredResponse
+                    is Response.Loading -> filteredResponse
+                }
             }.collect { filteredResponse ->
                 when (filteredResponse) {
-                    is Response.Success -> displayQuestionsList(filteredResponse.data)
+                    is Response.Success -> {
+                        Log.d("Questions", filteredResponse.data.toString())
+                        view.displayQuestions(filteredResponse.data)
+                    }
                     is Response.Error -> view.showError(filteredResponse.error)
                     is Response.Loading -> view.showLoading()
                 }
             }
         }
-    }
-
-    private fun displayQuestionsList(questions: List<Question>) {
-        view.displayQuestions(questions.map { it.toUIModel(getCategoryForQuestion(it.linkedCategories)) })
-    }
-
-    private fun getCategoryForQuestion(categoryIds: List<Long>): List<SimpleCategoryUIModel> {
-        val simpleCategoriesList = mutableListOf<SimpleCategoryUIModel>()
-        categoryIds.forEach { id ->
-            val response = repository.getCategoryById(id)
-            if(response is Response.Success) simpleCategoriesList.add(response.data.toSimplePresentation())
-        }
-        return simpleCategoriesList
     }
 
     override fun removeQuestion(question: QuestionUIModel) {

@@ -1,7 +1,9 @@
 package com.rafalskrzypczyk.quiz_mode.di
 
+import com.rafalskrzypczyk.core.di.IoDispatcher
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.data.QuizModeRepositoryImpl
+import com.rafalskrzypczyk.quiz_mode.domain.DataUpdateManager
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
@@ -22,6 +24,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -30,6 +33,17 @@ abstract class QuizModeModule {
     @Binds
     @Singleton
     abstract fun bindRepository(repository: QuizModeRepositoryImpl): QuizModeRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object QuizModeFragmentModule {
+    @Provides
+    @Singleton
+    fun provideUpdateManager(
+        repository: QuizModeRepository,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ) = DataUpdateManager(repository, dispatcher)
 }
 
 @Module
@@ -44,7 +58,10 @@ abstract class QuizQuestionDetailsModule {
 object QuizQuestionDetailsFragmentModule{
     @Provides
     @FragmentScoped
-    fun provideInteractor(repository: QuizModeRepository) = QuizQuestionDetailsInteractor(repository)
+    fun provideInteractor(
+        repository: QuizModeRepository,
+        dataUpdateManager: DataUpdateManager
+    ) = QuizQuestionDetailsInteractor(repository, dataUpdateManager)
 }
 
 @Module
@@ -73,7 +90,11 @@ abstract class QuizCategoryDetailsModule {
 object QuizCategoryDetailsFragmentModule{
     @Provides
     @FragmentScoped
-    fun provideInteractor(repository: QuizModeRepository, resourceProvider: ResourceProvider) = QuizCategoryDetailsInteractor(repository, resourceProvider)
+    fun provideInteractor(
+        repository: QuizModeRepository,
+        resourceProvider: ResourceProvider,
+        dataUpdateManager: DataUpdateManager
+    ) = QuizCategoryDetailsInteractor(repository, resourceProvider, dataUpdateManager)
 }
 
 @Module

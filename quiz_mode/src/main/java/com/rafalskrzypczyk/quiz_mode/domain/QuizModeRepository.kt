@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.Flow
 interface QuizModeRepository {
     fun getAllCategories(): Flow<Response<List<Category>>>
     fun getUpdatedCategories(): Flow<List<Category>>
-    fun getCategoryById(categoryId: Long): Response<Category>
+    fun getCategoryById(categoryId: Long): Flow<Response<Category>>
     suspend fun addCategory(category: Category): Response<Unit>
     suspend fun updateCategory(category: Category): Response<Unit>
     suspend fun deleteCategory(categoryId: Long): Response<Unit>
 
     fun getAllQuestions(): Flow<Response<List<Question>>>
     fun getUpdatedQuestions(): Flow<List<Question>>
-    fun getQuestionById(questionId: Long): Response<Question>
+    fun getQuestionById(questionId: Long): Flow<Response<Question>>
     suspend fun addQuestion(question: Question): Response<Unit>
     suspend fun updateQuestion(question: Question): Response<Unit>
     suspend fun deleteQuestion(questionId: Long): Response<Unit>

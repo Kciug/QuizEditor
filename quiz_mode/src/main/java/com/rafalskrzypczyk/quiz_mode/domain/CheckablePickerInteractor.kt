@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface CheckablePickerInteractor {
     fun getItemList() : Flow<Response<List<Checkable>>>
-    suspend fun onItemSelected(selectedItem: Checkable)
-    suspend fun onItemDeselected(deselectedItem: Checkable)
+    fun onItemSelected(selectedItem: Checkable)
+    fun onItemDeselected(deselectedItem: Checkable)
 }

@@ -9,6 +9,7 @@
         android:id="@+id/navigation_categories"
         android:name="com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesFragment"
         android:label="@string/bottom_bar_title_categories"
+        app:restoreState="true"
         tools:layout="@layout/fragment_quiz_categories" >
     </fragment>
 
@@ -17,6 +18,7 @@
         android:id="@+id/navigation_questions"
         android:name="com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuizQuestionsFragment"
         android:label="@string/bottom_bar_title_questions"
+        app:restoreState="true"
         tools:layout="@layout/fragment_quiz_questions" >
     </fragment>
 

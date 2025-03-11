@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.login_screen.login
 import com.rafalskrzypczyk.auth.domain.AuthRepository
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.login_screen.SuccessLoginHandler
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +15,7 @@ import javax.inject.Inject
 class LoginPresenter @Inject constructor(
     private val authRepository: AuthRepository,
     private val successLoginHandler: SuccessLoginHandler,
-    dispatcher: CoroutineDispatcher
+    @MainDispatcher dispatcher: CoroutineDispatcher
 ) : BasePresenter<LoginContract.View>(), LoginContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 

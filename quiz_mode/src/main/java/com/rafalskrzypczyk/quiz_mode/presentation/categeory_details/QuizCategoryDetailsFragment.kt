@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -206,6 +207,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
 
     override fun displayNewQuestionSheet(parentCategoryId: Long) {
         val bundle = Bundle().apply { putLong("parentCategoryId", parentCategoryId) }
+        Log.d("KURWA", "QuizCategoryDetailsFragment:displayNewQuestionSheet: bundle: $bundle")
         val newQuestionSheetFragment = QuizQuestionDetailsFragment().apply { arguments = bundle }
         newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionFromCategoryBS")
     }

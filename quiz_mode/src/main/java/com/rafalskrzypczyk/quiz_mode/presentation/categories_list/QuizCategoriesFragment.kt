@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -26,17 +25,8 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     private lateinit var actionBarMenuBuilder: CategoriesSortAndFilter
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
-    }
-
-    override fun onResume() {
-        super.onResume()
         presenter.onAttach(this)
         presenter.onViewCreated()
     }

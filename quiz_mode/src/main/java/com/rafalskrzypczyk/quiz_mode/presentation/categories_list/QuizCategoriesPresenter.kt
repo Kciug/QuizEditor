@@ -1,8 +1,8 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
@@ -19,13 +19,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class QuizCategoriesPresenter @Inject constructor(
     private val repository: QuizModeRepository,
-    private val dispatcher: CoroutineDispatcher,
+    @MainDispatcher private val dispatcher: CoroutineDispatcher,
 ) : BasePresenter<QuizCategoriesContract.View>(), QuizCategoriesContract.Presenter {
     private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
@@ -34,22 +33,14 @@ class QuizCategoriesPresenter @Inject constructor(
     private val sortType = MutableStateFlow<CategorySort.SortTypes>(CategorySort.defaultSortType)
     private val filterType = MutableStateFlow<CategoryFilters>(CategoryFilters.defaultFilter)
 
-    override fun onAttach(view: QuizCategoriesContract.View) {
-        super.onAttach(view)
-        presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-    }
-
     override fun onViewCreated() {
         super.onViewCreated()
-        Log.d("KURWA", "CatPresenter:onViewCreated: invoked")
-        Log.d("KURWA", "CatPresenter:onViewCreated: scope: ${presenterScope.isActive}")
+        presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
         presenterScope.launch {
             val combinedData = combine(
                 repository.getAllCategories(),
                 repository.getUpdatedCategories()
             ) { response, categories ->
-                Log.d("KURWA", "CatPresenter:combine: response: $response")
-                Log.d("KURWA", "CatPresenter:combine: categories: $categories")
                 when (response) {
                     is Response.Success -> Response.Success(categories)
                     is Response.Error -> response

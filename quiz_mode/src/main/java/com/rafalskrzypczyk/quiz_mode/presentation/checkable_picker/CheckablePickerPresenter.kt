@@ -2,9 +2,9 @@ package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CheckablePickerPresenter @Inject constructor (
-    dispatcher: CoroutineDispatcher,
+    @MainDispatcher dispatcher: CoroutineDispatcher,
 ) : BasePresenter<CheckablePickerContract.View>(), CheckablePickerContract.Presenter {
     private lateinit var interactor: CheckablePickerInteractor
 
@@ -52,11 +52,11 @@ class CheckablePickerPresenter @Inject constructor (
     }
 
     override fun onItemSelected(selectedItem: Checkable) {
-        presenterScope.launch{ interactor.onItemSelected(selectedItem) }
+        interactor.onItemSelected(selectedItem)
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        presenterScope.launch{ interactor.onItemDeselected(deselectedItem) }
+        interactor.onItemDeselected(deselectedItem)
     }
 
     override fun onSearchQueryChanged(query: String) {

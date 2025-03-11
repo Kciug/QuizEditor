@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
@@ -14,12 +15,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class QuizCategoryDetailsPresenter @Inject constructor(
     private val interactor: QuizCategoryDetailsInteractor,
-    dispatcher: CoroutineDispatcher,
+    @MainDispatcher dispatcher: CoroutineDispatcher,
 ) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
@@ -34,7 +36,16 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         }
 
         presenterScope.launch {
-            interactor.getCategory(categoryId).collectLatest { displayCategoryData(it) }
+            combine(
+                interactor.getCategory(categoryId),
+                interactor.getUpdatedCategory()
+            ) { categoryResponse, updatedCategory ->
+                when (categoryResponse) {
+                    is Response.Success -> Response.Success(updatedCategory)
+                    is Response.Error -> categoryResponse
+                    is Response.Loading -> categoryResponse
+                }
+            }.collectLatest { displayCategoryData(it) }
         }
     }
 
@@ -66,7 +77,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
 
     override fun createNewCategory(categoryTitle: String) {
         presenterScope.launch {
-            Log.d("KURWA", "CatDetailsPresenter:createNewCategory: working")
             displayCategoryData(interactor.instantiateNewCategory(categoryTitle))
         }
     }
@@ -124,14 +134,13 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun onNewQuestion() {
+        Log.d("KURWA", "QuizCategoryDetailsPresenter:onNewQuestion: categoryId: ${interactor.getCategoryId()}")
         view.displayNewQuestionSheet(interactor.getCategoryId())
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenterScope.launch {
-            interactor.saveCachedCategory()
-            presenterScope.cancel()
-        }
+        interactor.saveCachedCategory()
+        presenterScope.cancel()
     }
 }

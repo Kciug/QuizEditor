@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
@@ -19,10 +20,15 @@ import kotlin.collections.map
 
 class QuizQuestionDetailsPresenter @Inject constructor(
     private val interactor: QuizQuestionDetailsInteractor,
-    dispatcher: CoroutineDispatcher
+    @MainDispatcher dispatcher: CoroutineDispatcher
 ) : BasePresenter<QuizQuestionDetailsContract.View>(), QuizQuestionDetailsContract.Presenter {
     private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
     private var isQuestionLoaded = false
+
+    override fun onViewCreated() {
+        super.onViewCreated()
+        attachChangeListener()
+    }
 
     override fun getData(bundle: Bundle?) {
         val questionId = bundle?.getLong("questionId")
@@ -33,22 +39,36 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             return
         }
 
-        presenterScope.launch { interactor.getQuestion(questionId).collectLatest { presentQuestion(it) } }
+        presenterScope.launch{
+            interactor.getQuestion(questionId).collectLatest {
+                when (it) {
+                    is Response.Success -> { displayQuestion(it) }
+                    else -> it
+                }
+            }
+        }
     }
 
-    private fun presentQuestion(response: Response<Question>) {
+    private fun attachChangeListener() {
+        presenterScope.launch {
+            interactor.getUpdatedQuestion().collectLatest { it?.let { updateUI(it) } }
+        }
+    }
+
+    private fun displayQuestion(response: Response<Question>) {
         when (response) {
             is Response.Success -> {
                 isQuestionLoaded = true
                 updateUI(response.data)
             }
-
             is Response.Error -> view.showError(response.error)
             is Response.Loading -> view.showLoading()
         }
     }
 
     private fun updateUI(question: Question) {
+        if(!isQuestionLoaded) return
+
         view.setupView()
         view.displayQuestionText(question.text)
         view.displayAnswersDetails(
@@ -61,7 +81,8 @@ class QuizQuestionDetailsPresenter @Inject constructor(
 
     override fun saveNewQuestion(questionText: String) {
         presenterScope.launch {
-            presentQuestion(interactor.instantiateNewQuestion(questionText))
+            displayQuestion(interactor.instantiateNewQuestion(questionText))
+            interactor.bindWithParentCategory()
         }
     }
 
@@ -114,10 +135,8 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun onDestroy() {
-        presenterScope.launch {
-            interactor.saveCachedQuestion()
-            presenterScope.cancel()
-        }
+        interactor.saveCachedQuestion()
+        presenterScope.cancel()
         super.onDestroy()
     }
 }

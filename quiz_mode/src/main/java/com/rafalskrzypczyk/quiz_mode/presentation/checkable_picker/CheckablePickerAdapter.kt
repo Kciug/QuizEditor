@@ -29,8 +29,10 @@ class CheckablePickerAdapter(
             view.buttonTintList = view.context.getColorStateList(R.color.primary)
             view.gravity = Gravity.CENTER_VERTICAL
 
-            view.setOnCheckedChangeListener { _, isChecked ->
-                if(isChecked) onItemSelected(item) else onItemDeselected(item)
+            view.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if(compoundButton.isPressed) {
+                    if (isChecked) onItemSelected(item) else onItemDeselected(item)
+                }
             }
         }
     }
