@@ -20,42 +20,32 @@ class QuizModeRepositoryImpl @Inject constructor(
     private var _cachedCategories: List<Category>? = null
     private var _cachedQuestions: List<Question>? = null
 
-    override fun getAllCategories(): Flow<Response<List<Category>>> {
-        return firestoreApi.getQuizCategories().map {
-            if (_cachedCategories != null) {
-                return@map Response.Success(_cachedCategories!!)
-            }
-            when (it) {
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
+    override fun getAllCategories(): Flow<Response<List<Category>>> =
+        firestoreApi.getQuizCategories().map { response ->
+            _cachedCategories?.let { return@map Response.Success(it) }
+            when (response) {
                 is Response.Success -> {
-                    _cachedCategories = it.data.map { it.toDomain() }
+                    _cachedCategories = response.data.map { it.toDomain() }
                     Response.Success(_cachedCategories!!)
                 }
+                is Response.Error -> response
+                is Response.Loading -> response
             }
         }
-    }
 
-    override fun getUpdatedCategories(): Flow<List<Category>> {
-        return firestoreApi.getUpdatedQuizCategories().map {
-            _cachedCategories = it.map { it.toDomain() }
-            _cachedCategories!!
-        }
-    }
+    override fun getUpdatedCategories(): Flow<List<Category>> =
+        firestoreApi.getUpdatedQuizCategories().map { it.map { dto -> dto.toDomain() }.also { _cachedCategories = it } }
 
     override fun getCategoryById(categoryId: Long): Flow<Response<Category>> =
-        getAllCategories().map {
-            when (it) {
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
-                is Response.Success -> {
-                    val category = it.data.find { it.id == categoryId }
-                    if (category == null) Response.Error(resourceProvider.getString(R.string.error_not_found_category))
-                    else Response.Success(category)
-                }
+        getAllCategories().map { response ->
+            when (response) {
+                is Response.Success -> response.data.find { it.id == categoryId }
+                    ?.let { Response.Success(it) }
+                    ?: Response.Error(resourceProvider.getString(R.string.error_not_found_category))
+                is Response.Error -> response
+                is Response.Loading -> response
             }
         }
-
 
     override suspend fun addCategory(category: Category): Response<Unit> =
         firestoreApi.addQuizCategory(category.toDTO())
@@ -68,38 +58,30 @@ class QuizModeRepositoryImpl @Inject constructor(
         return firestoreApi.deleteQuizCategory(categoryId)
     }
 
-    override fun getAllQuestions(): Flow<Response<List<Question>>> {
-        return firestoreApi.getQuizQuestions().map {
-            if (_cachedQuestions != null) {
-                return@map Response.Success(_cachedQuestions!!)
-            }
-            when (it) {
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
+    override fun getAllQuestions(): Flow<Response<List<Question>>> =
+        firestoreApi.getQuizQuestions().map { response ->
+            _cachedQuestions?.let { return@map Response.Success(it) }
+            when (response) {
                 is Response.Success -> {
-                    _cachedQuestions = it.data.map { it.toDomain() }.toMutableList()
+                    _cachedQuestions = response.data.map { it.toDomain() }
                     Response.Success(_cachedQuestions!!)
                 }
+                is Response.Error -> response
+                is Response.Loading -> response
             }
         }
-    }
 
-    override fun getUpdatedQuestions(): Flow<List<Question>> {
-        return firestoreApi.getUpdatedQuizQuestions().map {
-            _cachedQuestions = it.map { it.toDomain() }
-            _cachedQuestions!!
-        }
-    }
+    override fun getUpdatedQuestions(): Flow<List<Question>> =
+        firestoreApi.getUpdatedQuizQuestions().map { it.map { dto -> dto.toDomain() }.also { _cachedQuestions = it } }
 
-    override fun getQuestionById(questionId: Long): Flow<Response<Question>> = getAllQuestions().map {
-        when (it) {
-            is Response.Error -> Response.Error(it.error)
-            is Response.Loading -> Response.Loading
-            is Response.Success -> {
-                val question = it.data.find { it.id == questionId }
-                if (question == null) Response.Error(resourceProvider.getString(R.string.error_not_found_question))
-                else Response.Success(question)
-            }
+    override fun getQuestionById(questionId: Long): Flow<Response<Question>> =
+        getAllQuestions().map { response ->
+        when (response) {
+            is Response.Success -> response.data.find { it.id == questionId }
+                ?.let { Response.Success(it) }
+                ?: Response.Error(resourceProvider.getString(R.string.error_not_found_question))
+            is Response.Error -> response
+            is Response.Loading -> response
         }
     }
 
@@ -115,12 +97,9 @@ class QuizModeRepositoryImpl @Inject constructor(
         return firestoreApi.deleteQuizQuestion(questionId)
     }
 
-
     override suspend fun bindQuestionWithCategory(questionId: Long, categoryId: Long) {
-        val question = _cachedQuestions?.find { it.id == questionId }
-        val category = _cachedCategories?.find { it.id == categoryId }
-
-        if (question == null || category == null) return
+        val question = _cachedQuestions?.find { it.id == questionId } ?: return
+        val category = _cachedCategories?.find { it.id == categoryId } ?: return
 
         if(!question.linkedCategories.contains(categoryId)) question.linkedCategories.add(categoryId)
         if(!category.linkedQuestions.contains(questionId)) category.linkedQuestions.add(questionId)
@@ -130,20 +109,17 @@ class QuizModeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unbindQuestionWithCategory(questionId: Long, categoryId: Long) {
-        val question = _cachedQuestions?.find { it.id == questionId }
-        val category = _cachedCategories?.find { it.id == categoryId }
-        if (question == null || category == null) return
+        val question = _cachedQuestions?.find { it.id == questionId } ?: return
+        val category = _cachedCategories?.find { it.id == categoryId } ?: return
 
-        question.linkedCategories.remove(categoryId)
-        category.linkedQuestions.remove(questionId)
-
-        updateCategory(category)
-        updateQuestion(question)
+        if(question.linkedCategories.remove(categoryId) && category.linkedQuestions.remove(questionId)){
+            updateCategory(category)
+            updateQuestion(question)
+        }
     }
 
     private suspend fun unbindAllQuestions(categoryId: Long){
-        val category = _cachedCategories?.find { it.id == categoryId } ?: return
-        category.linkedQuestions.forEach { questionId ->
+        _cachedCategories?.find { it.id == categoryId }?.linkedQuestions?.forEach { questionId ->
             _cachedQuestions?.find { it.id == questionId }?.let {
                 it.linkedCategories.remove(categoryId)
                 updateQuestion(it)
@@ -152,8 +128,7 @@ class QuizModeRepositoryImpl @Inject constructor(
     }
 
     private suspend fun unbindAllCategories(questionId: Long){
-        val question = _cachedQuestions?.find { it.id == questionId } ?: return
-        question.linkedCategories.forEach { categoryId ->
+        _cachedQuestions?.find { it.id == questionId }?.linkedCategories?.forEach { categoryId ->
             _cachedCategories?.find { it.id == categoryId }?.let {
                 it.linkedQuestions.remove(questionId)
                 updateCategory(it)
