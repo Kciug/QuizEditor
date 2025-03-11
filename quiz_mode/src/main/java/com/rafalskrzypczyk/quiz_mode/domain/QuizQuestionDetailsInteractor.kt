@@ -16,47 +16,42 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     private var cachedQuestion: Question? = null
     private var parentCategoryId: Long? = null
 
-    fun getQuestion(questionId: Long): Flow<Response<Question>> = repository.getQuestionById(questionId).map {
-        when (it) {
-            is Response.Success -> {
-                cachedQuestion = it.data
-                Response.Success(cachedQuestion!!)
+    fun getQuestion(questionId: Long): Flow<Response<Question>> =
+        repository.getQuestionById(questionId).map {
+            when (it) {
+                is Response.Success -> {
+                    cachedQuestion = it.data
+                    Response.Success(it.data)
+                }
+                is Response.Error -> it
+                is Response.Loading -> it
             }
-            is Response.Error -> Response.Error(it.error)
-            is Response.Loading -> Response.Loading
         }
-    }
 
-    fun getUpdatedQuestion(): Flow<Question?> = repository.getUpdatedQuestions().map {
-        it.find { it.id == cachedQuestion?.id }?.let { cachedQuestion = it }
-        cachedQuestion
-    }
+    fun getUpdatedQuestion(): Flow<Question?> =
+        repository.getUpdatedQuestions().map { categories ->
+            categories.find { it.id == cachedQuestion?.id }?.also { cachedQuestion = it }
+        }
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
         val newQuestion = Question.new(questionText)
-        val response = repository.addQuestion(newQuestion)
-        return when (response) {
+        return when (val response = repository.addQuestion(newQuestion)) {
             is Response.Success -> {
                 cachedQuestion = newQuestion
+                bindWithParentCategory()
                 Response.Success(newQuestion)
             }
-
-            is Response.Error -> {
-                Response.Error(response.error)
-            }
-
-            is Response.Loading -> {
-                Response.Loading
-            }
+            is Response.Error -> response
+            is Response.Loading -> response
         }
     }
 
     fun bindWithParentCategory() {
-        if(cachedQuestion == null || parentCategoryId == null) return
-        dataUpdateManager.bindQuestionWithCategory(
-            questionId = cachedQuestion?.id ?: -1,
-            categoryId = parentCategoryId ?: -1
-        )
+        cachedQuestion?.let { question ->
+            parentCategoryId?.let { categoryId ->
+                dataUpdateManager.bindQuestionWithCategory(question.id, categoryId)
+            }
+        }
     }
 
     fun setParentCategoryId(categoryId: Long) {
@@ -72,25 +67,26 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     fun updateAnswer(answerId: Long, answerText: String, answerIsCorrect: Boolean) {
-        cachedQuestion?.answers?.find { it.id == answerId }
-            ?.let { it.answerText = answerText; it.isCorrect = answerIsCorrect }
+        cachedQuestion?.answers?.find { it.id == answerId }?.apply {
+            this.answerText = answerText; this.isCorrect = answerIsCorrect
+        }
     }
 
     fun removeAnswer(answerId: Long) {
-        val answerToRemove = cachedQuestion?.answers?.find { it.id == answerId } ?: return
-        cachedQuestion?.answers?.remove(answerToRemove)
+        cachedQuestion?.answers?.removeIf { it.id == answerId }
     }
 
-    fun getLinkedCategories(): Flow<Response<List<Category>>> {
-        return repository.getAllCategories()
-            .map {
-                when (it) {
-                    is Response.Success -> Response.Success(it.data.filter { cachedQuestion?.linkedCategories?.contains(it.id) == true })
-                    is Response.Error -> Response.Error(it.error)
-                    is Response.Loading -> Response.Loading
-                }
+    fun getLinkedCategories(): Flow<Response<List<Category>>> =
+        repository.getAllCategories().map {
+            when (it) {
+                is Response.Success -> Response.Success(it.data.filter {
+                    cachedQuestion?.linkedCategories?.contains(it.id) == true
+                })
+                is Response.Error -> it
+                is Response.Loading -> it
             }
-    }
+        }
+
 
     fun answerCount() = cachedQuestion?.answers?.count() ?: 0
 
@@ -105,29 +101,35 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     override fun getItemList(): Flow<Response<List<Checkable>>> {
         return repository.getAllCategories().map {
             when (it) {
-                is Response.Success -> Response.Success(it.data.map { Checkable(
-                    id = it.id,
-                    title = it.title,
-                    isChecked = cachedQuestion?.linkedCategories?.contains(it.id) == true,
-                    isLocked = parentCategoryId?.equals(it.id) == true,
-                ) })
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
+                is Response.Success -> Response.Success(it.data.map {
+                    Checkable(
+                        id = it.id,
+                        title = it.title,
+                        isChecked = cachedQuestion?.linkedCategories?.contains(it.id) == true,
+                        isLocked = parentCategoryId?.equals(it.id) == true,
+                    )
+                })
+                is Response.Error -> it
+                is Response.Loading -> it
             }
         }
     }
 
     override fun onItemSelected(selectedItem: Checkable) {
-        dataUpdateManager.bindQuestionWithCategory(
-            questionId = cachedQuestion?.id ?: -1,
-            categoryId = selectedItem.id
-        )
+        cachedQuestion?.id?.let { questionId ->
+            dataUpdateManager.bindQuestionWithCategory(
+                questionId = questionId,
+                categoryId = selectedItem.id
+            )
+        }
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        dataUpdateManager.unbindQuestionWithCategory(
-            questionId = cachedQuestion?.id ?: -1,
-            categoryId = deselectedItem.id
-        )
+        cachedQuestion?.id?.let { questionId ->
+            dataUpdateManager.unbindQuestionWithCategory(
+                questionId = questionId,
+                categoryId = deselectedItem.id
+            )
+        }
     }
 }

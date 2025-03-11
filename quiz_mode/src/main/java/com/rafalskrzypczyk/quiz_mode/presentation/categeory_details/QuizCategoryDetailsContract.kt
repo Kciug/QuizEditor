@@ -3,7 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.base.BaseContract
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 
 interface QuizCategoryDetailsContract {

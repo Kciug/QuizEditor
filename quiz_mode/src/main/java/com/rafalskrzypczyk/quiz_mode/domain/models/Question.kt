@@ -21,7 +21,7 @@ data class Question(
                 text = text,
                 answers = mutableListOf(),
                 creationDate = Date(),
-                createdBy = "Kurwa Chuj",
+                createdBy = "Random User",
                 linkedCategories = mutableListOf(),
                 dateModified = Date().toString()
             )

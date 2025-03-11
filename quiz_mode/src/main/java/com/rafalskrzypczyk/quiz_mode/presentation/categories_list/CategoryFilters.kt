@@ -3,7 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 import androidx.annotation.StringRes
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import kotlin.hashCode
 
 sealed class CategoryFilters(@StringRes val title: Int) {

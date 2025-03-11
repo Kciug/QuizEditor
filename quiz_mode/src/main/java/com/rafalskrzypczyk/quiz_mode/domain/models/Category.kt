@@ -5,9 +5,6 @@ import com.rafalskrzypczyk.core.base.Identifiable
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
-import com.rafalskrzypczyk.quiz_mode.domain.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.domain.toCategoryStatus
-import com.rafalskrzypczyk.quiz_mode.domain.toTitleString
 import java.util.Date
 
 data class Category(
@@ -44,11 +41,7 @@ fun CategoryDTO.toDomain() = Category(
     description = subtitle ?: "",
     linkedQuestions = questionIDs.toMutableList(),
     status = status.toCategoryStatus(),
-    color = Color.argb(
-        (color?.opacity?.times(255)?.toInt() ?: 0),
-        (color?.red?.times(255)?.toInt() ?: 0),
-        (color?.green?.times(255)?.toInt() ?: 0),
-        (color?.blue?.times(255)?.toInt() ?: 0)),
+    color = color?.toAndroidColor() ?: Color.WHITE,
     creationDate = dateCreated,
     createdBy = "Random User",
     modifiedDate = dateModified,
@@ -61,15 +54,28 @@ fun Category.toDTO() = CategoryDTO(
     subtitle = description,
     questionIDs = linkedQuestions,
     status = status.toTitleString(),
-    color = CategoryColorRGB(
-        opacity = Color.alpha(color) / 255f,
-        red = Color.red(color) / 255f,
-        green = Color.green(color) / 255f,
-        blue = Color.blue(color) / 255f
-    ),
+    color = color.toCategoryColorRGB(),
     dateCreated = creationDate,
     questionCount = linkedQuestions.count(),
     dateModified = Date().toString(),
     productionTransferDate = productionTransferDate
 )
+
+private fun CategoryColorRGB.toAndroidColor(): Int {
+    return Color.argb(
+        opacity.times(255).toInt(),
+        red.times(255).toInt(),
+        green.times(255).toInt(),
+        blue.times(255).toInt()
+    )
+}
+
+private fun Int.toCategoryColorRGB(): CategoryColorRGB {
+    return CategoryColorRGB(
+        opacity = Color.alpha(this) / 255f,
+        red = Color.red(this) / 255f,
+        green = Color.green(this) / 255f,
+        blue = Color.blue(this) / 255f
+    )
+}
 

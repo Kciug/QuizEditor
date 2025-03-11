@@ -13,32 +13,29 @@ class DataUpdateManager @Inject constructor(
     private val repository: QuizModeRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + dispatcher)
+    private val backgroundUpdateScope = CoroutineScope(SupervisorJob() + dispatcher)
 
     fun updateCategory(category: Category) {
-        scope.launch {
+        backgroundUpdateScope.launch {
             repository.updateCategory(category)
         }
     }
 
     fun updateQuestion(question: Question) {
-        scope.launch {
+        backgroundUpdateScope.launch {
             repository.updateQuestion(question)
         }
     }
 
-    fun bindQuestionWithCategory(questionId: Long, categoryId: Long, onScope: CoroutineScope? = null) {
-        val bindScope = onScope ?: scope
-        bindScope.launch {
+    fun bindQuestionWithCategory(questionId: Long, categoryId: Long) {
+        backgroundUpdateScope.launch {
             repository.bindQuestionWithCategory(questionId, categoryId)
         }
     }
 
     fun unbindQuestionWithCategory(questionId: Long, categoryId: Long) {
-        scope.launch {
+        backgroundUpdateScope.launch {
             repository.unbindQuestionWithCategory(questionId, categoryId)
         }
     }
-
-    fun getCoroutineContext() = scope.coroutineContext
 }

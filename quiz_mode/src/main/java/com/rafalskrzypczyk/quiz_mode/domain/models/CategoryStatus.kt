@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.domain
+package com.rafalskrzypczyk.quiz_mode.domain.models
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes

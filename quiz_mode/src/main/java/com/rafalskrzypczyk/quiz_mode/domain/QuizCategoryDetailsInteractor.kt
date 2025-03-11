@@ -4,6 +4,7 @@ import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import kotlinx.coroutines.flow.Flow
@@ -15,112 +16,107 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val dataUpdateManager: DataUpdateManager
 ) : CheckablePickerInteractor {
-    private var cachedCategory: Category? = null
+    private var categoryReference: Category? = null
 
-    fun getCategory(categoryId: Long): Flow<Response<Category>> = repository.getCategoryById(categoryId).map{
-        when (it) {
-            is Response.Success -> {
-                cachedCategory = it.data
-                Response.Success(cachedCategory!!)
+    fun getCategory(categoryId: Long): Flow<Response<Category>> =
+        repository.getCategoryById(categoryId).map {
+            when (it) {
+                is Response.Success -> {
+                    categoryReference = it.data
+                    Response.Success(it.data)
+                }
+                is Response.Error -> it
+                is Response.Loading -> it
             }
-            is Response.Error -> Response.Error(it.error)
-            is Response.Loading -> Response.Loading
         }
-    }
 
-    fun getUpdatedCategory(): Flow<Category?> = repository.getUpdatedCategories().map {
-        it.find { it.id == cachedCategory?.id }?.let { cachedCategory = it }
-        cachedCategory
-    }
+    fun getUpdatedCategory(): Flow<Category?> =
+        repository.getUpdatedCategories().map { categories ->
+            categories.find { it.id == categoryReference?.id }?.also { categoryReference = it }
+        }
 
     suspend fun instantiateNewCategory(categoryTitle: String): Response<Category> {
-        val newCategory =
-            Category.new(categoryTitle, resourceProvider.getColor(R.color.colorable_default_color))
-        val response = repository.addCategory(newCategory)
-        return when (response) {
+        val newCategory = Category.new(categoryTitle, resourceProvider.getColor(R.color.colorable_default_color))
+        return when (val response = repository.addCategory(newCategory)) {
             is Response.Success -> {
-                cachedCategory = newCategory
+                categoryReference = newCategory
                 Response.Success(newCategory)
             }
-
-            is Response.Error -> {
-                Response.Error(response.error)
-            }
-
-            is Response.Loading -> {
-                Response.Loading
-            }
+            is Response.Error -> response
+            is Response.Loading -> response
         }
     }
 
     fun updateCategoryTitle(title: String) {
-        cachedCategory?.title = title
+        categoryReference?.title = title
     }
 
     fun updateCategoryDescription(description: String) {
-        cachedCategory?.description = description
+        categoryReference?.description = description
     }
 
     fun updateColor(color: Int) {
-        cachedCategory?.color = color
+        categoryReference?.color = color
     }
 
     fun updateStatus(status: CategoryStatus) {
-        cachedCategory?.status = status
+        categoryReference?.status = status
     }
 
-    fun getLinkedQuestions(): Flow<Response<List<Question>>> {
-        return repository.getAllQuestions()
-            .map {
-                when (it) {
-                    is Response.Success -> Response.Success(it.data.filter {
-                        cachedCategory?.linkedQuestions?.contains(it.id) == true
-                    })
-
-                    is Response.Error -> Response.Error(it.error)
-                    is Response.Loading -> Response.Loading
-                }
-            }
-    }
-
-    fun getLinkedQuestionsAmount(): Int = cachedCategory?.linkedQuestions?.count() ?: 0
-
-    fun saveCachedCategory() {
-        cachedCategory?.let { dataUpdateManager.updateCategory(cachedCategory!!) }
-    }
-
-    fun getCategoryId(): Long = cachedCategory?.id ?: -1
-
-    fun getCategoryColor(): Int = cachedCategory?.color ?: 0
-
-    fun getCategoryStatus(): CategoryStatus = cachedCategory?.status ?: CategoryStatus.DRAFT
-
-    override fun getItemList(): Flow<Response<List<Checkable>>> {
-        return repository.getAllQuestions().map {
+    fun getLinkedQuestions(): Flow<Response<List<Question>>> =
+        repository.getAllQuestions().map {
             when (it) {
-                is Response.Success -> Response.Success(it.data.map { Checkable(
-                    id = it.id,
-                    title = it.text,
-                    isChecked = cachedCategory?.linkedQuestions?.contains(it.id) == true,
-                    isLocked = false,
-                ) })
+                is Response.Success -> Response.Success(it.data.filter {
+                    categoryReference?.linkedQuestions?.contains(it.id) == true
+                })
                 is Response.Error -> Response.Error(it.error)
                 is Response.Loading -> Response.Loading
             }
         }
+
+    fun getLinkedQuestionsAmount(): Int = categoryReference?.linkedQuestions?.count() ?: 0
+
+    fun saveCachedCategory() {
+        categoryReference?.let { dataUpdateManager.updateCategory(categoryReference!!) }
     }
 
+    fun getCategoryId(): Long = categoryReference?.id ?: -1
+
+    fun getCategoryColor(): Int = categoryReference?.color ?: 0
+
+    fun getCategoryStatus(): CategoryStatus = categoryReference?.status ?: CategoryStatus.DRAFT
+
+    override fun getItemList(): Flow<Response<List<Checkable>>> =
+        repository.getAllQuestions().map {
+            when (it) {
+                is Response.Success -> Response.Success(it.data.map {
+                    Checkable(
+                        id = it.id,
+                        title = it.text,
+                        isChecked = categoryReference?.linkedQuestions?.contains(it.id) == true,
+                        isLocked = false,
+                    )
+                })
+                is Response.Error -> it
+                is Response.Loading -> it
+            }
+        }
+
     override fun onItemSelected(selectedItem: Checkable) {
-        dataUpdateManager.bindQuestionWithCategory(
-            questionId = selectedItem.id,
-            categoryId = cachedCategory?.id ?: -1
-        )
+        categoryReference?.id?.let { categoryId ->
+            dataUpdateManager.bindQuestionWithCategory(
+                questionId = selectedItem.id,
+                categoryId = categoryId
+            )
+        }
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        dataUpdateManager.unbindQuestionWithCategory(
-            questionId = deselectedItem.id,
-            categoryId = cachedCategory?.id ?: -1
-        )
+        categoryReference?.id?.let { categoryId ->
+            dataUpdateManager.unbindQuestionWithCategory(
+                questionId = deselectedItem.id,
+                categoryId = categoryId
+            )
+        }
     }
 }
