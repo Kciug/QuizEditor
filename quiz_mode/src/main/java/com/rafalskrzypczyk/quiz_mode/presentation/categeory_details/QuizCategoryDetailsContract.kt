@@ -19,6 +19,7 @@ interface QuizCategoryDetailsContract {
         fun displayColorPicker(currentColor: Int)
         fun displayQuestionsPicker()
         fun displayNewQuestionSheet(parentCategoryId: Long)
+        fun displayQuestionListLoading()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)

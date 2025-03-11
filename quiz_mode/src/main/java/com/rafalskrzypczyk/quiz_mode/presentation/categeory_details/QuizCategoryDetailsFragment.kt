@@ -212,10 +212,13 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
         newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionFromCategoryBS")
     }
 
-    override fun showLoading() {
+    override fun displayQuestionListLoading() {
     }
 
-    override fun showError(message: String) {
+    override fun displayLoading() {
+    }
+
+    override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
     }
 }

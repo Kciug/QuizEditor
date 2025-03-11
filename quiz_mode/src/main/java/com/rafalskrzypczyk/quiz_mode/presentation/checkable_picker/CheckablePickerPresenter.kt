@@ -40,8 +40,8 @@ class CheckablePickerPresenter @Inject constructor (
             }.collectLatest {
                 when (it) {
                     is Response.Success -> view.displayData(it.data)
-                    is Response.Error -> view.showError(it.error)
-                    is Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
         }

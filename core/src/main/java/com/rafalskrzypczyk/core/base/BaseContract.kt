@@ -2,8 +2,8 @@ package com.rafalskrzypczyk.core.base
 
 interface BaseContract {
     interface View {
-        fun showLoading()
-        fun showError(message: String)
+        fun displayLoading()
+        fun displayError(message: String)
     }
 
     interface Presenter<V : View> {

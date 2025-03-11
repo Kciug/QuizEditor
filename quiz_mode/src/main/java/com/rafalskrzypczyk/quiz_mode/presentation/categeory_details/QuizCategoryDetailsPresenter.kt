@@ -1,7 +1,6 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 
 import android.os.Bundle
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
@@ -15,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +25,11 @@ class QuizCategoryDetailsPresenter @Inject constructor(
 
     private var isDataLoaded = false
 
+    override fun onAttach(view: QuizCategoryDetailsContract.View) {
+        super.onAttach(view)
+        attachChangeListener()
+    }
+
     override fun getData(bundle: Bundle?) {
         val categoryId = bundle?.getLong("categoryId")
 
@@ -36,16 +39,13 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         }
 
         presenterScope.launch {
-            combine(
-                interactor.getCategory(categoryId),
-                interactor.getUpdatedCategory()
-            ) { categoryResponse, updatedCategory ->
-                when (categoryResponse) {
-                    is Response.Success -> Response.Success(updatedCategory)
-                    is Response.Error -> categoryResponse
-                    is Response.Loading -> categoryResponse
+            interactor.getCategory(categoryId).collectLatest {
+                when (it) {
+                    is Response.Success -> displayCategoryData(it)
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayLoading()
                 }
-            }.collectLatest { displayCategoryData(it) }
+            }
         }
     }
 
@@ -57,16 +57,26 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             }
 
             is Response.Error -> {
-                view.showError(response.error)
+                view.displayError(response.error)
             }
 
             is Response.Loading -> {
-                view.showLoading()
+                view.displayLoading()
+            }
+        }
+    }
+
+    private fun attachChangeListener(){
+        presenterScope.launch {
+            interactor.getUpdatedCategory().collectLatest {
+                it?.let { updateUI(it) }
             }
         }
     }
 
     private fun updateUI(category: Category) {
+        if(!isDataLoaded) return
+
         view.setupView()
         view.displayCategoryDetails(category.title, category.description)
         view.displayCategoryColor(category.color)
@@ -122,8 +132,8 @@ class QuizCategoryDetailsPresenter @Inject constructor(
                         view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
                     }
 
-                    is Response.Error -> view.showError(it.error)
-                    is Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayQuestionListLoading()
                 }
             }
         }
@@ -134,7 +144,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun onNewQuestion() {
-        Log.d("KURWA", "QuizCategoryDetailsPresenter:onNewQuestion: categoryId: ${interactor.getCategoryId()}")
         view.displayNewQuestionSheet(interactor.getCategoryId())
     }
 

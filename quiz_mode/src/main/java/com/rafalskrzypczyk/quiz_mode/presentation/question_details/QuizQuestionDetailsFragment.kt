@@ -167,10 +167,13 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         linkedCategoriesPicker.show(parentFragmentManager, "CategoriesPickerBS")
     }
 
-    override fun showLoading() {
+    override fun displayCategoriesListLoading() {
     }
 
-    override fun showError(message: String) {
+    override fun displayLoading() {
+    }
+
+    override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
     }
 }

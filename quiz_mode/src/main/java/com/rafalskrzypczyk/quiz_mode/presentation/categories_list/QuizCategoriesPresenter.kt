@@ -85,8 +85,8 @@ class QuizCategoriesPresenter @Inject constructor(
             }.collectLatest { filteredResponse ->
                 when (filteredResponse) {
                     is Response.Success -> view.displayCategories(filteredResponse.data)
-                    is Response.Error -> view.showError(filteredResponse.error)
-                    is Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(filteredResponse.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
         }
@@ -95,7 +95,7 @@ class QuizCategoriesPresenter @Inject constructor(
     override fun removeCategory(category: Category) {
         presenterScope.launch {
             val response = repository.deleteCategory(category.id)
-            if (response is Response.Error) view.showError(response.error)
+            if (response is Response.Error) view.displayError(response.error)
         }
     }
 

@@ -110,8 +110,8 @@ class QuizQuestionsPresenter @Inject constructor(
                         Log.d("Questions", filteredResponse.data.toString())
                         view.displayQuestions(filteredResponse.data)
                     }
-                    is Response.Error -> view.showError(filteredResponse.error)
-                    is Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(filteredResponse.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
         }
@@ -120,7 +120,7 @@ class QuizQuestionsPresenter @Inject constructor(
     override fun removeQuestion(question: QuestionUIModel) {
         presenterScope.launch {
             val response = repository.deleteQuestion(question.id)
-            if (response is Response.Error) view.showError(response.error)
+            if (response is Response.Error) view.displayError(response.error)
         }
     }
 

@@ -52,7 +52,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     fun bindWithParentCategory() {
-        if(parentCategoryId == null) return
+        if(cachedQuestion == null || parentCategoryId == null) return
         dataUpdateManager.bindQuestionWithCategory(
             questionId = cachedQuestion?.id ?: -1,
             categoryId = parentCategoryId ?: -1

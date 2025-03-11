@@ -16,6 +16,7 @@ interface QuizQuestionDetailsContract {
         fun setupView()
         fun setupNewElementView()
         fun displayCategoryPicker()
+        fun displayCategoriesListLoading()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)

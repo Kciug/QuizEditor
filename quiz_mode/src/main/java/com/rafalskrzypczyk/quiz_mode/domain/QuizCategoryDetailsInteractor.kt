@@ -28,9 +28,9 @@ class QuizCategoryDetailsInteractor @Inject constructor(
         }
     }
 
-    fun getUpdatedCategory(): Flow<Category> = repository.getUpdatedCategories().map {
+    fun getUpdatedCategory(): Flow<Category?> = repository.getUpdatedCategories().map {
         it.find { it.id == cachedCategory?.id }?.let { cachedCategory = it }
-        cachedCategory!!
+        cachedCategory
     }
 
     suspend fun instantiateNewCategory(categoryTitle: String): Response<Category> {
@@ -74,7 +74,8 @@ class QuizCategoryDetailsInteractor @Inject constructor(
             .map {
                 when (it) {
                     is Response.Success -> Response.Success(it.data.filter {
-                        cachedCategory?.linkedQuestions?.contains(it.id) == true })
+                        cachedCategory?.linkedQuestions?.contains(it.id) == true
+                    })
 
                     is Response.Error -> Response.Error(it.error)
                     is Response.Loading -> Response.Loading

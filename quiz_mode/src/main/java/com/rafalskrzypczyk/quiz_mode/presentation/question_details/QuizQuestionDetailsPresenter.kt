@@ -61,8 +61,8 @@ class QuizQuestionDetailsPresenter @Inject constructor(
                 isQuestionLoaded = true
                 updateUI(response.data)
             }
-            is Response.Error -> view.showError(response.error)
-            is Response.Loading -> view.showLoading()
+            is Response.Error -> view.displayError(response.error)
+            is Response.Loading -> view.displayLoading()
         }
     }
 
@@ -123,8 +123,8 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             interactor.getLinkedCategories().collectLatest {
                 when (it) {
                     is Response.Success -> view.displayLinkedCategories(it.data.map { it.toSimplePresentation() })
-                    is Response.Error -> view.showError(it.error)
-                    is Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
         }

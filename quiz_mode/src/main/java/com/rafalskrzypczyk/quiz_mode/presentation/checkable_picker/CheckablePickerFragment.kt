@@ -59,10 +59,10 @@ class CheckablePickerFragment (
         adapter.updateData(items)
     }
 
-    override fun showLoading() {
+    override fun displayLoading() {
     }
 
-    override fun showError(message: String) {
+    override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
     }
 }

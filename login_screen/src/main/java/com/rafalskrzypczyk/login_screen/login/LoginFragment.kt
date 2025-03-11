@@ -49,12 +49,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         super.onDestroyView()
     }
 
-    override fun showLoading() {
+    override fun displayLoading() {
         val toast = Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT)
         toast.show()
     }
 
-    override fun showError(message: String) {
+    override fun displayError(message: String) {
         val errorDialog = ErrorDialog(requireContext(), message)
         errorDialog.show()
     }

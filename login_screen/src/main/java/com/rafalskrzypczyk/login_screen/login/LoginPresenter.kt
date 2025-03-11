@@ -23,8 +23,8 @@ class LoginPresenter @Inject constructor(
         presenterScope.launch{
             authRepository.loginWithEmailAndPassword(email, password).collect{
                 when(it){
-                    is Response.Error -> view.showError(it.error)
-                    Response.Loading -> view.showLoading()
+                    is Response.Error -> view.displayError(it.error)
+                    Response.Loading -> view.displayLoading()
                     is Response.Success -> successLoginHandler.onSuccessLogin()
                 }
             }
