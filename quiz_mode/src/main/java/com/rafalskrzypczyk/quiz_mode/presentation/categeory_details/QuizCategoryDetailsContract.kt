@@ -20,6 +20,7 @@ interface QuizCategoryDetailsContract {
         fun displayQuestionsPicker()
         fun displayNewQuestionSheet(parentCategoryId: Long)
         fun displayQuestionListLoading()
+        fun displayToastMessage(message: String)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)

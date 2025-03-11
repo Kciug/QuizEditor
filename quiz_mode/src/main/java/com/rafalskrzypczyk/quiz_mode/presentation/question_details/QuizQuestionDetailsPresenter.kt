@@ -5,6 +5,8 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
+import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
@@ -20,6 +22,7 @@ import kotlin.collections.map
 
 class QuizQuestionDetailsPresenter @Inject constructor(
     private val interactor: QuizQuestionDetailsInteractor,
+    private val resourceProvider: ResourceProvider,
     @MainDispatcher dispatcher: CoroutineDispatcher
 ) : BasePresenter<QuizQuestionDetailsContract.View>(), QuizQuestionDetailsContract.Presenter {
     private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
@@ -34,18 +37,12 @@ class QuizQuestionDetailsPresenter @Inject constructor(
         val questionId = bundle?.getLong("questionId")
         if (questionId == null || questionId == 0.toLong()) {
             view.setupNewElementView()
-            val parentCategoryId = bundle?.getLong("parentCategoryId")
-            if(parentCategoryId != null) interactor.setParentCategoryId(parentCategoryId)
+            bundle?.getLong("parentCategoryId")?.let { interactor.setParentCategoryId(it) }
             return
         }
 
         presenterScope.launch{
-            interactor.getQuestion(questionId).collectLatest {
-                when (it) {
-                    is Response.Success -> { displayQuestion(it) }
-                    else -> it
-                }
-            }
+            interactor.getQuestion(questionId).collectLatest { handleQuestionResponse(it) }
         }
     }
 
@@ -55,7 +52,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    private fun displayQuestion(response: Response<Question>) {
+    private fun handleQuestionResponse(response: Response<Question>) {
         when (response) {
             is Response.Success -> {
                 isQuestionLoaded = true
@@ -69,52 +66,56 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     private fun updateUI(question: Question) {
         if(!isQuestionLoaded) return
 
-        view.setupView()
-        view.displayQuestionText(question.text)
-        view.displayAnswersDetails(
-            question.answers.count(),
-            question.answers.count { it.isCorrect })
-        displayAnswersList()
-        view.displayCreatedOn(String.formatDate(question.creationDate), question.createdBy)
+        with(view){
+            setupView()
+            displayQuestionText(question.text)
+            displayAnswersDetails(question.answers.count(), question.answers.count { it.isCorrect })
+            displayAnswersList(question.answers.map { it.toSimplePresentation() })
+            displayCreatedOn(String.formatDate(question.creationDate), question.createdBy)
+        }
         updateLinkedCategories()
     }
 
     override fun saveNewQuestion(questionText: String) {
         presenterScope.launch {
-            displayQuestion(interactor.instantiateNewQuestion(questionText))
-            interactor.bindWithParentCategory()
+            handleQuestionResponse(interactor.instantiateNewQuestion(questionText))
         }
     }
 
-    override fun updateQuestionText(questionText: String) = interactor.updateQuestionText(questionText)
-
-    override fun onQuestionTextSubmitted(questionText: String) {
-        if (questionText.isEmpty()) return
+    override fun updateQuestionText(questionText: String) {
+        if (questionText.isEmpty()) {
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_question_text))
+            return
+        }
         if (isQuestionLoaded) interactor.updateQuestionText(questionText)
         else saveNewQuestion(questionText)
     }
 
     override fun addAnswer(answerText: String) {
-        if (answerText.isEmpty()) return
+        if (answerText.isEmpty()) {
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_answer_text))
+            return
+        }
         interactor.addAnswer(answerText)
-        view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
-        displayAnswersList()
+        displayAnswers()
     }
 
     override fun updateAnswer(answer: AnswerUIModel) {
-        if(answer.answerText.isEmpty()) return
+        if (answer.answerText.isEmpty()) {
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_answer_text))
+            return
+        }
         interactor.updateAnswer(answer.id, answer.answerText, answer.isCorrect)
-        view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
-        displayAnswersList()
+        displayAnswers()
     }
 
     override fun removeAnswer(answer: AnswerUIModel) {
         interactor.removeAnswer(answer.id)
-        view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
-        displayAnswersList()
+        displayAnswers()
     }
 
-    private fun displayAnswersList() {
+    private fun displayAnswers() {
+        view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
         view.displayAnswersList(interactor.getAnswers().map { it.toSimplePresentation() })
     }
 

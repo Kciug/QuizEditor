@@ -3,11 +3,11 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
@@ -17,8 +17,8 @@ import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
@@ -35,7 +35,6 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
     lateinit var parentInteractor: QuizCategoryDetailsInteractor
 
     private lateinit var adapter: QuestionsSimpleAdapter
-
     private lateinit var keyboardController: KeyboardController
 
     override fun onAttach(context: Context) {
@@ -53,28 +52,15 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
     override fun onViewBound() {
         super.onViewBound()
 
-        binding.sectionNavbar.buttonClose.setOnClickListener {
-            dismiss()
-        }
-
-        binding.sectionNavbar.buttonSave.setOnClickListener {
-            presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
-        }
-
-        binding.sectionCategoryDetails.buttonChangeColor.setOnClickListener {
-            presenter.onChangeColor()
-        }
-
-        binding.sectionCategoryDetails.buttonChangeStatus.setOnClickListener {
-            presenter.onChangeCategoryStatus()
-        }
-
-        binding.sectionQuestionsList.buttonNewQuestion.setOnClickListener {
-            presenter.onNewQuestion()
-        }
-
-        binding.sectionQuestionsList.buttonAddFromDb.setOnClickListener {
-            presenter.onQuestionFromList()
+        with(binding){
+            sectionNavbar.buttonClose.setOnClickListener { dismiss() }
+            sectionNavbar.buttonSave.setOnClickListener {
+                presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
+            }
+            sectionCategoryDetails.buttonChangeColor.setOnClickListener { presenter.onChangeColor() }
+            sectionCategoryDetails.buttonChangeStatus.setOnClickListener { presenter.onChangeCategoryStatus() }
+            sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
+            sectionQuestionsList.buttonAddFromDb.setOnClickListener { presenter.onQuestionFromList() }
         }
     }
 
@@ -84,75 +70,76 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
     }
 
     override fun setupView() {
-        binding.groupEditionFields.visibility = View.VISIBLE
-        binding.sectionCategoryDetails.groupDetailsEditionFields.visibility = View.VISIBLE
-        binding.sectionNavbar.buttonSave.visibility = View.GONE
-
         adapter = QuestionsSimpleAdapter()
-        binding.sectionQuestionsList.questionsRecyclerView.adapter = adapter
 
-        val categoryTitle = binding.sectionCategoryDetails.categoryNameField
-        val categoryDescription = binding.sectionCategoryDetails.categoryDescriptionField
+        with(binding){
+            groupEditionFields.visibility = View.VISIBLE
+            sectionCategoryDetails.groupDetailsEditionFields.visibility = View.VISIBLE
+            sectionNavbar.buttonSave.visibility = View.GONE
 
-        categoryTitle.imeOptions = EditorInfo.IME_ACTION_NEXT
-        categoryTitle.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        categoryTitle.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                categoryDescription.requestFocus()
-                true
-            } else false
-        }
+            sectionQuestionsList.questionsRecyclerView.adapter = adapter
 
-        categoryDescription.imeOptions = EditorInfo.IME_ACTION_DONE
-        categoryDescription.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        categoryDescription.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                keyboardController.hideKeyboard(categoryDescription)
-                true
-            } else false
-        }
+            with(sectionCategoryDetails){
+                categoryNameField.imeOptions = EditorInfo.IME_ACTION_NEXT
+                categoryNameField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryNameField.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        categoryDescriptionField.requestFocus()
+                        true
+                    } else false
+                }
 
-        categoryTitle.addTextChangedListener(
-            afterTextChanged = {
-                presenter.updateCategoryTitle(categoryTitle.text.toString())
+                categoryDescriptionField.imeOptions = EditorInfo.IME_ACTION_DONE
+                categoryDescriptionField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryDescriptionField.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        keyboardController.hideKeyboard(categoryDescriptionField)
+                        true
+                    } else false
+                }
+
+                categoryNameField.addTextChangedListener(
+                    afterTextChanged = {
+                        presenter.updateCategoryTitle(it.toString())
+                    }
+                )
+                categoryDescriptionField.addTextChangedListener(
+                    afterTextChanged = {
+                        presenter.updateCategoryDescription(it.toString())
+                    }
+                )
+
+                if (categoryNameField.hasFocus()) categoryNameField.clearFocus()
             }
-        )
-        categoryDescription.addTextChangedListener(
-            afterTextChanged = {
-                presenter.updateCategoryDescription(categoryDescription.text.toString())
-            }
-        )
-
-        if(binding.sectionCategoryDetails.categoryNameField.hasFocus())
-            binding.sectionCategoryDetails.categoryNameField.clearFocus()
+        }
     }
 
     override fun setupNewElementView() {
-        binding.groupEditionFields.visibility = View.GONE
-        binding.sectionCategoryDetails.groupDetailsEditionFields.visibility = View.GONE
-        binding.sectionNavbar.buttonSave.visibility = View.VISIBLE
+        with(binding){
+            groupEditionFields.visibility = View.GONE
+            sectionCategoryDetails.groupDetailsEditionFields.visibility = View.GONE
+            sectionNavbar.buttonSave.visibility = View.VISIBLE
 
-        val categoryTitle = binding.sectionCategoryDetails.categoryNameField
-        categoryTitle.imeOptions = EditorInfo.IME_ACTION_DONE
-        categoryTitle.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        categoryTitle.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
-                keyboardController.hideKeyboard(categoryTitle)
-                true
-            } else false
+            with(sectionCategoryDetails){
+                categoryNameField.imeOptions = EditorInfo.IME_ACTION_DONE
+                categoryNameField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryNameField.setOnEditorActionListener { tv, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        presenter.createNewCategory(tv.text.toString())
+                        keyboardController.hideKeyboard(tv)
+                        true
+                    } else false
+                }
+                keyboardController.showKeyboardWithDelay(categoryNameField)
+            }
         }
-
-        keyboardController.showKeyboardWithDelay(binding.sectionCategoryDetails.categoryNameField)
     }
 
-    override fun displayCategoryDetails(
-        categoryTitle: String,
-        categoryDescription: String
-    ) {
-        val detailsSection = binding.sectionCategoryDetails
-        detailsSection.categoryNameField.setText(categoryTitle)
-        detailsSection.categoryDescriptionField.setText(categoryDescription)
+    override fun displayCategoryDetails(categoryTitle: String, categoryDescription: String) {
+        with(binding.sectionCategoryDetails) {
+            categoryNameField.setText(categoryTitle)
+            categoryDescriptionField.setText(categoryDescription)
+        }
     }
 
     override fun displayCategoryColor(color: Int) {
@@ -181,11 +168,9 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
         }
 
         statusPopupMenu.setOnMenuItemClickListener{ item ->
-            val selectedItem = options.find { it.hashCode() == item.itemId }
-            selectedItem?.let { presenter.updateCategoryStatus(it) }
+            options.find { it.hashCode() == item.itemId }?.let { presenter.updateCategoryStatus(it) }
             true
         }
-
         statusPopupMenu.show()
     }
 
@@ -207,12 +192,15 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
 
     override fun displayNewQuestionSheet(parentCategoryId: Long) {
         val bundle = Bundle().apply { putLong("parentCategoryId", parentCategoryId) }
-        Log.d("KURWA", "QuizCategoryDetailsFragment:displayNewQuestionSheet: bundle: $bundle")
         val newQuestionSheetFragment = QuizQuestionDetailsFragment().apply { arguments = bundle }
         newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionFromCategoryBS")
     }
 
     override fun displayQuestionListLoading() {
+    }
+
+    override fun displayToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun displayLoading() {

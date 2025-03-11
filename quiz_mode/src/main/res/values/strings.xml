@@ -74,4 +74,8 @@
     <string name="filter_by_no_answers">Bez Odpowiedzi</string>
     <string name="filter_by_correct_answers">Z Poprawnymi Odpowiedziami</string>
     <string name="filter_by_no_correct_answers">Bez Poprawnych Odpowiedzi</string>
+
+    <string name="warning_empty_category_text">Tytuł kategorii nie może być pusty!</string>
+    <string name="warning_empty_question_text">Tekst pytania nie może być pusty!</string>
+    <string name="warning_empty_answer_text">Tekst odpowiedzi nie może być pusty!</string>
 </resources>

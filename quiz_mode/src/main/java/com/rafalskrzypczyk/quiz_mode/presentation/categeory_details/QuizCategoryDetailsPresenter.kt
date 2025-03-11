@@ -5,9 +5,9 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toSelectableMenuItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -22,47 +22,34 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     @MainDispatcher dispatcher: CoroutineDispatcher,
 ) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-
     private var isDataLoaded = false
 
-    override fun onAttach(view: QuizCategoryDetailsContract.View) {
-        super.onAttach(view)
+    override fun onViewCreated() {
+        super.onViewCreated()
         attachChangeListener()
     }
 
     override fun getData(bundle: Bundle?) {
         val categoryId = bundle?.getLong("categoryId")
-
         if (categoryId == null) {
             view.setupNewElementView()
             return
         }
 
         presenterScope.launch {
-            interactor.getCategory(categoryId).collectLatest {
-                when (it) {
-                    is Response.Success -> displayCategoryData(it)
-                    is Response.Error -> view.displayError(it.error)
-                    is Response.Loading -> view.displayLoading()
-                }
-            }
+            interactor.getCategory(categoryId).collectLatest { handleCategoryResponse(it) }
         }
     }
 
-    private fun displayCategoryData(response: Response<Category>) {
+    private fun handleCategoryResponse(response: Response<Category>) {
         when (response) {
             is Response.Success -> {
                 isDataLoaded = true
                 updateUI(response.data)
             }
 
-            is Response.Error -> {
-                view.displayError(response.error)
-            }
-
-            is Response.Loading -> {
-                view.displayLoading()
-            }
+            is Response.Error -> view.displayError(response.error)
+            is Response.Loading -> view.displayLoading()
         }
     }
 
@@ -75,19 +62,21 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     private fun updateUI(category: Category) {
-        if(!isDataLoaded) return
+        if (!isDataLoaded) return
 
-        view.setupView()
-        view.displayCategoryDetails(category.title, category.description)
-        view.displayCategoryColor(category.color)
-        view.displayCategoryStatus(category.status)
-        view.displayQuestionCount(category.linkedQuestions.count())
+        with(view){
+            setupView()
+            displayCategoryDetails(category.title, category.description)
+            displayCategoryColor(category.color)
+            displayCategoryStatus(category.status)
+            displayQuestionCount(category.linkedQuestions.count())
+        }
         updateQuestionList()
     }
 
     override fun createNewCategory(categoryTitle: String) {
         presenterScope.launch {
-            displayCategoryData(interactor.instantiateNewCategory(categoryTitle))
+            handleCategoryResponse(interactor.instantiateNewCategory(categoryTitle))
         }
     }
 
@@ -116,10 +105,9 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun updateCategoryStatus(status: SelectableMenuItem) {
-        val newStatus = CategoryStatus.entries.find { it.hashCode() == status.itemHashCode }
-        newStatus?.let {
-            interactor.updateStatus(newStatus)
-            view.displayCategoryStatus(newStatus)
+        CategoryStatus.entries.find { it.hashCode() == status.itemHashCode }?.let {
+            interactor.updateStatus(it)
+            view.displayCategoryStatus(it)
         }
     }
 
@@ -131,7 +119,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
                         view.displayQuestionList(it.data)
                         view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
                     }
-
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayQuestionListLoading()
                 }
@@ -148,8 +135,8 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         interactor.saveCachedCategory()
         presenterScope.cancel()
+        super.onDestroy()
     }
 }

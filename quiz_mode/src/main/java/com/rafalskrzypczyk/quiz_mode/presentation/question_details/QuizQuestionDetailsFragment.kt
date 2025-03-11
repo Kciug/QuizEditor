@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.utils.KeyboardController
@@ -49,43 +49,33 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     override fun onViewBound() {
         super.onViewBound()
 
-        val fieldQuestionText = binding.fieldQuestionText
-        val fieldNewAnswer = binding.fieldNewAnswer
+        with(binding){
+            fieldQuestionText.imeOptions = EditorInfo.IME_ACTION_DONE
+            fieldQuestionText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+            fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    presenter.updateQuestionText(fieldQuestionText.text.toString())
+                    keyboardController.hideKeyboard(fieldQuestionText)
+                    true
+                } else false
+            }
 
-        fieldQuestionText.imeOptions = EditorInfo.IME_ACTION_DONE
-        fieldQuestionText.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter.onQuestionTextSubmitted(fieldQuestionText.text.toString())
-                keyboardController.hideKeyboard(fieldQuestionText)
-                true
-            } else false
-        }
+            fieldNewAnswer.imeOptions = EditorInfo.IME_ACTION_DONE
+            fieldNewAnswer.setRawInputType(InputType.TYPE_CLASS_TEXT)
+            fieldNewAnswer.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    presenter.addAnswer(fieldNewAnswer.text.toString())
+                    fieldNewAnswer.text.clear()
+                    true
+                } else false
+            }
 
-        fieldNewAnswer.imeOptions = EditorInfo.IME_ACTION_DONE
-        fieldNewAnswer.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        fieldNewAnswer.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter.addAnswer(fieldNewAnswer.text.toString())
-                //keyboardController.hideKeyboard(fieldNewAnswer)
-                true
-            } else false
-        }
+            bottomSheetBar.buttonClose.setOnClickListener { dismiss() }
+            bottomSheetBar.buttonSave.setOnClickListener { presenter.saveNewQuestion(fieldQuestionText.text.toString()) }
 
-        binding.bottomSheetBar.buttonClose.setOnClickListener {
-            dismiss()
-        }
+            buttonAssignCategory.setOnClickListener { presenter.onAssignCategory() }
 
-        binding.bottomSheetBar.buttonSave.setOnClickListener {
-            presenter.saveNewQuestion(binding.fieldQuestionText.text.toString())
-        }
-
-        binding.buttonAssignCategory.setOnClickListener {
-            presenter.onAssignCategory()
-        }
-
-        binding.buttonAddAnswer.setOnClickListener {
-            presenter.addAnswer(binding.fieldNewAnswer.text.toString())
+            buttonAddAnswer.setOnClickListener { presenter.addAnswer(binding.fieldNewAnswer.text.toString()) }
         }
     }
 
@@ -107,10 +97,6 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         answersListAdapter.submitList(answers)
     }
 
-    override fun updateInputOnAnswerAdded() {
-        binding.fieldNewAnswer.text.clear()
-    }
-
     override fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>) {
         if(categories.isEmpty()) {
             binding.labelNoCategories.visibility = View.VISIBLE
@@ -128,37 +114,39 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
     override fun setupView() {
         categoriesPreviewAdapter = CategoriesPreviewAdapter()
-        binding.categoriesRecyclerView.adapter = categoriesPreviewAdapter
-
         answersListAdapter = AnswersListAdapter(
             onAnswerChanged = { presenter.updateAnswer(it) },
             onAnswerRemoved = { presenter.removeAnswer(it) }
         )
-        binding.answersRecyclerView.adapter = answersListAdapter
-        binding.answersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        if(binding.fieldQuestionText.hasFocus()) binding.fieldQuestionText.clearFocus()
+        with(binding){
+            categoriesRecyclerView.adapter = categoriesPreviewAdapter
+            answersRecyclerView.adapter = answersListAdapter
 
-        binding.fieldQuestionText.addTextChangedListener(
-            afterTextChanged = {
-                presenter.updateQuestionText(it.toString())
-            }
-        )
+            bottomSheetBar.buttonSave.visibility = View.GONE
+            sectionAssignedCategories.visibility = View.VISIBLE
+            sectionCreationDetails.visibility = View.VISIBLE
+            sectionAnswersDetails.visibility = View.VISIBLE
+            sectionAnswers.visibility = View.VISIBLE
 
-        binding.bottomSheetBar.buttonSave.visibility = View.GONE
-        binding.sectionAssignedCategories.visibility = View.VISIBLE
-        binding.sectionCreationDetails.visibility = View.VISIBLE
-        binding.sectionAnswersDetails.visibility = View.VISIBLE
-        binding.sectionAnswers.visibility = View.VISIBLE
+            if (fieldQuestionText.hasFocus()) fieldQuestionText.clearFocus()
+
+            fieldQuestionText.addTextChangedListener(
+                afterTextChanged = {
+                    presenter.updateQuestionText(it.toString())
+                }
+            )
+        }
     }
 
     override fun setupNewElementView() {
-        binding.bottomSheetBar.buttonSave.visibility = View.VISIBLE
-        binding.sectionAssignedCategories.visibility = View.GONE
-        binding.sectionCreationDetails.visibility = View.GONE
-        binding.sectionAnswersDetails.visibility = View.GONE
-        binding.sectionAnswers.visibility = View.GONE
-
+        with(binding){
+            bottomSheetBar.buttonSave.visibility = View.VISIBLE
+            sectionAssignedCategories.visibility = View.GONE
+            sectionCreationDetails.visibility = View.GONE
+            sectionAnswersDetails.visibility = View.GONE
+            sectionAnswers.visibility = View.GONE
+        }
         keyboardController.showKeyboardWithDelay(binding.fieldQuestionText)
     }
 
@@ -168,6 +156,10 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     }
 
     override fun displayCategoriesListLoading() {
+    }
+
+    override fun displayToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun displayLoading() {
