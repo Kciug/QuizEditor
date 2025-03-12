@@ -13,31 +13,39 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     private val repository: QuizModeRepository,
     private val dataUpdateManager: DataUpdateManager
 ) : CheckablePickerInteractor {
-    private var cachedQuestion: Question? = null
+    private lateinit var questionInitialState: Question
+    private lateinit var answersInitialState: List<Answer>
+    private var questionReference: Question? = null
     private var parentCategoryId: Long? = null
 
     fun getQuestion(questionId: Long): Flow<Response<Question>> =
         repository.getQuestionById(questionId).map {
-            when (it) {
-                is Response.Success -> {
-                    cachedQuestion = it.data
-                    Response.Success(it.data)
-                }
-                is Response.Error -> it
-                is Response.Loading -> it
-            }
+            if(it is Response.Success) {
+                questionReference = it.data
+                updateInitialState(it.data)
+                Response.Success(it.data)
+            } else it
         }
 
     fun getUpdatedQuestion(): Flow<Question?> =
         repository.getUpdatedQuestions().map { categories ->
-            categories.find { it.id == cachedQuestion?.id }?.also { cachedQuestion = it }
+            categories.find { it.id == questionReference?.id }?.also {
+                questionReference = it
+                updateInitialState(it)
+            }
         }
+
+    private fun updateInitialState(question: Question) {
+        questionInitialState = question.copy()
+        answersInitialState = question.answers.map { it.copy() }
+    }
 
     suspend fun instantiateNewQuestion(questionText: String): Response<Question> {
         val newQuestion = Question.new(questionText)
         return when (val response = repository.addQuestion(newQuestion)) {
             is Response.Success -> {
-                cachedQuestion = newQuestion
+                questionReference = newQuestion
+                updateInitialState(newQuestion)
                 bindWithParentCategory()
                 Response.Success(newQuestion)
             }
@@ -47,7 +55,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     fun bindWithParentCategory() {
-        cachedQuestion?.let { question ->
+        questionReference?.let { question ->
             parentCategoryId?.let { categoryId ->
                 dataUpdateManager.bindQuestionWithCategory(question.id, categoryId)
             }
@@ -59,43 +67,54 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     fun updateQuestionText(text: String) {
-        cachedQuestion?.text = text
+        questionReference?.text = text
     }
 
     fun addAnswer(text: String) {
-        cachedQuestion?.answers?.add(Answer.new(text))
+        questionReference?.answers?.add(Answer.new(text))
     }
 
     fun updateAnswer(answerId: Long, answerText: String, answerIsCorrect: Boolean) {
-        cachedQuestion?.answers?.find { it.id == answerId }?.apply {
+        questionReference?.answers?.find { it.id == answerId }?.apply {
             this.answerText = answerText; this.isCorrect = answerIsCorrect
         }
     }
 
     fun removeAnswer(answerId: Long) {
-        cachedQuestion?.answers?.removeIf { it.id == answerId }
+        questionReference?.answers?.removeIf { it.id == answerId }
     }
 
     fun getLinkedCategories(): Flow<Response<List<Category>>> =
         repository.getAllCategories().map {
-            when (it) {
-                is Response.Success -> Response.Success(it.data.filter {
-                    cachedQuestion?.linkedCategories?.contains(it.id) == true
+            if(it is Response.Success){
+                Response.Success(it.data.filter {
+                    questionReference?.linkedCategories?.contains(it.id) == true
                 })
-                is Response.Error -> it
-                is Response.Loading -> it
             }
+            else it
         }
 
 
-    fun answerCount() = cachedQuestion?.answers?.count() ?: 0
+    fun answerCount() = questionReference?.answers?.count() ?: 0
 
-    fun correctAnswerCount() = cachedQuestion?.answers?.count { it.isCorrect } ?: 0
+    fun correctAnswerCount() = questionReference?.answers?.count { it.isCorrect } ?: 0
 
-    fun getAnswers() = cachedQuestion?.answers ?: emptyList()
+    fun getAnswers() = questionReference?.answers ?: emptyList()
 
     fun saveCachedQuestion() {
-        cachedQuestion?.let { dataUpdateManager.updateQuestion(cachedQuestion!!) }
+        questionReference?.let {
+            if(it == questionInitialState) {
+                if(answersEqual(it.answers, answersInitialState)) return
+            }
+        }
+        questionReference?.let { dataUpdateManager.updateQuestion(questionReference!!) }
+    }
+
+    private fun answersEqual(currentAnswers: List<Answer>, initialAnswers: List<Answer>): Boolean {
+        if(currentAnswers.size != initialAnswers.size) return false
+        return currentAnswers.zip(initialAnswers).all { (current, initial) ->
+            current == initial
+        }
     }
 
     override fun getItemList(): Flow<Response<List<Checkable>>> {
@@ -105,7 +124,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
                     Checkable(
                         id = it.id,
                         title = it.title,
-                        isChecked = cachedQuestion?.linkedCategories?.contains(it.id) == true,
+                        isChecked = questionReference?.linkedCategories?.contains(it.id) == true,
                         isLocked = parentCategoryId?.equals(it.id) == true,
                     )
                 })
@@ -116,7 +135,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     override fun onItemSelected(selectedItem: Checkable) {
-        cachedQuestion?.id?.let { questionId ->
+        questionReference?.id?.let { questionId ->
             dataUpdateManager.bindQuestionWithCategory(
                 questionId = questionId,
                 categoryId = selectedItem.id
@@ -125,7 +144,7 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     override fun onItemDeselected(deselectedItem: Checkable) {
-        cachedQuestion?.id?.let { questionId ->
+        questionReference?.id?.let { questionId ->
             dataUpdateManager.unbindQuestionWithCategory(
                 questionId = questionId,
                 categoryId = deselectedItem.id

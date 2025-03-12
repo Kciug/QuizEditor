@@ -16,6 +16,7 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val dataUpdateManager: DataUpdateManager
 ) : CheckablePickerInteractor {
+    private lateinit var categoryInitialState: Category
     private var categoryReference: Category? = null
 
     fun getCategory(categoryId: Long): Flow<Response<Category>> =
@@ -23,6 +24,7 @@ class QuizCategoryDetailsInteractor @Inject constructor(
             when (it) {
                 is Response.Success -> {
                     categoryReference = it.data
+                    categoryInitialState = it.data.copy()
                     Response.Success(it.data)
                 }
                 is Response.Error -> it
@@ -32,7 +34,10 @@ class QuizCategoryDetailsInteractor @Inject constructor(
 
     fun getUpdatedCategory(): Flow<Category?> =
         repository.getUpdatedCategories().map { categories ->
-            categories.find { it.id == categoryReference?.id }?.also { categoryReference = it }
+            categories.find { it.id == categoryReference?.id }?.also {
+                categoryReference = it
+                categoryInitialState = it.copy()
+            }
         }
 
     suspend fun instantiateNewCategory(categoryTitle: String): Response<Category> {
@@ -40,6 +45,7 @@ class QuizCategoryDetailsInteractor @Inject constructor(
         return when (val response = repository.addCategory(newCategory)) {
             is Response.Success -> {
                 categoryReference = newCategory
+                categoryInitialState = newCategory.copy()
                 Response.Success(newCategory)
             }
             is Response.Error -> response
@@ -77,6 +83,7 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     fun getLinkedQuestionsAmount(): Int = categoryReference?.linkedQuestions?.count() ?: 0
 
     fun saveCachedCategory() {
+        if(categoryReference?.equals(categoryInitialState) == true) return
         categoryReference?.let { dataUpdateManager.updateCategory(categoryReference!!) }
     }
 
