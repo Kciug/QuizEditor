@@ -106,7 +106,6 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             return
         }
         interactor.updateAnswer(answer.id, answer.answerText, answer.isCorrect)
-        displayAnswers()
     }
 
     override fun removeAnswer(answer: AnswerUIModel) {
