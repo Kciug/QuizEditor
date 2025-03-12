@@ -59,9 +59,9 @@ class QuizQuestionsPresenter @Inject constructor(
                         var questions = response.data.filter { it.text.contains(query, ignoreCase = true) }
 
                         questions = when (sortOption) {
-                            QuestionSort.SortOptions.ByDate -> questions.sortedBy { it.creationDate }
+                            QuestionSort.SortOptions.ByDate -> questions.sortedBy { it.creationDate }.reversed()
                             QuestionSort.SortOptions.ByAnswersAmount -> questions.sortedBy { it.answers.count() }
-                            QuestionSort.SortOptions.ByTitle -> questions.sortedBy { it.text }
+                            QuestionSort.SortOptions.ByTitle -> questions.sortedBy { it.text.lowercase() }
                         }
                         if(sortType == QuestionSort.SortTypes.Descending) questions = questions.reversed()
 
@@ -72,7 +72,7 @@ class QuizQuestionsPresenter @Inject constructor(
                             QuestionFilter.WithCorrectAnswers -> questions.filter { it.answers.any { it.isCorrect } }
                             QuestionFilter.WithoutAnswers -> questions.filter { it.answers.isEmpty()}
                             QuestionFilter.WithoutCategories -> questions.filter { it.linkedCategories.isEmpty() }
-                            QuestionFilter.WithoutCorrectAnswers -> questions.filter { it.answers.any { it.isCorrect.not() } || it.answers.isEmpty() }
+                            QuestionFilter.WithoutCorrectAnswers -> questions.filter { it.answers.none { it.isCorrect } }
                         }
                         Response.Success(questions)
                     }
@@ -131,7 +131,7 @@ class QuizQuestionsPresenter @Inject constructor(
     override fun onSortMenuOpened() {
         view.displaySortMenu(
             sortOptions = QuestionSort.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
-            sortTypes = QuestionSort.getSortTypes().map { it.toSelectableMenuItem(sortOption.value == it) }
+            sortTypes = QuestionSort.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
         )
     }
 

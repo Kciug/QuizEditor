@@ -4,9 +4,9 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toFilterOption
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toSelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategorySort.Companion.toSelectableMenuItem
@@ -28,6 +28,7 @@ class QuizCategoriesPresenter @Inject constructor(
 ) : BasePresenter<QuizCategoriesContract.View>(), QuizCategoriesContract.Presenter {
     private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
+    private val data = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<CategorySort.SortOptions>(CategorySort.defaultSortOption)
     private val sortType = MutableStateFlow<CategorySort.SortTypes>(CategorySort.defaultSortType)
@@ -36,59 +37,65 @@ class QuizCategoriesPresenter @Inject constructor(
     override fun onViewCreated() {
         super.onViewCreated()
         presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
+        presenterScope.launch { getData() }
+    }
+
+    private fun getData(){
         presenterScope.launch {
-            val combinedData = combine(
-                repository.getAllCategories(),
-                repository.getUpdatedCategories()
-            ) { response, categories ->
-                when (response) {
-                    is Response.Success -> Response.Success(categories)
-                    is Response.Error -> response
-                    is Response.Loading -> Response.Loading
+            repository.getAllCategories().collectLatest {
+                when (it) {
+                    is Response.Success -> {
+                        data.value = it.data
+                        observeDataChanges()
+                        displayData()
+                    }
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
+        }
+    }
 
+    private fun observeDataChanges(){
+        presenterScope.launch {
+            repository.getUpdatedCategories().collectLatest { data.value = it }
+        }
+    }
+
+    private fun displayData(){
+        presenterScope.launch {
             combine(
-                combinedData,
+                data,
                 searchQuery,
                 sortOption,
                 sortType,
                 filterType
-            ) { response, query, sortOption, sortType, filter ->
-                when (response) {
-                    is Response.Success -> {
-                        var categories =
-                            response.data.filter { it.title.contains(query, ignoreCase = true) }
-
-                        categories = when (sortOption) {
-                            CategorySort.SortOptions.ByDate -> categories.sortedBy { it.creationDate }
-                            CategorySort.SortOptions.ByQuestionsAmount -> categories.sortedBy { it.linkedQuestions.count() }
-                            CategorySort.SortOptions.ByTitle -> categories.sortedBy { it.title }
-                        }
-                        if (sortType == CategorySort.SortTypes.Descending) categories =
-                            categories.reversed()
-
-                        categories = when (filter) {
-                            CategoryFilters.None -> categories
-                            is CategoryFilters.ByStatus -> categories.filter { it.status == filter.status }
-                            CategoryFilters.WithQuestions -> categories.filter { it.linkedQuestions.isNotEmpty() }
-                            CategoryFilters.WithoutQuestions -> categories.filter { it.linkedQuestions.isEmpty() }
-                            CategoryFilters.IsMigrated -> categories
-                        }
-
-                        Response.Success(categories)
-                    }
-
-                    is Response.Error -> response
-                    is Response.Loading -> Response.Loading
-                }
-            }.collectLatest { filteredResponse ->
-                when (filteredResponse) {
-                    is Response.Success -> view.displayCategories(filteredResponse.data)
-                    is Response.Error -> view.displayError(filteredResponse.error)
-                    is Response.Loading -> view.displayLoading()
-                }
+            ) { categories, query, sortOption, sortType, filter ->
+                var searchedCategories = categories.filter { it.title.contains(query, ignoreCase = true) }
+                searchedCategories = sortData(searchedCategories, sortOption, sortType)
+                searchedCategories = filterData(searchedCategories, filter)
+                searchedCategories
+            }.collectLatest {
+                view.displayCategories(it)
             }
+        }
+    }
+
+    private fun sortData(data: List<Category>, sortOption: CategorySort.SortOptions, sortType: CategorySort.SortTypes) : List<Category> {
+        return when (sortOption) {
+            CategorySort.SortOptions.ByDate -> data.sortedBy { it.creationDate }.reversed()
+            CategorySort.SortOptions.ByQuestionsAmount -> data.sortedBy { it.linkedQuestions.count() }
+            CategorySort.SortOptions.ByTitle -> data.sortedBy { it.title.lowercase() }
+        }.let { if (sortType == CategorySort.SortTypes.Descending) it.reversed() else it }
+    }
+
+    private fun filterData(data: List<Category>, filter: CategoryFilters) : List<Category> {
+        return when (filter) {
+            CategoryFilters.None -> data
+            is CategoryFilters.ByStatus -> data.filter { it.status == filter.status }
+            CategoryFilters.WithQuestions -> data.filter { it.linkedQuestions.isNotEmpty() }
+            CategoryFilters.WithoutQuestions -> data.filter { it.linkedQuestions.isEmpty() }
+            CategoryFilters.IsMigrated -> data.filter { it.productionTransferDate != null }
         }
     }
 
@@ -105,22 +112,26 @@ class QuizCategoriesPresenter @Inject constructor(
 
     override fun onSortMenuOpened() {
         view.displaySortMenu(
-            sortOptions = CategorySort.getSortOptions()
-                .map { it.toSelectableMenuItem(sortOption.value == it) },
-            sortTypes = CategorySort.getSortTypes()
-                .map { it.toSelectableMenuItem(sortOption.value == it) }
+            sortOptions = CategorySort.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
+            sortTypes = CategorySort.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
         )
     }
 
     override fun onFilterMenuOpened() {
         view.displayFilterMenu(
-            filterOptions = CategoryFilters.getFilters().map {
-                if (it is CategoryFilters.ByStatus) it.toSelectableMenuItem(
-                    filterType.value == it,
-                    CategoryStatus.entries.map { status -> status.toSelectableMenuItem(status == it.status) }
-                )
-                else it.toSelectableMenuItem(filterType.value == it)
-            },
+            filterOptions = CategoryFilters.getFilters().map { filter ->
+                if (filter is CategoryFilters.ByStatus) {
+                    val selectedStatus = (filterType.value as? CategoryFilters.ByStatus)?.status
+                    filter.toSelectableMenuItem(
+                        filterType.value == filter,
+                        CategoryStatus.entries.map { status ->
+                            status.toSelectableMenuItem(status == selectedStatus)
+                        }
+                    )
+                } else {
+                    filter.toSelectableMenuItem(filterType.value == filter)
+                }
+            }
         )
     }
 

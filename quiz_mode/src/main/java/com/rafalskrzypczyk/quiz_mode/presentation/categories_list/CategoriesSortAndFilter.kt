@@ -29,85 +29,51 @@ class CategoriesSortAndFilter(private val context: Context) {
         val sortTypesGroupId = 1
         val popup = PopupMenu(context, anchorView)
 
-        val currentSortOption = sortOptionsList.find { it.isSelected } ?: sortOptionsList.first()
-        val currentSortType = sortTypesList.find { it.isSelected } ?: sortTypesList.first()
+        var currentSortOption = sortOptionsList.find { it.isSelected } ?: sortOptionsList.first()
+        var currentSortType = sortTypesList.find { it.isSelected } ?: sortTypesList.first()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             popup.menu.setGroupDividerEnabled(true)
-            popup.menu.setGroupCheckable(sortOptionsGroupId, true, true)
-            sortOptionsList.forEach {
-                val item =
-                    popup.menu.add(
-                        sortOptionsGroupId,
-                        it.hashCode(),
-                        Menu.NONE,
-                        context.getString(it.title)
-                    )
-                item.isCheckable = true
-                if (it.isSelected) item.isChecked = true
-            }
-            popup.menu.setGroupCheckable(sortTypesGroupId, true, true)
-            sortTypesList.forEach {
-                val item =
-                    popup.menu.add(
-                        sortTypesGroupId,
-                        it.hashCode(),
-                        Menu.NONE,
-                        context.getString(it.title)
-                    )
-                item.isCheckable = true
-                if (it.isSelected) item.isChecked = true
-            }
+            addMenuItems(popup.menu, sortOptionsList, sortOptionsGroupId)
+            addMenuItems(popup.menu, sortTypesList, sortTypesGroupId)
         } else {
-            popup.menu.setGroupCheckable(sortOptionsGroupId, true, true)
-            popup.menu.setGroupCheckable(sortTypesGroupId, true, true)
             popup.menu.addSubMenu(context.getString(R.string.sort_by_label)).apply {
-                sortOptionsList.forEach {
-                    val item = add(
-                        sortOptionsGroupId,
-                        it.hashCode(),
-                        Menu.NONE,
-                        context.getString(it.title)
-                    )
-                    item.isCheckable = true
-                    if (it.isSelected) item.isChecked = true
-                }
+                addMenuItems(this, sortOptionsList, sortOptionsGroupId)
             }
             popup.menu.addSubMenu(context.getString(R.string.sort_type_label)).apply {
-                sortTypesList.forEach {
-                    val item = add(
-                        sortTypesGroupId,
-                        it.hashCode(),
-                        Menu.NONE,
-                        context.getString(it.title)
-                    )
-                    item.isCheckable = true
-                    if (it.isSelected) item.isChecked = true
-                }
+                addMenuItems(this, sortTypesList, sortTypesGroupId)
             }
         }
+
         popup.setOnMenuItemClickListener { menuItem ->
             val selectedSortOption = sortOptionsList.find { it.hashCode() == menuItem.itemId }
             val selectedSortType = sortTypesList.find { it.hashCode() == menuItem.itemId }
+
             when {
                 selectedSortOption != null -> {
                     menuItem.isChecked = !menuItem.isChecked
                     popup.menu.findItem(currentSortOption.hashCode()).isChecked = false
+                    currentSortOption = selectedSortOption
+
                     onSortOptionSelected?.invoke(selectedSortOption)
                 }
                 selectedSortType != null -> {
                     menuItem.isChecked = !menuItem.isChecked
                     popup.menu.findItem(currentSortType.hashCode()).isChecked = false
+                    currentSortType = selectedSortType
+
                     onSortTypeSelected?.invoke(selectedSortType)
                 }
             }
 
-            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW)
-            menuItem.actionView = View(context)
-            menuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener{
-                override fun onMenuItemActionExpand(p0: MenuItem): Boolean = false
-                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean = false
-            })
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW)
+                menuItem.actionView = View(context)
+                menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                    override fun onMenuItemActionExpand(p0: MenuItem): Boolean = false
+                    override fun onMenuItemActionCollapse(p0: MenuItem): Boolean = false
+                })
+            }
 
             false
         }
@@ -118,39 +84,37 @@ class CategoriesSortAndFilter(private val context: Context) {
     fun showFilterMenu(ahchorView: View, filterOptions: List<SelectableMenuItem>) {
         val popup = PopupMenu(context, ahchorView)
 
-        filterOptions.forEach {
-            if(it.subMenu != null) {
-                val currentSubMenuItem = it.subMenu!!.find { it.isSelected }
-                val subMenuTitle = if(currentSubMenuItem == null) context.getString(it.title)
-                else "${context.getString(it.title)}: ${currentSubMenuItem.title}"
-
-                popup.menu.addSubMenu(subMenuTitle).apply {
-                    it.subMenu!!.forEach {
-                        val item = add(Menu.NONE, it.hashCode(), Menu.NONE, context.getString(it.title))
-                        item.isCheckable = true
-                        if (it.isSelected) item.isChecked = true
-                    }
+        filterOptions.forEach { option ->
+            if(option.subMenu != null) {
+                val currentSubMenuItem = option.subMenu?.find { it.isSelected }
+                val subMenuTitle = context.getString(option.title) + currentSubMenuItem?.let { ": ${context.getString(it.title)}" }.orEmpty()
+                val subMenu = popup.menu.addSubMenu(subMenuTitle)
+                option.subMenu?.forEach {
+                    addMenuItem(subMenu, it)
                 }
             } else {
-                val item = popup.menu.add(
-                    Menu.NONE,
-                    it.hashCode(),
-                    Menu.NONE,
-                    context.getString(it.title)
-                )
-                item.isCheckable = true
-                if(it.isSelected) item.isChecked = true
+                addMenuItem(popup.menu, option)
             }
         }
 
         popup.setOnMenuItemClickListener { menuItem ->
-            val selectedFilter = filterOptions.flatMap { listOf(it) + (it.subMenu ?: emptyList()) }
-                .find { it.itemHashCode == menuItem.itemId }
-
-            selectedFilter?.let { onFilterSelected?.invoke(it) }
+            filterOptions.flatMap { listOf(it) + (it.subMenu ?: emptyList()) }
+                .find { it.hashCode() == menuItem.itemId }
+                ?.takeIf { it.subMenu == null }
+                ?.let { onFilterSelected?.invoke(it) }
             true
         }
-
         popup.show()
+    }
+
+    private fun addMenuItems(menu: Menu, items: List<SelectableMenuItem>, groupId: Int? = null){
+        groupId?.let { menu.setGroupCheckable(groupId, true, true) }
+        items.forEach { addMenuItem(menu, it, groupId) }
+    }
+
+    private fun addMenuItem(menu: Menu, item: SelectableMenuItem, groupId: Int? = null) {
+        val menuItem = menu.add(groupId ?: Menu.NONE, item.hashCode(), Menu.NONE, context.getString(item.title))
+        menuItem.isCheckable = true
+        menuItem.isChecked = item.isSelected
     }
 }
