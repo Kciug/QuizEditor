@@ -83,7 +83,7 @@ class QuizCategoriesPresenter @Inject constructor(
 
     private fun sortData(data: List<Category>, sortOption: CategorySort.SortOptions, sortType: CategorySort.SortTypes) : List<Category> {
         return when (sortOption) {
-            CategorySort.SortOptions.ByDate -> data.sortedBy { it.creationDate }.reversed()
+            CategorySort.SortOptions.ByDate -> data.sortedByDescending { it.creationDate }
             CategorySort.SortOptions.ByQuestionsAmount -> data.sortedBy { it.linkedQuestions.count() }
             CategorySort.SortOptions.ByTitle -> data.sortedBy { it.title.lowercase() }
         }.let { if (sortType == CategorySort.SortTypes.Descending) it.reversed() else it }

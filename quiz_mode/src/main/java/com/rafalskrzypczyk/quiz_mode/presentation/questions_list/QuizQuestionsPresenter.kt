@@ -1,11 +1,12 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
+import com.rafalskrzypczyk.quiz_mode.domain.models.Category
+import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toFilterOption
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toSelectableMenuItem
@@ -16,7 +17,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +30,8 @@ class QuizQuestionsPresenter @Inject constructor(
 ) : BasePresenter<QuizQuestionsContract.View>(), QuizQuestionsContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
+    private val data = MutableStateFlow<List<Question>>(emptyList())
+    private val categoriesData = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<QuestionSort.SortOptions>(QuestionSort.defaultSortOption)
     private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.defaultSortType)
@@ -34,86 +39,100 @@ class QuizQuestionsPresenter @Inject constructor(
 
     override fun onViewCreated() {
         super.onViewCreated()
+        getData()
+    }
 
+    private fun getData(){
         presenterScope.launch {
-            val combinedData = combine(
-                repository.getAllQuestions(),
-                repository.getUpdatedQuestions()
-            ) { response, questions ->
-                when (response) {
-                    is Response.Success -> Response.Success(questions)
-                    is Response.Error -> response
-                    is Response.Loading -> Response.Loading
+            repository.getAllQuestions().collectLatest{
+                when (it) {
+                    is Response.Success -> {
+                        data.value = it.data
+                        observeDataChanges()
+                        getCategoriesData()
+                        displayData()
+                    }
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayLoading()
                 }
             }
+        }
+    }
 
-            val filteredData = combine(
-                combinedData,
+    private fun observeDataChanges(){
+        presenterScope.launch {
+            repository.getUpdatedQuestions().collectLatest { data.value = it }
+        }
+    }
+
+    private fun displayData() {
+        presenterScope.launch {
+            combine(
+                data,
                 searchQuery,
                 sortOption,
                 sortType,
                 filterType
-            ) { response, query, sortOption, sortType, filterType ->
-                when (response) {
-                    is Response.Success -> {
-                        var questions = response.data.filter { it.text.contains(query, ignoreCase = true) }
+            ) { questions, query, sortOption, sortType, filter ->
+                var searchedQuestions = questions.filter { it.text.contains(query, ignoreCase = true) }
+                searchedQuestions = sortData(searchedQuestions, sortOption, sortType)
+                searchedQuestions = filterData(searchedQuestions, filter)
+                searchedQuestions
+            }.let { displayCombinedData(it) }
+        }
+    }
 
-                        questions = when (sortOption) {
-                            QuestionSort.SortOptions.ByDate -> questions.sortedBy { it.creationDate }.reversed()
-                            QuestionSort.SortOptions.ByAnswersAmount -> questions.sortedBy { it.answers.count() }
-                            QuestionSort.SortOptions.ByTitle -> questions.sortedBy { it.text.lowercase() }
-                        }
-                        if(sortType == QuestionSort.SortTypes.Descending) questions = questions.reversed()
-
-                        questions = when(filterType){
-                            QuestionFilter.None -> questions
-                            QuestionFilter.WithAnswers -> questions.filter { it.answers.isNotEmpty() }
-                            QuestionFilter.WithCategories -> questions.filter { it.linkedCategories.isNotEmpty() }
-                            QuestionFilter.WithCorrectAnswers -> questions.filter { it.answers.any { it.isCorrect } }
-                            QuestionFilter.WithoutAnswers -> questions.filter { it.answers.isEmpty()}
-                            QuestionFilter.WithoutCategories -> questions.filter { it.linkedCategories.isEmpty() }
-                            QuestionFilter.WithoutCorrectAnswers -> questions.filter { it.answers.none { it.isCorrect } }
-                        }
-                        Response.Success(questions)
-                    }
-                    is Response.Error -> response
-                    is Response.Loading -> Response.Loading
-
-                }
-            }
-
+    private fun displayCombinedData(questions: Flow<List<Question>>) {
+        presenterScope.launch{
             combine(
-                filteredData,
-                repository.getAllCategories()
-            ) { filteredResponse, categories ->
-                when (filteredResponse) {
-                    is Response.Success -> {
-                        when (categories) {
-                            is Response.Success -> Response.Success(
-                                filteredResponse.data.map { question ->
-                                    question.toUIModel(categories.data.filter {
-                                        it.linkedQuestions.contains(question.id)
-                                    }.map { it.toSimplePresentation() })
-                                })
-
-                            is Response.Error -> categories
-                            is Response.Loading -> categories
-                        }
-                    }
-
-                    is Response.Error -> filteredResponse
-                    is Response.Loading -> filteredResponse
+                questions,
+                categoriesData
+            ) { questions, categories ->
+                questions.map { question ->
+                    question.toUIModel(
+                        categoriesData.value.filter { question.linkedCategories.contains(it.id) }
+                            .map { it.toSimplePresentation() }
+                    )
                 }
-            }.collect { filteredResponse ->
-                when (filteredResponse) {
-                    is Response.Success -> {
-                        Log.d("Questions", filteredResponse.data.toString())
-                        view.displayQuestions(filteredResponse.data)
-                    }
-                    is Response.Error -> view.displayError(filteredResponse.error)
-                    is Response.Loading -> view.displayLoading()
+            }.collectLatest {
+                view.displayQuestions(it)
+            }
+        }
+    }
+
+    private fun getCategoriesData() {
+        presenterScope.launch {
+            repository.getAllCategories().collectLatest { if (it is Response.Success) {
+                    categoriesData.value = it.data
+                    observeCategoriesDataChanges()
                 }
             }
+        }
+    }
+
+    private fun observeCategoriesDataChanges() {
+        presenterScope.launch {
+            repository.getUpdatedCategories().collectLatest { categoriesData.value = it }
+        }
+    }
+
+    private fun sortData(data: List<Question>, sortOption: QuestionSort.SortOptions, sortType: QuestionSort.SortTypes) : List<Question> {
+        return when (sortOption) {
+            QuestionSort.SortOptions.ByDate -> data.sortedByDescending { it.creationDate }
+            QuestionSort.SortOptions.ByAnswersAmount -> data.sortedBy { it.answers.count() }
+            QuestionSort.SortOptions.ByTitle -> data.sortedBy { it.text.lowercase() }
+        }.let { if (sortType == QuestionSort.SortTypes.Descending) it.reversed() else it }
+    }
+
+    private fun filterData(data: List<Question>, filter: QuestionFilter) : List<Question> {
+        return when (filter) {
+            QuestionFilter.None -> data
+            QuestionFilter.WithAnswers -> data.filter { it.answers.isNotEmpty() }
+            QuestionFilter.WithCategories -> data.filter { it.linkedCategories.isNotEmpty() }
+            QuestionFilter.WithCorrectAnswers -> data.filter { it.answers.any { it.isCorrect } }
+            QuestionFilter.WithoutAnswers -> data.filter { it.answers.isEmpty()}
+            QuestionFilter.WithoutCategories -> data.filter { it.linkedCategories.isEmpty() }
+            QuestionFilter.WithoutCorrectAnswers -> data.filter { it.answers.none { it.isCorrect } }
         }
     }
 
