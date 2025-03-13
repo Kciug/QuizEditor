@@ -138,7 +138,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
             return
         }
 
-        val buttonAddNew = noElementsStub.findViewById<View>(R.id.button_add_new)
+        val buttonAddNew = noElementsStub.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
         buttonAddNew.setOnClickListener { openNewQuestionSheet() }
     }
 }
