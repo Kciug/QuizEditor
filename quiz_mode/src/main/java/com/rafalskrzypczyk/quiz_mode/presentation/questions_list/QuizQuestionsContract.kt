@@ -2,6 +2,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
 import com.rafalskrzypczyk.core.base.BaseContract
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 
 interface QuizQuestionsContract{
     interface View : BaseContract.View {

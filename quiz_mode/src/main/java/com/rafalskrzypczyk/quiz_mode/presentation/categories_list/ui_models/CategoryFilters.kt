@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
+package com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models
 
 import androidx.annotation.StringRes
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem

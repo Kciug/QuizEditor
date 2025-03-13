@@ -10,8 +10,9 @@ import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoriesSortAndFilter
+import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -24,7 +25,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     private lateinit var adapter: QuestionsAdapter
 
-    private lateinit var actionBarMenuBuilder: CategoriesSortAndFilter
+    private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,7 +52,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
         (requireActivity() as ActionBarBuilder).setupActionBarMenu(R.menu.action_bar_quiz_mode) { actionMenuCallback(it) }
 
-        actionBarMenuBuilder = CategoriesSortAndFilter(requireContext())
+        actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
         actionBarMenuBuilder.setupOnSelectListeners(
             onSortOptionSelected = { presenter.sortByOption(it) },
             onSortTypeSelected = { presenter.sortByType(it) },

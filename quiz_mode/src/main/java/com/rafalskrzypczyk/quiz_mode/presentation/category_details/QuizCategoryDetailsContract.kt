@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
+package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.os.Bundle
 import com.rafalskrzypczyk.core.base.BaseContract
@@ -11,6 +11,7 @@ interface QuizCategoryDetailsContract {
         fun setupView()
         fun setupNewElementView()
         fun displayCategoryDetails(categoryTitle: String, categoryDescription: String)
+        fun displayCreatedDetails(date: String)
         fun displayCategoryColor(color: Int)
         fun displayCategoryStatus(status: CategoryStatus)
         fun displayQuestionCount(questionCount: Int)

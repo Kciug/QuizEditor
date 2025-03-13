@@ -7,11 +7,13 @@ import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toFilterOption
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toSelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategorySort.Companion.toSelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategorySort.Companion.toSortOption
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategorySort.Companion.toSortType
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toFilterOption
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSortOption
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSortType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -30,9 +32,9 @@ class QuizCategoriesPresenter @Inject constructor(
 
     private val data = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
-    private val sortOption = MutableStateFlow<CategorySort.SortOptions>(CategorySort.defaultSortOption)
-    private val sortType = MutableStateFlow<CategorySort.SortTypes>(CategorySort.defaultSortType)
-    private val filterType = MutableStateFlow<CategoryFilters>(CategoryFilters.defaultFilter)
+    private val sortOption = MutableStateFlow<CategorySort.SortOptions>(CategorySort.Companion.defaultSortOption)
+    private val sortType = MutableStateFlow<CategorySort.SortTypes>(CategorySort.Companion.defaultSortType)
+    private val filterType = MutableStateFlow<CategoryFilters>(CategoryFilters.Companion.defaultFilter)
 
     override fun onViewCreated() {
         super.onViewCreated()
@@ -112,14 +114,14 @@ class QuizCategoriesPresenter @Inject constructor(
 
     override fun onSortMenuOpened() {
         view.displaySortMenu(
-            sortOptions = CategorySort.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
-            sortTypes = CategorySort.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
+            sortOptions = CategorySort.Companion.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
+            sortTypes = CategorySort.Companion.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
         )
     }
 
     override fun onFilterMenuOpened() {
         view.displayFilterMenu(
-            filterOptions = CategoryFilters.getFilters().map { filter ->
+            filterOptions = CategoryFilters.Companion.getFilters().map { filter ->
                 if (filter is CategoryFilters.ByStatus) {
                     val selectedStatus = (filterType.value as? CategoryFilters.ByStatus)?.status
                     filter.toSelectableMenuItem(
@@ -136,15 +138,15 @@ class QuizCategoriesPresenter @Inject constructor(
     }
 
     override fun sortByOption(option: SelectableMenuItem) {
-        sortOption.value = option.toSortOption() ?: CategorySort.defaultSortOption
+        sortOption.value = option.toSortOption() ?: CategorySort.Companion.defaultSortOption
     }
 
     override fun sortByType(type: SelectableMenuItem) {
-        sortType.value = type.toSortType() ?: CategorySort.defaultSortType
+        sortType.value = type.toSortType() ?: CategorySort.Companion.defaultSortType
     }
 
     override fun filterBy(filter: SelectableMenuItem) {
-        filterType.value = filter.toFilterOption() ?: CategoryFilters.defaultFilter
+        filterType.value = filter.toFilterOption() ?: CategoryFilters.Companion.defaultFilter
     }
 
     override fun onDestroy() {

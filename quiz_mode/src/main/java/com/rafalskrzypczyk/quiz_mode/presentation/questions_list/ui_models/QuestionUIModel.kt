@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
+package com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models
 
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
@@ -17,7 +17,7 @@ fun Question.toUIModel(linkedCategories: List<SimpleCategoryUIModel>) = Question
     answersCount = answers.count(),
     linkedCategories = linkedCategories,
     validationMessage =
-    if(answers.isEmpty()) QuestionValidationMessage.MISSING_ANSWERS
-    else if (answers.none { it.isCorrect }) QuestionValidationMessage.NO_CORRECT_ANSWER
+    if(answers.isEmpty()) QuestionValidationMessage.MissingAnswers
+    else if (answers.none { it.isCorrect }) QuestionValidationMessage.NoCorrectAnswers
     else QuestionValidationMessage.OK
 )

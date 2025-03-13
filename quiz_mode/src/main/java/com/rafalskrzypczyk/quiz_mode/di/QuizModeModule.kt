@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rafalskrzypczyk.quiz_mode.di
 
 import com.rafalskrzypczyk.core.di.IoDispatcher
@@ -7,8 +9,8 @@ import com.rafalskrzypczyk.quiz_mode.domain.DataUpdateManager
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
-import com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsContract
-import com.rafalskrzypczyk.quiz_mode.presentation.categeory_details.QuizCategoryDetailsPresenter
+import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsContract
+import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsPresenter
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesContract
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesPresenter
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerContract

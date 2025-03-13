@@ -1,14 +1,15 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
+package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.os.Bundle
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
+import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.CategoryFilters.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toSelectableMenuItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -67,6 +68,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         with(view){
             setupView()
             displayCategoryDetails(category.title, category.description)
+            displayCreatedDetails(String.formatDate(category.creationDate))
             displayCategoryColor(category.color)
             displayCategoryStatus(category.status)
             displayQuestionCount(category.linkedQuestions.count())

@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
+package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.view.LayoutInflater
 import android.view.View

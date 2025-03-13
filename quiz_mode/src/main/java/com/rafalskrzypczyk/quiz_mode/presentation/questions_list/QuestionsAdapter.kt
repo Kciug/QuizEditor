@@ -12,6 +12,7 @@ import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.ListItemType
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.CategoriesPreviewAdapter
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 
 class QuestionsAdapter(
     private val onItemClicked: (QuestionUIModel) -> Unit,

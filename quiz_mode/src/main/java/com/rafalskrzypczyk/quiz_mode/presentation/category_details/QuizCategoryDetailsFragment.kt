@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categeory_details
+package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.content.Context
 import android.os.Bundle
@@ -140,6 +140,10 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
             categoryNameField.setText(categoryTitle)
             categoryDescriptionField.setText(categoryDescription)
         }
+    }
+
+    override fun displayCreatedDetails(date: String) {
+        binding.sectionCreationDetails.labelCreationDate.text = date
     }
 
     override fun displayCategoryColor(color: Int) {

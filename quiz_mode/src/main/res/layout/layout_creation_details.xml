@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="5dp"
         android:text="@string/label_created_on"
-        android:textSize="10sp"
+        android:textSize="11sp"
         app:layout_constraintEnd_toStartOf="@+id/label_creation_date"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -23,34 +23,12 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="5dp"
         android:text="@string/text_placeholder_short"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/label_created_by"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/label_created"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label_created_by"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="5dp"
-        android:text="@string/label_created_by"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/label_cration_user"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/label_creation_date"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label_cration_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="5dp"
-        android:text="@string/text_placeholder_short"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/label_created_by"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

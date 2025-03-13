@@ -8,11 +8,15 @@ import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toFilterOption
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionFilter.Companion.toSelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSortOption
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuestionSort.Companion.toSortType
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toFilterOption
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortOption
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortType
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.toUIModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -33,9 +37,9 @@ class QuizQuestionsPresenter @Inject constructor(
     private val data = MutableStateFlow<List<Question>>(emptyList())
     private val categoriesData = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
-    private val sortOption = MutableStateFlow<QuestionSort.SortOptions>(QuestionSort.defaultSortOption)
-    private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.defaultSortType)
-    private val filterType = MutableStateFlow<QuestionFilter>(QuestionFilter.defaultFilter)
+    private val sortOption = MutableStateFlow<QuestionSort.SortOptions>(QuestionSort.Companion.defaultSortOption)
+    private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.Companion.defaultSortType)
+    private val filterType = MutableStateFlow<QuestionFilter>(QuestionFilter.Companion.defaultFilter)
 
     override fun onViewCreated() {
         super.onViewCreated()
@@ -149,27 +153,27 @@ class QuizQuestionsPresenter @Inject constructor(
 
     override fun onSortMenuOpened() {
         view.displaySortMenu(
-            sortOptions = QuestionSort.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
-            sortTypes = QuestionSort.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
+            sortOptions = QuestionSort.Companion.getSortOptions().map { it.toSelectableMenuItem(sortOption.value == it) },
+            sortTypes = QuestionSort.Companion.getSortTypes().map { it.toSelectableMenuItem(sortType.value == it) }
         )
     }
 
     override fun onFilterMenuOpened() {
         view.displayFilterMenu(
-            filterOptions = QuestionFilter.getFilters().map { it.toSelectableMenuItem(filterType.value == it) }
+            filterOptions = QuestionFilter.Companion.getFilters().map { it.toSelectableMenuItem(filterType.value == it) }
         )
     }
 
     override fun sortByOption(sort: SelectableMenuItem) {
-        sortOption.value = sort.toSortOption() ?: QuestionSort.defaultSortOption
+        sortOption.value = sort.toSortOption() ?: QuestionSort.Companion.defaultSortOption
     }
 
     override fun sortByType(sort: SelectableMenuItem) {
-        sortType.value = sort.toSortType() ?: QuestionSort.defaultSortType
+        sortType.value = sort.toSortType() ?: QuestionSort.Companion.defaultSortType
     }
 
     override fun filterBy(filter: SelectableMenuItem) {
-        filterType.value = filter.toFilterOption() ?: QuestionFilter.defaultFilter
+        filterType.value = filter.toFilterOption() ?: QuestionFilter.Companion.defaultFilter
     }
 
     override fun onDestroy() {

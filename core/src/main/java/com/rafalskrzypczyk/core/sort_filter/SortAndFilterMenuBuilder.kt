@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
+package com.rafalskrzypczyk.core.sort_filter
 
 import android.content.Context
 import android.os.Build
@@ -7,9 +7,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.rafalskrzypczyk.core.R
-import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 
-class CategoriesSortAndFilter(private val context: Context) {
+class SortAndFilterMenuBuilder(private val context: Context) {
     private var onSortOptionSelected: ((SelectableMenuItem) -> Unit)? = null
     private var onSortTypeSelected: ((SelectableMenuItem) -> Unit)? = null
     private var onFilterSelected: ((SelectableMenuItem) -> Unit)? = null
@@ -86,10 +85,10 @@ class CategoriesSortAndFilter(private val context: Context) {
 
         filterOptions.forEach { option ->
             if(option.subMenu != null) {
-                val currentSubMenuItem = option.subMenu?.find { it.isSelected }
+                val currentSubMenuItem = option.subMenu.find { it.isSelected }
                 val subMenuTitle = context.getString(option.title) + currentSubMenuItem?.let { ": ${context.getString(it.title)}" }.orEmpty()
                 val subMenu = popup.menu.addSubMenu(subMenuTitle)
-                option.subMenu?.forEach {
+                option.subMenu.forEach {
                     addMenuItem(subMenu, it)
                 }
             } else {

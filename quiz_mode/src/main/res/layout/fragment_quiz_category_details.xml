@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
-    tools:context=".presentation.categeory_details.QuizCategoryDetailsFragment">
+    tools:context=".presentation.category_details.QuizCategoryDetailsFragment">
 
     <include
         android:id="@+id/section_navbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/layout_bottom_sheet_bar"
+        layout="@layout/layout_bottom_sheet_nav_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -43,7 +43,8 @@
         android:layout_height="wrap_content"
         layout="@layout/layout_creation_details"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/section_category_details"/>
+        app:layout_constraintTop_toBottomOf="@id/section_category_details"
+        android:layout_marginTop="5dp"/>
 
     <TextView
         android:id="@+id/label_questions"
