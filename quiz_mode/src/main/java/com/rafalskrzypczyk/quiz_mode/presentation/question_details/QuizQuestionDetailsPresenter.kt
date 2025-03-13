@@ -77,18 +77,22 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun saveNewQuestion(questionText: String) {
+        if (questionText.isEmpty()) {
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_question_text))
+            return
+        }
         presenterScope.launch {
             handleQuestionResponse(interactor.instantiateNewQuestion(questionText))
         }
     }
 
     override fun updateQuestionText(questionText: String) {
-        if (questionText.isEmpty()) {
-            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_question_text))
-            return
-        }
-        if (isQuestionLoaded) interactor.updateQuestionText(questionText)
-        else saveNewQuestion(questionText)
+        if (isQuestionLoaded) {
+            if (questionText.isEmpty()) {
+                view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_question_text))
+            }
+            interactor.updateQuestionText(questionText)
+        } else saveNewQuestion(questionText)
     }
 
     override fun addAnswer(answerText: String) {
@@ -101,10 +105,9 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateAnswer(answer: AnswerUIModel) {
-        if (answer.answerText.isEmpty()) {
+        if (answer.answerText.isEmpty())
             view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_answer_text))
-            return
-        }
+
         interactor.updateAnswer(answer.id, answer.answerText, answer.isCorrect)
     }
 

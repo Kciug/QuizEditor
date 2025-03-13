@@ -6,6 +6,8 @@ import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
@@ -20,10 +22,13 @@ import javax.inject.Inject
 
 class QuizCategoryDetailsPresenter @Inject constructor(
     private val interactor: QuizCategoryDetailsInteractor,
+    private val resourceProvider: ResourceProvider,
     @MainDispatcher dispatcher: CoroutineDispatcher,
 ) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
     private var isDataLoaded = false
+
+    private var initialCategoryTitle: String = ""
 
     override fun onViewCreated() {
         super.onViewCreated()
@@ -74,15 +79,24 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             displayQuestionCount(category.linkedQuestions.count())
         }
         updateQuestionList()
+
+        initialCategoryTitle = category.title
     }
 
     override fun createNewCategory(categoryTitle: String) {
+        if(categoryTitle.isEmpty()){
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_category_text))
+            return
+        }
         presenterScope.launch {
             handleCategoryResponse(interactor.instantiateNewCategory(categoryTitle))
         }
     }
 
     override fun updateCategoryTitle(categoryTitle: String) {
+        if(categoryTitle.isEmpty())
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_category_text))
+
         interactor.updateCategoryTitle(categoryTitle)
     }
 

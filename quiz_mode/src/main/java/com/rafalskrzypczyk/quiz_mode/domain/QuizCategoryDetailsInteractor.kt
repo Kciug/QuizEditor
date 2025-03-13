@@ -54,7 +54,8 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     }
 
     fun updateCategoryTitle(title: String) {
-        categoryReference?.title = title
+        if(title.isEmpty()) categoryReference?.title = categoryInitialState.title
+        else categoryReference?.title = title
     }
 
     fun updateCategoryDescription(description: String) {

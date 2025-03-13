@@ -83,7 +83,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
                 categoryNameField.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_NEXT)
                 categoryNameField.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        categoryDescriptionField.requestFocus()
+                        if(categoryNameField.text.isNotEmpty()) categoryDescriptionField.requestFocus()
                         true
                     } else false
                 }
@@ -123,7 +123,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
                 categoryNameField.setOnEditorActionListener { tv, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         presenter.createNewCategory(tv.text.toString())
-                        keyboardController.hideKeyboard(tv)
+                        if(categoryNameField.text.isNotEmpty()) keyboardController.hideKeyboard(tv)
                         true
                     } else false
                 }

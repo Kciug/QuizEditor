@@ -54,7 +54,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
             fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     presenter.updateQuestionText(fieldQuestionText.text.toString())
-                    keyboardController.hideKeyboard(fieldQuestionText)
+                    if(fieldQuestionText.text.isNotEmpty()) keyboardController.hideKeyboard(fieldQuestionText)
                     true
                 } else false
             }
@@ -116,6 +116,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     override fun setupView() {
         categoriesPreviewAdapter = CategoriesPreviewAdapter()
         answersListAdapter = AnswersListAdapter(
+            keyboardController = keyboardController,
             onAnswerChanged = { presenter.updateAnswer(it) },
             onAnswerRemoved = { presenter.removeAnswer(it) }
         )

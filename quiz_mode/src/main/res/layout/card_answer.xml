@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:autofillHints="name"
             android:background="@color/transparent"
-            android:hint="@string/text_placeholder_short"/>
+            android:hint="@string/hint_answer"
+            tools:ignore="TextFields" />
 
     </LinearLayout>
 
@@ -48,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="UseSwitchCompatOrMaterialXml"
-            app:thumbTint="@color/selector_correct_swtich_tint"/>
+            app:thumbTint="@color/selector_correct_switch_tint"/>
 
     </LinearLayout>
 

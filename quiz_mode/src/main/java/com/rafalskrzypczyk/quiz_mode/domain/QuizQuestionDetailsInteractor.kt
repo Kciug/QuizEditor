@@ -18,6 +18,8 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     private var questionReference: Question? = null
     private var parentCategoryId: Long? = null
 
+    private val answersBuffer: MutableList<Answer> = mutableListOf()
+
     fun getQuestion(questionId: Long): Flow<Response<Question>> =
         repository.getQuestionById(questionId).map {
             if(it is Response.Success) {
@@ -67,16 +69,22 @@ class QuizQuestionDetailsInteractor @Inject constructor(
     }
 
     fun updateQuestionText(text: String) {
-        questionReference?.text = text
+        if(text.isEmpty()) questionReference?.text = questionInitialState.text
+        else questionReference?.text = text
     }
 
     fun addAnswer(text: String) {
-        questionReference?.answers?.add(Answer.new(text))
+        Answer.new(text).let {
+            questionReference?.answers?.add(it)
+            answersBuffer.add(it.copy())
+        }
     }
 
     fun updateAnswer(answerId: Long, answerText: String, answerIsCorrect: Boolean) {
         questionReference?.answers?.find { it.id == answerId }?.apply {
-            this.answerText = answerText; this.isCorrect = answerIsCorrect
+            this.answerText = if(answerText.isEmpty()) answersInitialState.find { it.id == answerId }?.answerText ?:
+                answersBuffer.find { it.id == answerId }?.answerText ?: "" else answerText
+            this.isCorrect = answerIsCorrect
         }
     }
 
