@@ -2,7 +2,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputType
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -13,6 +12,7 @@ import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.R
@@ -80,8 +80,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
             sectionQuestionsList.questionsRecyclerView.adapter = adapter
 
             with(sectionCategoryDetails){
-                categoryNameField.imeOptions = EditorInfo.IME_ACTION_NEXT
-                categoryNameField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryNameField.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_NEXT)
                 categoryNameField.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
                         categoryDescriptionField.requestFocus()
@@ -89,8 +88,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
                     } else false
                 }
 
-                categoryDescriptionField.imeOptions = EditorInfo.IME_ACTION_DONE
-                categoryDescriptionField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryDescriptionField.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
                 categoryDescriptionField.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         keyboardController.hideKeyboard(categoryDescriptionField)
@@ -121,8 +119,7 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
             sectionNavbar.buttonSave.visibility = View.VISIBLE
 
             with(sectionCategoryDetails){
-                categoryNameField.imeOptions = EditorInfo.IME_ACTION_DONE
-                categoryNameField.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                categoryNameField.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
                 categoryNameField.setOnEditorActionListener { tv, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         presenter.createNewCategory(tv.text.toString())

@@ -21,9 +21,6 @@
             android:layout_height="wrap_content"
             android:autofillHints="name"
             android:background="@color/transparent"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:maxLines="2"
             android:hint="@string/text_placeholder_short"/>
 
     </LinearLayout>

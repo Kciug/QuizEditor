@@ -39,6 +39,7 @@ class CategoriesAdapter(
         fun bind(category: Category) {
             categoryTitle.text = category.title
             categoryDescription.text = category.description
+            categoryDescription.visibility = if (category.description.isEmpty()) View.GONE else View.VISIBLE
             questionCount.text = String.format(category.linkedQuestions.count().toString())
             questionCountLabel.text = UITextHelpers.provideDeclinedNumberText(
                 category.linkedQuestions.count(),

@@ -2,13 +2,13 @@ package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
@@ -50,8 +50,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
         super.onViewBound()
 
         with(binding){
-            fieldQuestionText.imeOptions = EditorInfo.IME_ACTION_DONE
-            fieldQuestionText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+            fieldQuestionText.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     presenter.updateQuestionText(fieldQuestionText.text.toString())
@@ -60,8 +59,7 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
                 } else false
             }
 
-            fieldNewAnswer.imeOptions = EditorInfo.IME_ACTION_DONE
-            fieldNewAnswer.setRawInputType(InputType.TYPE_CLASS_TEXT)
+            fieldNewAnswer.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             fieldNewAnswer.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     presenter.addAnswer(fieldNewAnswer.text.toString())
@@ -75,7 +73,10 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
             buttonAssignCategory.setOnClickListener { presenter.onAssignCategory() }
 
-            buttonAddAnswer.setOnClickListener { presenter.addAnswer(binding.fieldNewAnswer.text.toString()) }
+            buttonAddAnswer.setOnClickListener {
+                presenter.addAnswer(binding.fieldNewAnswer.text.toString())
+                fieldNewAnswer.text.clear()
+            }
         }
     }
 

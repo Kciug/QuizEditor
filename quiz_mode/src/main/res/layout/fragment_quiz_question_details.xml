@@ -68,10 +68,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="name"
             android:background="@color/transparent"
-            android:hint="@string/hint_question_text"
-            android:inputType="textMultiLine"
-            android:maxLines="2"
-            android:minLines="1" />
+            android:hint="@string/hint_question_text"/>
 
         <LinearLayout
             android:id="@+id/section_assigned_categories"
@@ -244,10 +241,7 @@
                 android:layout_weight="1"
                 android:autofillHints="name"
                 android:background="@color/transparent"
-                android:hint="@string/hint_answer"
-                android:inputType="textMultiLine"
-                android:maxLines="2"
-                android:minLines="1" />
+                android:hint="@string/hint_answer" />
 
             <ImageButton
                 android:id="@+id/button_add_answer"
