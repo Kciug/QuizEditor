@@ -8,9 +8,9 @@ import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
-import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,8 +42,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
         adapter = QuestionsAdapter(
             onItemClicked = { openQuestionDetailsSheet(it.id) },
-            onItemDeleted = { presenter.removeQuestion(it) },
-            onAddClicked = { openNewQuestionSheet() }
+            onItemDeleted = { presenter.removeQuestion(it) }
         )
         binding.recyclerViewQuestions.adapter = adapter
 
@@ -88,6 +87,7 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun displayQuestions(questions: List<QuestionUIModel>) {
         adapter.submitList(questions)
+        toggleNoElementsStub(questions.isEmpty())
     }
 
     override fun displaySortMenu(
@@ -126,5 +126,19 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun toggleNoElementsStub(show: Boolean) {
+        val noElementsStub = binding.stubEmptyList
+
+        if (show) {
+            noElementsStub.inflate()
+        } else {
+            noElementsStub.visibility = View.GONE
+            return
+        }
+
+        val buttonAddNew = noElementsStub.findViewById<View>(R.id.button_add_new)
+        buttonAddNew.setOnClickListener { openNewQuestionSheet() }
     }
 }

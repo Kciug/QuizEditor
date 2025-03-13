@@ -12,14 +12,12 @@ import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.utils.UITextHelpers
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.presentation.ListItemType
 import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 
 class CategoriesAdapter(
     private val onCategoryClicked: (Category) -> Unit,
-    private val onCategoryRemoved: (Category) -> Unit,
-    private val onAddClicked: () -> Unit
-) : ListAdapter<Category, RecyclerView.ViewHolder>(GenericDiffCallback<Category>(
+    private val onCategoryRemoved: (Category) -> Unit
+) : ListAdapter<Category, CategoriesAdapter.CategoryViewHolder>(GenericDiffCallback<Category>(
     itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
     contentsTheSame = { oldItem, newItem ->
         oldItem == newItem &&
@@ -66,46 +64,13 @@ class CategoriesAdapter(
         }
     }
 
-    inner class AddButtonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val button: View = view.findViewById(com.rafalskrzypczyk.core.R.id.button_add_new)
-
-        fun bind() {
-            button.setOnClickListener { onAddClicked() }
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_category, parent, false)
+        return CategoryViewHolder(view)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (position < currentList.size) {
-            ListItemType.TYPE_ELEMENT.value
-        } else {
-            ListItemType.TYPE_ADD_BUTTON.value
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == ListItemType.TYPE_ELEMENT.value) {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.card_category, parent, false)
-            CategoryViewHolder(view)
-        } else {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(com.rafalskrzypczyk.core.R.layout.card_add_new, parent, false)
-            AddButtonViewHolder(view)
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is CategoryViewHolder) {
-            val category = getItem(position)
-            holder.bind(category)
-        } else if (holder is AddButtonViewHolder) {
-            holder.bind()
-        }
-    }
-
-    override fun getItemCount(): Int = currentList.size + 1
-
-    override fun submitList(list: List<Category>?) {
-        super.submitList(list?.let { ArrayList(it) })
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        val category = getItem(position)
+        holder.bind(category)
     }
 }

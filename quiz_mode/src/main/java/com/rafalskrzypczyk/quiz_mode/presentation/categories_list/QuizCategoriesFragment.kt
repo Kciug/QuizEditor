@@ -37,8 +37,7 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
         adapter = CategoriesAdapter(
             onCategoryClicked = { openCategoryDetailsSheet(it.id) },
-            onCategoryRemoved = { presenter.removeCategory(it) },
-            onAddClicked = { openNewCategorySheet() },
+            onCategoryRemoved = { presenter.removeCategory(it) }
         )
         binding.recyclerViewCategories.adapter = adapter
 
@@ -83,6 +82,7 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     override fun displayCategories(categories: List<Category>) {
         adapter.submitList(categories)
+        toggleNoElementsStub(categories.isEmpty())
     }
 
     override fun displaySortMenu(
@@ -121,5 +121,19 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun toggleNoElementsStub(show: Boolean) {
+        val noElementsStub = binding.stubEmptyList
+
+        if (show) {
+            noElementsStub.inflate()
+        } else {
+            noElementsStub.visibility = View.GONE
+            return
+        }
+
+        val buttonAddNew = noElementsStub.findViewById<View>(R.id.button_add_new)
+        buttonAddNew.setOnClickListener { openNewCategorySheet() }
     }
 }
