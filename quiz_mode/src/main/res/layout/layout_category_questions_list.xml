@@ -55,7 +55,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_simple_question_numered" />
+        tools:listitem="@layout/item_simple_question_numered"
+        android:paddingBottom="5dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
