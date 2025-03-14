@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_information_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jesteś w aplikacji do zarządzania pytaniami dla"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="MediQuiz"
+        android:textColor="@color/primary"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_information_message"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_start_work_guide_part1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Kliknij"
+        app:layout_constraintEnd_toStartOf="@+id/iv_drawer_icon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_information_message" />
+
+    <ImageView
+        android:id="@+id/iv_drawer_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_24"
+        android:layout_marginHorizontal="5dp"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_start_work_guide_part1"
+        app:layout_constraintEnd_toStartOf="@+id/tv_start_work_guide_part2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_start_work_guide_part1"
+        app:layout_constraintTop_toTopOf="@+id/tv_start_work_guide_part1" />
+
+    <TextView
+        android:id="@+id/tv_start_work_guide_part2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="i wybierz tryb, by zacząć edytować pytania!"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_drawer_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iv_drawer_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_drawer_icon" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

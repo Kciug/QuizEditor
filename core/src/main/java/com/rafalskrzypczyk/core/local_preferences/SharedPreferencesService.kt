@@ -1,7 +1,6 @@
 package com.rafalskrzypczyk.core.local_preferences
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.rafalskrzypczyk.core.user.UserData
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -11,26 +10,37 @@ class SharedPreferencesService @Inject constructor(
 ) : SharedPreferencesApi {
     companion object{
         const val KEY_CURRENT_USER = "current_user"
+        const val KEY_LAST_EDITED_MODE = "last_edited_mode"
 
-        const val DEFAULT_VALUE = ""
+        const val DEFAULT_STRING_VALUE = ""
+        const val DEFAULT_NUMBER_VALUE = 0
     }
 
 
     override fun setCurrentUser(userData: UserData?) {
-        Log.d("SharedPreferencesService", "setCurrentUser: $userData")
         sharedPreferences.edit()
             .putString(KEY_CURRENT_USER, Json.encodeToString(userData))
             .apply()
     }
 
     override fun getCurrentUser(): UserData? {
-        val json = sharedPreferences.getString(KEY_CURRENT_USER, DEFAULT_VALUE)
-        Log.d("SharedPreferencesService", "json: $json")
+        val json = sharedPreferences.getString(KEY_CURRENT_USER, DEFAULT_STRING_VALUE)
         if (json.isNullOrEmpty()) return null
         return Json.decodeFromString<UserData>(json)
     }
 
     override fun clearUserData() {
         setCurrentUser(null)
+        setLastEditedMode(DEFAULT_NUMBER_VALUE)
+    }
+
+    override fun setLastEditedMode(mode: Int) {
+        sharedPreferences.edit()
+            .putInt(KEY_LAST_EDITED_MODE, mode)
+            .apply()
+    }
+
+    override fun getLastEditedMode(): Int {
+        return sharedPreferences.getInt(KEY_LAST_EDITED_MODE, DEFAULT_NUMBER_VALUE)
     }
 }

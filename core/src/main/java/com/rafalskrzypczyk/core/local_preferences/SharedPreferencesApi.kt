@@ -6,4 +6,7 @@ interface SharedPreferencesApi {
     fun setCurrentUser(userData: UserData?)
     fun getCurrentUser(): UserData?
     fun clearUserData()
+
+    fun setLastEditedMode(mode: Int)
+    fun getLastEditedMode(): Int
 }

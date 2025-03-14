@@ -12,6 +12,8 @@
     <color name="text_secondary">#B0BEC5</color>
     <color name="text_disabled">#CCCCCC</color>
 
+    <color name="btn_icon">#121212</color>
+
     <color name="green">#66BB6A</color>
     <color name="red">#CA2828</color>
 

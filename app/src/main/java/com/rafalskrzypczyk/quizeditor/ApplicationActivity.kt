@@ -16,12 +16,14 @@ import com.rafalskrzypczyk.auth.domain.AuthRepository
 import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
+import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMainBinding::inflate), ActionBarBuilder {
+class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMainBinding::inflate),
+    ActionBarBuilder {
 
     lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -30,6 +32,9 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
 
     @Inject
     lateinit var userManager: UserManager
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferencesApi
 
     private var actionMenuRes: Int? = null
     private var actionMenuCallback: ((MenuItem) -> Boolean)? = null
@@ -59,12 +64,19 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
         val navController = navHostFragment.navController
 
-
-
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_quiz_mode, R.id.nav_swipe_quiz_mode, R.id.nav_slideshow), drawerLayout)
+            R.id.nav_home, R.id.nav_quiz_mode, R.id.nav_swipe_quiz_mode, R.id.nav_slideshow), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        binding.drawerNavView.setNavigationItemSelectedListener{ menuItem ->
+            if (menuItem.itemId != R.id.nav_home) sharedPreferences.setLastEditedMode(menuItem.itemId)
+
+            navController.navigate(menuItem.itemId)
+
+            binding.drawerLayout.closeDrawers()
+            true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

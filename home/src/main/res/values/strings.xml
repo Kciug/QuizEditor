@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_welcome_message">Cześć</string>
+    <string name="message_return_to_last_edited">Wróć do ostatnio edytowanych</string>
+    <string name="label_continue">Kontynuuj</string>
+
+    <string name="error_user_name_not_found">Nazwa użytkownika nie została zanleziona. Przeloguj się lub spróbuj później.</string>
+</resources>

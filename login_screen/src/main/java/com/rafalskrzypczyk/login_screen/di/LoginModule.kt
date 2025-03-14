@@ -24,7 +24,7 @@ object QuizQuestionDetailsActivityModule {
 
 @Module
 @InstallIn(FragmentComponent::class)
-abstract class QuizQuestionsModule {
+abstract class LoginMdule {
     @Binds
     abstract fun bindPresenter(presenter: LoginPresenter): LoginContract.Presenter
 }

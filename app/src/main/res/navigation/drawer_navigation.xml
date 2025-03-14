@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_quiz_mode">
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.rafalskrzypczyk.home.presentation.HomeScreenFragment"
+        android:label="@string/drawer_menu_title_home"
+        tools:layout="@layout/fragment_home_screen" />
 
     <fragment
         android:id="@+id/nav_quiz_mode"
