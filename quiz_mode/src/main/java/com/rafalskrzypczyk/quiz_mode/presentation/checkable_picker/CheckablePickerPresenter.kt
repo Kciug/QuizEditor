@@ -27,6 +27,8 @@ class CheckablePickerPresenter @Inject constructor (
     override fun onViewCreated() {
         super.onViewCreated()
 
+        view.displayTitle(interactor.getPickerTitle())
+
         presenterScope.launch {
             combine(
                 interactor.getItemList(),
@@ -39,7 +41,10 @@ class CheckablePickerPresenter @Inject constructor (
                 }
             }.collectLatest {
                 when (it) {
-                    is Response.Success -> view.displayData(it.data)
+                    is Response.Success -> {
+                        if (it.data.isEmpty()) view.displayNoItems(interactor.getPickerNoItemsMessage())
+                        else view.displayData(it.data)
+                    }
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayLoading()
                 }

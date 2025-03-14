@@ -8,4 +8,6 @@ interface CheckablePickerInteractor {
     fun getItemList() : Flow<Response<List<Checkable>>>
     fun onItemSelected(selectedItem: Checkable)
     fun onItemDeselected(deselectedItem: Checkable)
+    fun getPickerTitle() : String
+    fun getPickerNoItemsMessage() : String
 }

@@ -127,4 +127,8 @@ class QuizCategoryDetailsInteractor @Inject constructor(
             )
         }
     }
+
+    override fun getPickerTitle(): String = resourceProvider.getString(com.rafalskrzypczyk.quiz_mode.R.string.title_picker_questions)
+
+    override fun getPickerNoItemsMessage(): String = resourceProvider.getString(com.rafalskrzypczyk.quiz_mode.R.string.picker_no_questions)
 }

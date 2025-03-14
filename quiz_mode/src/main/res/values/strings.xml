@@ -78,4 +78,9 @@
     <string name="warning_empty_category_text">Tytuł kategorii nie może być pusty!</string>
     <string name="warning_empty_question_text">Tekst pytania nie może być pusty!</string>
     <string name="warning_empty_answer_text">Tekst odpowiedzi nie może być pusty!</string>
+
+    <string name="title_picker_categories">Dodaj lub usuń kategorie</string>
+    <string name="title_picker_questions">Dodaj lub usuń pytania</string>
+    <string name="picker_no_categories">Żadna kategoria nie została jeszcze dodana. Wróć do listy wszystkich kategorii i dodaj pierwszą!</string>
+    <string name="picker_no_questions">Żadne pytanie nie zostało jeszcze dodane. Wróć do listy wszystkich pytań i dodaj pierwsze!</string>
 </resources>

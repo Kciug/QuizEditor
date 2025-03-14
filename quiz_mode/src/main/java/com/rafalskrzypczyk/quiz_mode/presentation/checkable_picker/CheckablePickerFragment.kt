@@ -3,8 +3,10 @@ package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentCheckablePickerBinding
 import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
@@ -55,8 +57,19 @@ class CheckablePickerFragment (
         super.onDestroyView()
     }
 
+    override fun displayTitle(title: String) {
+        binding.labelTitle.text = title
+    }
+
     override fun displayData(items: List<Checkable>) {
         adapter.updateData(items)
+    }
+
+    override fun displayNoItems(message: String) {
+        val noItemsStub = binding.stubNoItems.inflate()
+
+        val messageTextView = noItemsStub.findViewById<TextView>(R.id.message_no_items_to_display)
+        messageTextView.text = message
     }
 
     override fun displayLoading() {

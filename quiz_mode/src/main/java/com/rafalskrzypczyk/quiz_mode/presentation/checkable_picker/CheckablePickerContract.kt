@@ -6,7 +6,9 @@ import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 
 interface CheckablePickerContract {
     interface View : BaseContract.View {
+        fun displayTitle(title: String)
         fun displayData(items: List<Checkable>)
+        fun displayNoItems(message: String)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun attachInteractor(interactor: CheckablePickerInteractor)

@@ -9,10 +9,10 @@ import com.rafalskrzypczyk.quiz_mode.domain.DataUpdateManager
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
-import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsContract
-import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsPresenter
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesContract
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesPresenter
+import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsContract
+import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsPresenter
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerContract
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerPresenter
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsContract
@@ -62,8 +62,9 @@ object QuizQuestionDetailsFragmentModule{
     @FragmentScoped
     fun provideInteractor(
         repository: QuizModeRepository,
-        dataUpdateManager: DataUpdateManager
-    ) = QuizQuestionDetailsInteractor(repository, dataUpdateManager)
+        dataUpdateManager: DataUpdateManager,
+        resourceProvider: ResourceProvider
+    ) = QuizQuestionDetailsInteractor(repository, dataUpdateManager, resourceProvider)
 }
 
 @Module

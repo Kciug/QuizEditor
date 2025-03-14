@@ -1,6 +1,8 @@
 package com.rafalskrzypczyk.quiz_mode.domain
 
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Answer
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
@@ -11,7 +13,8 @@ import javax.inject.Inject
 
 class QuizQuestionDetailsInteractor @Inject constructor(
     private val repository: QuizModeRepository,
-    private val dataUpdateManager: DataUpdateManager
+    private val dataUpdateManager: DataUpdateManager,
+    private val resourceProvider: ResourceProvider
 ) : CheckablePickerInteractor {
     private lateinit var questionInitialState: Question
     private lateinit var answersInitialState: List<Answer>
@@ -159,4 +162,8 @@ class QuizQuestionDetailsInteractor @Inject constructor(
             )
         }
     }
+
+    override fun getPickerTitle(): String = resourceProvider.getString(R.string.title_picker_categories)
+
+    override fun getPickerNoItemsMessage(): String = resourceProvider.getString(R.string.picker_no_categories)
 }
