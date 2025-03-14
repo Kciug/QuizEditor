@@ -50,18 +50,22 @@ class SortAndFilterMenuBuilder(private val context: Context) {
 
             when {
                 selectedSortOption != null -> {
-                    menuItem.isChecked = !menuItem.isChecked
-                    popup.menu.findItem(currentSortOption.hashCode()).isChecked = false
-                    currentSortOption = selectedSortOption
+                    if(selectedSortOption.hashCode() != currentSortOption.hashCode()){
+                        menuItem.isChecked = !menuItem.isChecked
+                        popup.menu.findItem(currentSortOption.hashCode()).isChecked = false
+                        currentSortOption = selectedSortOption
 
-                    onSortOptionSelected?.invoke(selectedSortOption)
+                        onSortOptionSelected?.invoke(selectedSortOption)
+                    }
                 }
                 selectedSortType != null -> {
-                    menuItem.isChecked = !menuItem.isChecked
-                    popup.menu.findItem(currentSortType.hashCode()).isChecked = false
-                    currentSortType = selectedSortType
+                    if(selectedSortType.hashCode() != currentSortType.hashCode()){
+                        menuItem.isChecked = !menuItem.isChecked
+                        popup.menu.findItem(currentSortType.hashCode()).isChecked = false
+                        currentSortType = selectedSortType
 
-                    onSortTypeSelected?.invoke(selectedSortType)
+                        onSortTypeSelected?.invoke(selectedSortType)
+                    }
                 }
             }
 
