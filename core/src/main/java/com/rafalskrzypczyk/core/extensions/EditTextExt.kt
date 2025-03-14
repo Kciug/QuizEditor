@@ -5,6 +5,7 @@ import android.widget.EditText
 
 fun EditText.setupMultilineWithIMEAction(imeAction: Int){
     imeOptions = imeAction
-    setRawInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
     inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_CLASS_TEXT
+    setHorizontallyScrolling(false)
+    maxLines = Int.MAX_VALUE
 }
