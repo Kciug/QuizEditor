@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/firestore" />
+            <option value="$PROJECT_DIR$/home" />
             <option value="$PROJECT_DIR$/login_screen" />
             <option value="$PROJECT_DIR$/quiz_mode" />
           </set>
