@@ -24,6 +24,8 @@ class CheckablePickerFragment (
 
     private lateinit var adapter: CheckablePickerAdapter
 
+    private var noElementsView: View? = null
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         presenter.onAttach(this)
@@ -66,10 +68,13 @@ class CheckablePickerFragment (
     }
 
     override fun displayNoItems(message: String) {
-        val noItemsStub = binding.stubNoItems.inflate()
+        if(noElementsView == null) {
+            val stub = binding.stubNoItems
+            noElementsView = stub.inflate()
+        }
 
-        val messageTextView = noItemsStub.findViewById<TextView>(R.id.message_no_items_to_display)
-        messageTextView.text = message
+        val messageTextView = noElementsView?.findViewById<TextView>(R.id.message_no_items_to_display)
+        messageTextView?.text = message
     }
 
     override fun displayLoading() {

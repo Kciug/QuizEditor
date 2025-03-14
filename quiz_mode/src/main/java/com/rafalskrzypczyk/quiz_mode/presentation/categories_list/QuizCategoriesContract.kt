@@ -9,6 +9,7 @@ interface QuizCategoriesContract {
         fun displayCategories(categories: List<Category>)
         fun displaySortMenu(sortOptions: List<SelectableMenuItem>, sortTypes: List<SelectableMenuItem>)
         fun displayFilterMenu(filterOptions: List<SelectableMenuItem>)
+        fun displayNoElementsView()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun removeCategory(category: Category)

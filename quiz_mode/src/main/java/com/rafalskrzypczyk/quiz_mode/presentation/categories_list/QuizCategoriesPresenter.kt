@@ -65,6 +65,11 @@ class QuizCategoriesPresenter @Inject constructor(
     }
 
     private fun displayData(){
+        if(data.value.isEmpty()) {
+            view.displayNoElementsView()
+            return
+        }
+
         presenterScope.launch {
             combine(
                 data,

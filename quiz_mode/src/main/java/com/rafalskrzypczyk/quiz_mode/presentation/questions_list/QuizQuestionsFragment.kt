@@ -24,8 +24,9 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
     lateinit var presenter: QuizQuestionsContract.Presenter
 
     private lateinit var adapter: QuestionsAdapter
-
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
+
+    private var noElementsView: View? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,7 +88,6 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun displayQuestions(questions: List<QuestionUIModel>) {
         adapter.submitList(questions)
-        toggleNoElementsStub(questions.isEmpty())
     }
 
     override fun displaySortMenu(
@@ -108,6 +108,16 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
         )
     }
 
+    override fun displayNoElementsView() {
+        if(noElementsView == null) {
+            val stub = binding.stubEmptyList
+            noElementsView = stub.inflate()
+        }
+
+        val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+        buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
+    }
+
     private fun openQuestionDetailsSheet(questionId: Long) {
         val bundle = Bundle().apply {
             putLong("questionId", questionId)
@@ -126,19 +136,5 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
-    }
-
-    private fun toggleNoElementsStub(show: Boolean) {
-        val noElementsStub = binding.stubEmptyList
-
-        if (show) {
-            noElementsStub.inflate()
-        } else {
-            noElementsStub.visibility = View.GONE
-            return
-        }
-
-        val buttonAddNew = noElementsStub.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
-        buttonAddNew.setOnClickListener { openNewQuestionSheet() }
     }
 }

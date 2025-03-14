@@ -8,13 +8,13 @@ import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toFilterOption
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toSelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortOption
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortType
-import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSelectableMenuItem
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortOption
+import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortType
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.toUIModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -70,6 +70,11 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun displayData() {
+        if(data.value.isEmpty()) {
+            view.displayNoElementsView()
+            return
+        }
+
         presenterScope.launch {
             combine(
                 data,

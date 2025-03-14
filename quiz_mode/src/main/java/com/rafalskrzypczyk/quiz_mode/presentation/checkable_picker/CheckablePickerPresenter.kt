@@ -24,6 +24,8 @@ class CheckablePickerPresenter @Inject constructor (
 
     private val searchQuery = MutableStateFlow("")
 
+    private var isLoadedDataEmpty = false
+
     override fun onViewCreated() {
         super.onViewCreated()
 
@@ -35,14 +37,17 @@ class CheckablePickerPresenter @Inject constructor (
                 searchQuery
             ){ response, query ->
                 when (response) {
-                    is Response.Success -> Response.Success(response.data.filter { it.title.contains(query, ignoreCase = true) })
+                    is Response.Success -> {
+                        if(response.data.isEmpty()) isLoadedDataEmpty = true
+                        Response.Success(response.data.filter { it.title.contains(query, ignoreCase = true) })
+                    }
                     is Response.Error -> response
                     is Response.Loading -> response
                 }
             }.collectLatest {
                 when (it) {
                     is Response.Success -> {
-                        if (it.data.isEmpty()) view.displayNoItems(interactor.getPickerNoItemsMessage())
+                        if(isLoadedDataEmpty) view.displayNoItems(interactor.getPickerNoItemsMessage())
                         else view.displayData(it.data)
                     }
                     is Response.Error -> view.displayError(it.error)

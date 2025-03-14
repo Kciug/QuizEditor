@@ -23,8 +23,9 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
     lateinit var presenter: QuizCategoriesContract.Presenter
 
     private lateinit var adapter: CategoriesAdapter
-
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
+
+    private var noElementsView: View? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +83,6 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     override fun displayCategories(categories: List<Category>) {
         adapter.submitList(categories)
-        toggleNoElementsStub(categories.isEmpty())
     }
 
     override fun displaySortMenu(
@@ -103,6 +103,16 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
         )
     }
 
+    override fun displayNoElementsView() {
+        if(noElementsView == null) {
+            val stub = binding.stubEmptyList
+            noElementsView = stub.inflate()
+        }
+
+        val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+        buttonAddNew?.setOnClickListener { openNewCategorySheet() }
+    }
+
     private fun openCategoryDetailsSheet(categoryId: Long) {
         val bundle = Bundle().apply {
             putLong("categoryId", categoryId)
@@ -121,19 +131,5 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
-    }
-
-    private fun toggleNoElementsStub(show: Boolean) {
-        val noElementsStub = binding.stubEmptyList
-
-        if (show) {
-            noElementsStub.inflate()
-        } else {
-            noElementsStub.visibility = View.GONE
-            return
-        }
-
-        val buttonAddNew = noElementsStub.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
-        buttonAddNew.setOnClickListener { openNewCategorySheet() }
     }
 }
