@@ -99,13 +99,22 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
     }
 
     override fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>) {
-        if(categories.isEmpty()) {
+        if (categories.isEmpty()) {
+            binding.labelNoCategories.alpha = 0f
             binding.labelNoCategories.visibility = View.VISIBLE
+            binding.labelNoCategories.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .start()
+        } else {
             categoriesPreviewAdapter.submitList(categories)
-            return
+            binding.categoriesRecyclerView.alpha = 0f
+            binding.categoriesRecyclerView.visibility = View.VISIBLE
+            binding.categoriesRecyclerView.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .start()
         }
-        binding.labelNoCategories.visibility = View.GONE
-        categoriesPreviewAdapter.submitList(categories)
     }
 
     override fun displayCreatedOn(date: String, user: String) {
