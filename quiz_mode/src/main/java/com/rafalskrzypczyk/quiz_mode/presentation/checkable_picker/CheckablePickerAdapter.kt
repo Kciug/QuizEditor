@@ -25,9 +25,14 @@ class CheckablePickerAdapter(
             view.isEnabled = !item.isLocked
 
             view.textSize = 16f
-            view.setPadding(7,0,0,0)
-            view.buttonTintList = view.context.getColorStateList(R.color.primary)
+            if(view.isEnabled) view.buttonTintList = view.context.getColorStateList(R.color.primary)
             view.gravity = Gravity.CENTER_VERTICAL
+
+            view.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            view.setPadding(7,0,7,0)
 
             view.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if(compoundButton.isPressed) {
