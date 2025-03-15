@@ -9,20 +9,28 @@
             android:icon="@drawable/baseline_home_24"
             android:title="@string/drawer_menu_title_home" />
         <item
-            android:id="@+id/nav_quiz_mode"
-            android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/drawer_menu_title_quiz" />
-        <item
-            android:id="@+id/nav_swipe_quiz_mode"
-            android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/drawer_menu_title_swipe_quiz" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/drawer_menu_title_calculations" />
-        <item
-            android:id="@+id/nav_mode_scenarios"
-            android:icon="@drawable/ic_arrow_forward_24"
-            android:title="@string/drawer_menu_title_scenarios" />
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_chat_24"
+            android:title="Chat" />
+        <item android:title="Tryby">
+            <menu>
+                <item
+                    android:id="@+id/nav_quiz_mode"
+                    android:icon="@drawable/ic_keyboard_arrow_right_24"
+                    android:title="@string/drawer_menu_title_quiz" />
+                <item
+                    android:id="@+id/nav_swipe_quiz_mode"
+                    android:icon="@drawable/ic_keyboard_arrow_right_24"
+                    android:title="@string/drawer_menu_title_swipe_quiz" />
+                <item
+                    android:id="@+id/nav_slideshow"
+                    android:icon="@drawable/ic_keyboard_arrow_right_24"
+                    android:title="@string/drawer_menu_title_calculations" />
+                <item
+                    android:id="@+id/nav_mode_scenarios"
+                    android:icon="@drawable/ic_keyboard_arrow_right_24"
+                    android:title="@string/drawer_menu_title_scenarios" />
+            </menu>
+        </item>
     </group>
 </menu>

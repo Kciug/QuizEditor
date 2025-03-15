@@ -22,7 +22,34 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test DB"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:background="@drawable/background_tile"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
+                app:drawableStartCompat="@drawable/baseline_storage_24"
+                app:drawableEndCompat="@drawable/ic_arrow_drop_up_24"
+                android:drawableTint="@color/primary"/>
+
+        </LinearLayout>
+
+
+    </com.google.android.material.navigation.NavigationView>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
