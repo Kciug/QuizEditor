@@ -1,13 +1,14 @@
 package com.rafalskrzypczyk.chat.domain
 
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
+import java.util.Date
 
 data class Message(
     val id: Long,
     val senderId: String,
     val senderName: String,
     val message: String,
-    val timestamp: Long
+    val timestamp: Date
 )
 
 fun MessageDTO.toDomain() = Message(

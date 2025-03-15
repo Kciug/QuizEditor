@@ -1,0 +1,75 @@
+package com.rafalskrzypczyk.chat.presentation
+
+import com.rafalskrzypczyk.chat.domain.ChatRepository
+import com.rafalskrzypczyk.chat.domain.Message
+import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.MainDispatcher
+import com.rafalskrzypczyk.core.extensions.generateId
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
+
+class ChatPresenter @Inject constructor(
+    private val repository: ChatRepository,
+    @MainDispatcher private val dispatcher: CoroutineDispatcher
+): BasePresenter<ChatContract.View>(), ChatContract.Presenter {
+    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
+
+    override fun onViewCreated() {
+        super.onViewCreated()
+        view.setupMessagesReceiver(repository.getCurrentUserId())
+
+        presenterScope.launch{
+            repository.getLatestMessages().collectLatest{
+                processResponse(it)
+            }
+        }
+    }
+
+    override fun sendMessage(message: String) {
+        if(message.isBlank()) return
+        presenterScope.launch{
+            repository.sendMessage(Message(
+                id = Long.generateId(),
+                senderId = repository.getCurrentUserId(),
+                senderName = repository.getCurrentUserName(),
+                message = message,
+                timestamp = Date()
+            ))
+        }
+    }
+
+    override fun onDestroy() {
+        presenterScope.cancel()
+        super.onDestroy()
+    }
+
+    private fun processResponse(response: Response<List<Message>>) {
+        when(response) {
+            is Response.Success -> {
+                displayMessages(response.data)
+                attachMessagesListener()
+            }
+            is Response.Error -> view.displayError(response.error)
+            is Response.Loading -> view.displayLoading()
+        }
+    }
+
+    private fun attachMessagesListener() {
+        presenterScope.launch {
+            repository.getUpdatedMessages().collectLatest {
+                displayMessages(it)
+            }
+        }
+    }
+
+    private fun displayMessages(messages: List<Message>) {
+        view.displayMessages(messages.sortedByDescending { it.timestamp })
+    }
+}

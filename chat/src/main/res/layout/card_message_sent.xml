@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="@dimen/message_vertical_margin">
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxWidth="@dimen/message_max_width"
+        android:text="@string/text_placeholder_long"
+        android:layout_marginEnd="@dimen/message_short_side_margin"
+        android:padding="@dimen/message_padding"
+        android:background="@drawable/background_tile"
+        android:backgroundTint="@color/primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_date_sent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_placeholder_short"
+        android:textSize="@dimen/message_sent_date_text_size"
+        android:layout_marginEnd="@dimen/message_helper_text_margin"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tv_message"
+        app:layout_constraintEnd_toEndOf="@id/tv_message"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

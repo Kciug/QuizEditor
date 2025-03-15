@@ -6,7 +6,7 @@ plugins {
 apply<SharedGradleProjectConfig>()
 
 android {
-    namespace = "com.rafalskrzypczyk.auth"
+    namespace = "com.rafalskrzypczyk.chat"
     kotlinOptions {
         jvmTarget = "11"
     }

@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":auth"))
     implementation(project(":login_screen"))
     implementation(project(":home"))
+    implementation(project(":chat"))
 
     coreKtx()
     ui()

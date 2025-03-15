@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="message_max_width">250dp</dimen>
+    <dimen name="message_short_side_margin">10dp</dimen>
+    <dimen name="message_vertical_margin">5dp</dimen>"
+    <dimen name="message_padding">8dp</dimen>
+    <dimen name="message_helper_text_margin">10dp</dimen>
+
+    <dimen name="message_sent_date_text_size">11sp</dimen>
+</resources>
