@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="3dp">
 
     <EditText
         android:id="@+id/et_new_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Napisz wiadomość..."
         android:autofillHints=""
-        android:inputType="textMultiLine"
         android:background="@drawable/background_tile"
+        android:hint="@string/hint_chat_make_a_text"
+        android:inputType="textMultiLine"
+        android:minHeight="48dp"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_send_message"
-        android:padding="10dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <ImageButton
         android:id="@+id/btn_send_message"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_send_24"
         app:tint="@color/primary"
+        android:contentDescription="@string/ic_desc_chat_send_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/et_new_message"
         app:layout_constraintBottom_toBottomOf="@id/et_new_message"

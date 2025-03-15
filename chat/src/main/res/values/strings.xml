@@ -1,4 +1,6 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_chat_make_a_text">Napisz wiadomość…</string>
+    <string name="ic_desc_chat_send_message">Wyślij wiadomość</string>
 </resources>

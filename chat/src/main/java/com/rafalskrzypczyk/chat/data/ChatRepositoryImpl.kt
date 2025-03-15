@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
     private val firestoreApi: FirestoreApi,
-    private val userManager: UserManager
+    userManager: UserManager
 ) : ChatRepository {
     private var currentUser: UserData? = null
 

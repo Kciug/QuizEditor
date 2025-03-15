@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rafalskrzypczyk.chat.di
 
 import com.rafalskrzypczyk.chat.data.ChatRepositoryImpl
