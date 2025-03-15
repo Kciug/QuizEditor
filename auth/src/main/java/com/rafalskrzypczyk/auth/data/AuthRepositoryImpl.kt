@@ -8,6 +8,7 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.user.UserData
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -60,6 +61,14 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }.addOnSuccessListener {
                 trySend(Response.Success(Unit))
+            }
+    }
+
+    override fun changePassword(newPassword: String): Flow<Response<Unit>> = callbackFlow {
+        firebaseAuth.currentUser?.updatePassword(newPassword)?.addOnSuccessListener {
+                trySend(Response.Success(Unit))
+            }?.addOnFailureListener {
+                trySend(Response.Error(it.localizedMessage ?: resourcesProvider.getString(R.string.error_unknown)))
             }
     }
 }

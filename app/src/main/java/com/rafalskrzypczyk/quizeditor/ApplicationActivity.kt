@@ -1,23 +1,22 @@
 package com.rafalskrzypczyk.quizeditor
 
-import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.view.forEach
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
-import com.rafalskrzypczyk.auth.domain.AuthRepository
 import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
+import com.rafalskrzypczyk.quizeditor.user_panel.UserPanelFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -26,9 +25,6 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     ActionBarBuilder {
 
     lateinit var appBarConfiguration: AppBarConfiguration
-
-    @Inject
-    lateinit var authRepository: AuthRepository
 
     @Inject
     lateinit var userManager: UserManager
@@ -42,41 +38,11 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     override fun onViewBound() {
         super.onViewBound()
 
-        val drawerHeader = binding.drawerNavView.getHeaderView(0)
-        val buttonLogout = drawerHeader.findViewById<Button>(R.id.btn_logout_temp)
-        buttonLogout.setOnClickListener{
-            authRepository.signOut()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        val currentUser = userManager.getCurrentLoggedUser()
-
-        drawerHeader.findViewById<TextView>(R.id.tv_user_name).text = currentUser?.name
-        drawerHeader.findViewById<TextView>(R.id.tv_user_email).text = currentUser?.email
-        drawerHeader.findViewById<TextView>(R.id.tv_user_role).text = currentUser?.role?.value
-
-        setSupportActionBar(binding.appBarMain.toolbar)
-
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.drawerNavView
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
         val navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_quiz_mode, R.id.nav_swipe_quiz_mode, R.id.nav_slideshow), drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
-        binding.drawerNavView.setNavigationItemSelectedListener{ menuItem ->
-            if (menuItem.itemId != R.id.nav_home) sharedPreferences.setLastEditedMode(menuItem.itemId)
-
-            navController.navigate(menuItem.itemId)
-
-            binding.drawerLayout.closeDrawers()
-            true
-        }
+        setSupportActionBar(binding.appBarMain.toolbar)
+        setupDrawer(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -99,5 +65,49 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         actionMenuRes = menuRes
         actionMenuCallback = callback
         invalidateOptionsMenu()
+    }
+
+    private fun setupDrawer(navController: NavController) {
+        val topLevelDestinations = mutableSetOf<Int>()
+        binding.drawerNavView.menu.forEach {
+            topLevelDestinations.add(it.itemId)
+        }
+
+        appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.nav_home,
+            R.id.nav_chat,
+            R.id.nav_quiz_mode
+        ), binding.drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.drawerNavView.setupWithNavController(navController)
+
+        binding.drawerNavView.setNavigationItemSelectedListener{ menuItem ->
+            if (menuItem.itemId != R.id.nav_home || menuItem.itemId != R.id.nav_chat)
+                sharedPreferences.setLastEditedMode(menuItem.itemId)
+
+            navController.navigate(menuItem.itemId)
+
+            binding.drawerLayout.closeDrawers()
+            true
+        }
+
+        setupDrawerHeader()
+    }
+
+    private fun setupDrawerHeader() {
+        val currentUser = userManager.getCurrentLoggedUser()
+
+        val drawerHeader = binding.drawerNavView.getHeaderView(0)
+        with(drawerHeader) {
+            findViewById<TextView>(R.id.tv_user_name).text = currentUser?.name
+            findViewById<TextView>(R.id.tv_user_email).text = currentUser?.email
+            findViewById<TextView>(R.id.tv_user_role).text = currentUser?.role?.value
+        }
+
+        val buttonLogout = drawerHeader.findViewById<ImageButton>(R.id.btn_manage_account)
+        buttonLogout.setOnClickListener{
+            val userPanelDialog = UserPanelFragment()
+            userPanelDialog.show(supportFragmentManager, "UserPanelDialog")
+        }
     }
 }

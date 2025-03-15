@@ -8,4 +8,5 @@ interface AuthRepository {
     fun loginWithEmailAndPassword(email: String, password: String) : Flow<Response<UserData>>
     fun signOut()
     fun sendPasswordResetToEmail(email: String) : Flow<Response<Unit>>
+    fun changePassword(newPassword: String) : Flow<Response<Unit>>
 }
