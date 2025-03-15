@@ -9,6 +9,7 @@ import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.data_statistics.StatisticsQuizMode
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
@@ -113,6 +114,38 @@ class FirestoreService @Inject constructor(
 
     override suspend fun deleteQuizQuestion(questionId: Long): Response<Unit> =
         deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+
+    override fun getLatestMessages(): Flow<Response<List<MessageDTO>>> = flow {
+        emit(Response.Loading)
+        val messages = firestore.collection(FirestoreCollections.MESSAGES)
+            .get().await()
+            .toObjects(MessageDTO::class.java)
+        emit(Response.Success(messages))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedMessages(): Flow<List<MessageDTO>> = callbackFlow {
+        val listener = firestore.collection(FirestoreCollections.MESSAGES)
+            .addSnapshotListener{ value, error ->
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                value?.let { trySend(it.toObjects(MessageDTO::class.java)) }
+            }
+        awaitClose{ listener.remove() }
+    }
+
+    override suspend fun sendMessage(message: MessageDTO): Response<Unit> {
+        return try {
+            firestore.collection(FirestoreCollections.MESSAGES)
+                .document()
+                .set(message)
+                .await()
+            Response.Success(Unit)
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
 
     private suspend fun <T : Any> addFirestoreDocument(
         id: String,

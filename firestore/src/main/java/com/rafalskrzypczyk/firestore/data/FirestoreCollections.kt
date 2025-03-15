@@ -5,4 +5,6 @@ object FirestoreCollections {
 
     const val TEST_QUIZ_MODE_QUESTIONS = "test_questions"
     const val TEST_QUIZ_MODE_CATEGORIES = "test_categories"
+
+    const val MESSAGES = "messages"
 }

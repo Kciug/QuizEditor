@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.firestore.domain
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +24,8 @@ interface FirestoreApi {
     suspend fun addQuizQuestion(question: QuestionDTO): Response<Unit>
     suspend fun updateQuizQuestion(question: QuestionDTO): Response<Unit>
     suspend fun deleteQuizQuestion(questionId: Long): Response<Unit>
+
+    fun getLatestMessages(): Flow<Response<List<MessageDTO>>>
+    fun getUpdatedMessages(): Flow<List<MessageDTO>>
+    suspend fun sendMessage(message: MessageDTO): Response<Unit>
 }
