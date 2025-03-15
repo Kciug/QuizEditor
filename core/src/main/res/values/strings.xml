@@ -33,4 +33,6 @@
     <string name="label_no_elements_to_show">Brak elementów do wyświetlenia.</string>
     <string name="label_no_elements_guide_part1">Kliknij</string>
     <string name="label_no_elements_guide_part2">by dodać pierwszy element!</string>
+
+    <string name="ic_desc_nav_drawer">Panel Nawigacji</string>
 </resources>

@@ -59,8 +59,18 @@ HomeScreenContract.View {
         findNavController().navigate(destination)
     }
 
-    override fun displayStatistics(statistics: List<DataStatisticsUIModel>) {
-
+    override fun displayStatistics(statistics: DataStatisticsUIModel) {
+        val statisticsView = binding.statisticsDev
+        with(binding.statisticsDev){
+            statisticsView.statDbName.text = statistics.dataBaseName
+            with(statisticsView.statQuizMode){
+                tvModeName.text = statistics.quizModeStatistics.modeName
+                tvTypeFirstName.text = "Kategorie"
+                tvTypeSecondName.text = "Liczba pytań"
+                tvFirstElementsCount.text = String.format(statistics.quizModeStatistics.numberOfCategories.toString())
+                tvSecondElementsCount.text = String.format(statistics.quizModeStatistics.numberOfQuestions.toString())
+            }
+        }
     }
 
     override fun displayLoading() {

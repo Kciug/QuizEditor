@@ -7,7 +7,7 @@ interface HomeScreenContract {
         fun displayUserName(name: String)
         fun setStartWorkGuide()
         fun navigateToDestination(destination: Int)
-        fun displayStatistics(statistics: List<DataStatisticsUIModel>)
+        fun displayStatistics(statistics: DataStatisticsUIModel)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun onContinueWork()

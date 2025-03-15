@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="15dp">
 
     <TextView
         android:id="@+id/tv_information_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Jesteś w aplikacji do zarządzania pytaniami dla"
+        android:text="@string/home_message_guide_part1"
         app:layout_constraintEnd_toStartOf="@+id/textView"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:text="MediQuiz"
+        android:text="@string/home_message_related_app"
         android:textColor="@color/primary"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Kliknij"
+        android:text="@string/home_message_guide_part2"
         app:layout_constraintEnd_toStartOf="@+id/iv_drawer_icon"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -48,6 +48,7 @@
         android:src="@drawable/ic_menu_24"
         android:layout_marginHorizontal="5dp"
         app:tint="@color/primary"
+        android:contentDescription="@string/ic_desc_nav_drawer"
         app:layout_constraintBottom_toBottomOf="@+id/tv_start_work_guide_part1"
         app:layout_constraintEnd_toStartOf="@+id/tv_start_work_guide_part2"
         app:layout_constraintHorizontal_bias="0.5"
@@ -58,7 +59,7 @@
         android:id="@+id/tv_start_work_guide_part2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="i wybierz tryb, by zacząć edytować pytania!"
+        android:text="@string/home_message_guide_part3"
         app:layout_constraintBottom_toBottomOf="@+id/iv_drawer_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

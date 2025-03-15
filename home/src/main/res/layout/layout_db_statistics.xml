@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="10dp">
+
+    <TextView
+        android:id="@+id/stat_db_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_placeholder_short"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/stat_quiz_mode"
+        app:layout_constraintEnd_toEndOf="@id/stat_scenarios_mode"
+        android:padding="5dp"
+        android:background="@drawable/background_tile"
+        android:backgroundTint="@color/primary" />
+
+    <include
+        android:id="@+id/stat_quiz_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        layout="@layout/card_statistics_quiz_mode"
+        app:layout_constraintTop_toBottomOf="@id/stat_db_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/stat_swipe_mode"/>
+
+    <include
+        android:id="@+id/stat_swipe_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/card_statistics_default"
+        app:layout_constraintTop_toTopOf="@id/stat_quiz_mode"
+        app:layout_constraintStart_toEndOf="@id/stat_quiz_mode"
+        app:layout_constraintEnd_toStartOf="@id/stat_calculations_mode"/>
+
+    <include
+        android:id="@+id/stat_calculations_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/card_statistics_default"
+        app:layout_constraintTop_toTopOf="@id/stat_quiz_mode"
+        app:layout_constraintStart_toEndOf="@id/stat_swipe_mode"
+        app:layout_constraintEnd_toStartOf="@id/stat_scenarios_mode"/>
+
+    <include
+        android:id="@+id/stat_scenarios_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/card_statistics_default"
+        app:layout_constraintTop_toTopOf="@id/stat_quiz_mode"
+        app:layout_constraintStart_toEndOf="@id/stat_calculations_mode"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

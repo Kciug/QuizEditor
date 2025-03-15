@@ -5,4 +5,9 @@
     <string name="label_continue">Kontynuuj</string>
 
     <string name="error_user_name_not_found">Nazwa użytkownika nie została zanleziona. Przeloguj się lub spróbuj później.</string>
+    <string name="home_message_guide_part1">Jesteś w aplikacji do zarządzania pytaniami dla</string>
+    <string name="home_message_related_app">MediQuiz</string>
+    <string name="home_message_guide_part2">Kliknij</string>
+    <string name="home_message_guide_part3">i wybierz tryb, by zacząć edytować pytania!</string>
+    <string name="home_stats">Statystyki</string>
 </resources>

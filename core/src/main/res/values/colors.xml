@@ -17,6 +17,7 @@
     <color name="text_primary">#000000</color>
     <color name="text_secondary">#333333</color>
     <color name="text_disabled">#161616</color>
+    <color name="text_inverted">#FFFFFF</color>
 
     <color name="btn_icon">#FFFFFF</color>
 
