@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.home.presentation
 
+import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.base.BaseContract
 
 interface HomeScreenContract {
@@ -7,7 +8,7 @@ interface HomeScreenContract {
         fun displayUserName(name: String)
         fun setStartWorkGuide()
         fun navigateToDestination(destination: Int)
-        fun displayStatistics(statistics: DataStatisticsUIModel)
+        fun displayStatistics(statistics: DataStatistics)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun onContinueWork()

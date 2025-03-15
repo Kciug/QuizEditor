@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.firestore.domain
 
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
@@ -8,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirestoreApi {
     fun getUserData(userId: String): Flow<Response<UserDataDTO>>
+
+    suspend fun getDatabaseStatistics() : Flow<Response<DataStatistics>>
 
     fun getQuizCategories(): Flow<Response<List<CategoryDTO>>>
     fun getUpdatedQuizCategories(): Flow<List<CategoryDTO>>

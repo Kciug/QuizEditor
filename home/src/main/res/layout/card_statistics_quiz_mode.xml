@@ -14,11 +14,13 @@
         android:text="@string/text_placeholder_short"
         android:textColor="@color/text_inverted"
         android:textStyle="bold"
+        android:textSize="@dimen/statistics_text_size"
+        android:gravity="center"
         android:backgroundTintMode="src_in"
         android:background="@drawable/background_tile"
         android:backgroundTint="@color/primary"
-        android:padding="10dp"
-        android:elevation="3dp"/>
+        android:padding="@dimen/statistics_background_padding"
+        android:elevation="4dp"/>
 
     <TextView
         android:id="@+id/tv_type_first_name"
@@ -29,22 +31,28 @@
         android:text="@string/text_placeholder_short"
         android:textColor="@color/text_inverted"
         android:textStyle="bold"
+        android:textSize="@dimen/statistics_text_size"
+        android:gravity="center"
         android:backgroundTintMode="src_in"
         android:background="@drawable/background_tile"
         android:backgroundTint="@color/primary_variant"
-        android:paddingTop="47dp"
-        android:paddingHorizontal="10dp"
-        android:paddingBottom="10dp"/>
+        android:paddingTop="33dp"
+        android:paddingHorizontal="@dimen/statistics_background_padding"
+        android:paddingBottom="@dimen/statistics_background_padding"
+        android:elevation="3dp"/>
 
     <TextView
         android:id="@+id/tv_first_elements_count"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_type_first_name"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/text_placeholder_number"
         android:textStyle="bold"
-        android:padding="10dp"/>
+        android:textSize="@dimen/statistics_text_size"
+        android:gravity="center"
+        android:padding="@dimen/statistics_background_padding"/>
 
     <TextView
         android:id="@+id/tv_type_second_name"
@@ -55,19 +63,25 @@
         android:text="@string/text_placeholder_short"
         android:textColor="@color/text_inverted"
         android:textStyle="bold"
+        android:textSize="@dimen/statistics_text_size"
+        android:gravity="center"
         android:backgroundTintMode="src_in"
         android:background="@drawable/background_tile"
         android:backgroundTint="@color/primary_variant"
-        android:padding="10dp"/>
+        android:padding="@dimen/statistics_background_padding"
+        android:elevation="3dp"/>
 
     <TextView
         android:id="@+id/tv_second_elements_count"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_type_second_name"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/text_placeholder_number"
         android:textStyle="bold"
-        android:padding="10dp"/>
+        android:textSize="@dimen/statistics_text_size"
+        android:gravity="center"
+        android:padding="@dimen/statistics_background_padding"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

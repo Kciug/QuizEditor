@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.rafalskrzypczyk.core.base.BaseFragment
+import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,16 +60,16 @@ HomeScreenContract.View {
         findNavController().navigate(destination)
     }
 
-    override fun displayStatistics(statistics: DataStatisticsUIModel) {
+    override fun displayStatistics(statistics: DataStatistics) {
         val statisticsView = binding.statisticsDev
         with(binding.statisticsDev){
             statisticsView.statDbName.text = statistics.dataBaseName
             with(statisticsView.statQuizMode){
-                tvModeName.text = statistics.quizModeStatistics.modeName
+                tvModeName.text = "QuizMode"
                 tvTypeFirstName.text = "Kategorie"
                 tvTypeSecondName.text = "Liczba pytań"
-                tvFirstElementsCount.text = String.format(statistics.quizModeStatistics.numberOfCategories.toString())
-                tvSecondElementsCount.text = String.format(statistics.quizModeStatistics.numberOfQuestions.toString())
+                tvFirstElementsCount.text = statistics.quizModeStatistics.numberOfCategories.toString()
+                tvSecondElementsCount.text = statistics.quizModeStatistics.numberOfQuestions.toString()
             }
         }
     }

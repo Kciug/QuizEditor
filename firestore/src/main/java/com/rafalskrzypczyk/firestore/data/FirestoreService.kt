@@ -1,9 +1,12 @@
 package com.rafalskrzypczyk.firestore.data
 
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.data_statistics.DataStatistics
+import com.rafalskrzypczyk.core.data_statistics.StatisticsQuizMode
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
@@ -30,6 +33,27 @@ class FirestoreService @Inject constructor(
             .toObject(UserDataDTO::class.java)
 
         emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_no_data)))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override suspend fun getDatabaseStatistics(): Flow<Response<DataStatistics>> = flow {
+        emit(Response.Loading)
+
+        val collectionCategories = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        val collectionQuestions = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+
+        val categoriesCount = collectionCategories.count().get(AggregateSource.SERVER).await().count
+        val questionsCount = collectionQuestions.count().get(AggregateSource.SERVER).await().count
+
+        emit(Response.Success(DataStatistics(
+            dataBaseName = "Test DB",
+            quizModeStatistics = StatisticsQuizMode(
+                numberOfCategories = categoriesCount,
+                numberOfQuestions = questionsCount
+            ),
+            swipeQuizModeStatistics = 0,
+            calculationsModeStatistics = 0,
+            scenariosModeStatistics = 0
+        )))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getQuizCategories(): Flow<Response<List<CategoryDTO>>> = flow {
