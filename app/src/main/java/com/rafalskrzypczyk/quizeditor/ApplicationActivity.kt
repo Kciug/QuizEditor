@@ -82,11 +82,18 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         binding.drawerNavView.setupWithNavController(navController)
 
         binding.drawerNavView.setNavigationItemSelectedListener{ menuItem ->
-            if (menuItem.itemId != R.id.nav_home || menuItem.itemId != R.id.nav_chat)
+            val currentDestination = navController.currentDestination?.id
+
+            if (menuItem.itemId == currentDestination) {
+                binding.drawerLayout.closeDrawers()
+                return@setNavigationItemSelectedListener true
+            }
+
+            if (menuItem.itemId != R.id.nav_home && menuItem.itemId != R.id.nav_chat) {
                 sharedPreferences.setLastEditedMode(menuItem.itemId)
+            }
 
             navController.navigate(menuItem.itemId)
-
             binding.drawerLayout.closeDrawers()
             true
         }
