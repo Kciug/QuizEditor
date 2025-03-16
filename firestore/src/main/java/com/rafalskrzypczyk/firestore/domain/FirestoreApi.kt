@@ -26,6 +26,7 @@ interface FirestoreApi {
     suspend fun deleteQuizQuestion(questionId: Long): Response<Unit>
 
     fun getLatestMessages(): Flow<Response<List<MessageDTO>>>
+    fun getOlderMessages(): Flow<Response<List<MessageDTO>>>
     fun getUpdatedMessages(): Flow<List<MessageDTO>>
     suspend fun sendMessage(message: MessageDTO): Response<Unit>
 }

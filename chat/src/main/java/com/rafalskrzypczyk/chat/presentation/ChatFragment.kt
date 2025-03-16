@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.chat.databinding.FragmentChatBinding
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.base.BaseFragment
@@ -16,7 +17,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
     @Inject
     lateinit var presenter: ChatContract.Presenter
 
-    private lateinit var adapter: MessagesAdapter
+    private lateinit var messagesAdapter: MessagesAdapter
+    private lateinit var recyclerViewManager: LinearLayoutManager
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -45,17 +47,38 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
     }
 
     override fun setupMessagesReceiver(currentUserId: String) {
-        adapter = MessagesAdapter(currentUserId)
-        val linearLayoutManager = LinearLayoutManager(requireContext())
-        linearLayoutManager.reverseLayout = true
-        binding.rvMessages.adapter = adapter
-        binding.rvMessages.layoutManager = linearLayoutManager
+        messagesAdapter = MessagesAdapter(currentUserId)
+        recyclerViewManager = LinearLayoutManager(requireContext())
+        recyclerViewManager.reverseLayout = true
+
+        with(binding.rvMessages) {
+            adapter = messagesAdapter
+            layoutManager = recyclerViewManager
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val lastVisibleItemPosition = recyclerViewManager.findLastVisibleItemPosition()
+
+                    if (lastVisibleItemPosition == messagesAdapter.itemCount.minus(1)) {
+                        presenter.loadOlderMessages()
+                    }
+                }
+            })
+        }
     }
 
     override fun displayMessages(messages: List<Message>) {
-        adapter.submitList(messages) {
-            binding.rvMessages.scrollToPosition(0)
+        val shouldScroll = recyclerViewManager.findFirstVisibleItemPosition() == 0
+
+        messagesAdapter.submitList(messages) {
+            if (shouldScroll) {
+                binding.rvMessages.scrollToPosition(0)
+            }
         }
+    }
+
+    override fun displayOlderMessagesLoading() {
     }
 
     override fun displayLoading() {

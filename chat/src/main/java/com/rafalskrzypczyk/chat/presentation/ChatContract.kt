@@ -7,8 +7,10 @@ interface ChatContract {
     interface View : BaseContract.View {
         fun setupMessagesReceiver(currentUserId: String)
         fun displayMessages(messages: List<Message>)
+        fun displayOlderMessagesLoading()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun sendMessage(message: String)
+        fun loadOlderMessages()
     }
 }

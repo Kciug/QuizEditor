@@ -119,18 +119,37 @@ class FirestoreService @Inject constructor(
     override suspend fun deleteQuizQuestion(questionId: Long): Response<Unit> =
         deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
 
+    private val messagesLimit = 15L
+    private var lastObservedMessage: MessageDTO? = null
+
     override fun getLatestMessages(): Flow<Response<List<MessageDTO>>> = flow {
         emit(Response.Loading)
         val messages = firestore.collection(FirestoreCollections.MESSAGES)
-            .orderBy("timestamp", Query.Direction.DESCENDING).limit(15)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(messagesLimit)
             .get().await()
-            .toObjects(MessageDTO::class.java)
-        emit(Response.Success(messages))
+        val mappedMessages = messages.toObjects(MessageDTO::class.java)
+        lastObservedMessage = mappedMessages.lastOrNull()
+        emit(Response.Success(mappedMessages))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getOlderMessages(): Flow<Response<List<MessageDTO>>> = flow {
+        emit(Response.Loading)
+        val olderMessages = firestore.collection(FirestoreCollections.MESSAGES)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .startAfter(lastObservedMessage?.timestamp)
+            .limit(messagesLimit)
+            .get().await()
+
+        val fetchedMessages = olderMessages.toObjects(MessageDTO::class.java)
+        lastObservedMessage = fetchedMessages.lastOrNull()
+        emit(Response.Success(fetchedMessages))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getUpdatedMessages(): Flow<List<MessageDTO>> = callbackFlow {
         val listener = firestore.collection(FirestoreCollections.MESSAGES)
-            .orderBy("timestamp", Query.Direction.DESCENDING).limit(15)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(messagesLimit)
             .addSnapshotListener { value, error ->
                 if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if (error != null) {

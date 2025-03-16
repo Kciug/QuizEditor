@@ -21,6 +21,8 @@ class ChatPresenter @Inject constructor(
 ): BasePresenter<ChatContract.View>(), ChatContract.Presenter {
     private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
+    private var loadOldMessagesTriggered = false
+
     override fun onViewCreated() {
         super.onViewCreated()
         view.setupMessagesReceiver(repository.getCurrentUserId())
@@ -42,6 +44,20 @@ class ChatPresenter @Inject constructor(
                 message = message,
                 timestamp = Date()
             ))
+        }
+    }
+
+    override fun loadOlderMessages() {
+        if(loadOldMessagesTriggered) return
+        loadOldMessagesTriggered = true
+        presenterScope.launch {
+            repository.getOlderMessages().collectLatest {
+                when (it) {
+                    is Response.Success -> displayMessages(it.data)
+                    is Response.Error -> view.displayError(it.error)
+                    is Response.Loading -> view.displayOlderMessagesLoading()
+                }
+            }
         }
     }
 
@@ -71,5 +87,6 @@ class ChatPresenter @Inject constructor(
 
     private fun displayMessages(messages: List<Message>) {
         view.displayMessages(messages.sortedByDescending { it.timestamp })
+        loadOldMessagesTriggered = false
     }
 }

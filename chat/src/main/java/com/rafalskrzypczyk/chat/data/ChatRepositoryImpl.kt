@@ -41,10 +41,21 @@ class ChatRepositoryImpl @Inject constructor(
                     messages.addAll(it.data.map { it.toDomain() })
                     Response.Success(messages)
                 }
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
+                is Response.Error -> it
+                is Response.Loading -> it
             }
         }
+
+    override fun getOlderMessages(): Flow<Response<List<Message>>> = firestoreApi.getOlderMessages().map {
+        when(it) {
+            is Response.Success -> {
+                messages.addAll(0, it.data.map { it.toDomain() })
+                Response.Success(messages)
+            }
+            is Response.Error -> it
+            is Response.Loading -> it
+        }
+    }
 
     override fun getUpdatedMessages(): Flow<List<Message>> =
         firestoreApi.getUpdatedMessages().map {
