@@ -14,6 +14,7 @@ import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
+import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import com.rafalskrzypczyk.quizeditor.user_panel.UserPanelFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMainBinding::inflate),
-    ActionBarBuilder {
+    ActionBarBuilder, DrawerNavigationHandler {
 
     lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -34,14 +35,16 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     private var actionMenuRes: Int? = null
     private var actionMenuCallback: ((MenuItem) -> Boolean)? = null
 
+    private lateinit var navController: NavController
+
     override fun onViewBound() {
         super.onViewBound()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
 
         setSupportActionBar(binding.appBarMain.toolbar)
-        setupDrawer(navController)
+        setupDrawer()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,8 +58,6 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
-        val navController = navHostFragment.navController
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -66,7 +67,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         invalidateOptionsMenu()
     }
 
-    private fun setupDrawer(navController: NavController) {
+    private fun setupDrawer() {
         appBarConfiguration = AppBarConfiguration(setOf(
             R.id.nav_home,
             R.id.nav_chat,
@@ -110,5 +111,10 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             val userPanelDialog = UserPanelFragment()
             userPanelDialog.show(supportFragmentManager, "UserPanelDialog")
         }
+    }
+
+    override fun navigateToDestination(destination: Int) {
+        binding.drawerNavView.setCheckedItem(destination)
+        navController.navigate(destination)
     }
 }

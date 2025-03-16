@@ -3,10 +3,10 @@ package com.rafalskrzypczyk.home.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,6 +19,7 @@ HomeScreenContract.View {
     lateinit var presenter: HomeScreenContract.Presenter
 
     private var startWorkGuideView: View? = null
+    private var activityDrawerNavigationHandler: DrawerNavigationHandler? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -29,6 +30,7 @@ HomeScreenContract.View {
         super.onViewCreated(view, savedInstanceState)
         presenter.onAttach(this)
         presenter.onViewCreated()
+        activityDrawerNavigationHandler = activity as? DrawerNavigationHandler
     }
 
     override fun onViewBound() {
@@ -57,7 +59,7 @@ HomeScreenContract.View {
     }
 
     override fun navigateToDestination(destination: Int) {
-        findNavController().navigate(destination)
+        activityDrawerNavigationHandler?.navigateToDestination(destination)
     }
 
     override fun displayStatistics(statistics: DataStatistics) {
