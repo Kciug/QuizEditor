@@ -4,7 +4,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.view.forEach
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -68,11 +67,6 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     }
 
     private fun setupDrawer(navController: NavController) {
-        val topLevelDestinations = mutableSetOf<Int>()
-        binding.drawerNavView.menu.forEach {
-            topLevelDestinations.add(it.itemId)
-        }
-
         appBarConfiguration = AppBarConfiguration(setOf(
             R.id.nav_home,
             R.id.nav_chat,
