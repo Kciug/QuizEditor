@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingVertical="3dp">
+    android:paddingVertical="5dp">
 
     <EditText
         android:id="@+id/et_new_message"
@@ -16,6 +16,7 @@
         android:inputType="textMultiLine"
         android:minHeight="48dp"
         android:padding="10dp"
+        android:layout_marginStart="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_send_message"
         app:layout_constraintStart_toStartOf="parent"

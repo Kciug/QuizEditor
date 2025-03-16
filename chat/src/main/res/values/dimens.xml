@@ -3,8 +3,9 @@
     <dimen name="message_max_width">250dp</dimen>
     <dimen name="message_short_side_margin">10dp</dimen>
     <dimen name="message_vertical_margin">5dp</dimen>"
-    <dimen name="message_padding">8dp</dimen>
-    <dimen name="message_helper_text_margin">10dp</dimen>
+    <dimen name="message_padding_vertical">8dp</dimen>
+    <dimen name="message_padding_horizontal">12dp</dimen>
 
+    <dimen name="message_text_size">18sp</dimen>
     <dimen name="message_sent_date_text_size">11sp</dimen>
 </resources>
