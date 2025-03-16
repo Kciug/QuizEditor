@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/nav_chat"
         android:name="com.rafalskrzypczyk.chat.presentation.ChatFragment"
-        android:label="@string/drawer_menu_title_home"
+        android:label="@string/drawer_menu_title_chat"
         tools:layout="@layout/fragment_chat" />
 
     <fragment
