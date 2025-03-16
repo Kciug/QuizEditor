@@ -53,7 +53,10 @@ class ChatPresenter @Inject constructor(
         presenterScope.launch {
             repository.getOlderMessages().collectLatest {
                 when (it) {
-                    is Response.Success -> displayMessages(it.data)
+                    is Response.Success -> {
+                        view.displayOlderMessages(it.data.sortedByDescending { it.timestamp })
+                        loadOldMessagesTriggered = false
+                    }
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayOlderMessagesLoading()
                 }
@@ -87,6 +90,5 @@ class ChatPresenter @Inject constructor(
 
     private fun displayMessages(messages: List<Message>) {
         view.displayMessages(messages.sortedByDescending { it.timestamp })
-        loadOldMessagesTriggered = false
     }
 }

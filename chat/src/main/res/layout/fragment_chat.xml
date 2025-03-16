@@ -6,17 +6,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.rafalskrzypczyk.chat.presentation.ChatFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_messages"
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/section_message_input"
-        android:paddingBottom="10dp"/>
+        app:layout_constraintBottom_toTopOf="@id/section_message_input">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 
     <include
         android:id="@+id/section_message_input"

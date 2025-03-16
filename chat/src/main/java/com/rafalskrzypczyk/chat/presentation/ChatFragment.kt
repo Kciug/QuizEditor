@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.chat.databinding.FragmentChatBinding
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.base.BaseFragment
@@ -54,17 +53,20 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
         with(binding.rvMessages) {
             adapter = messagesAdapter
             layoutManager = recyclerViewManager
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-
-                    val lastVisibleItemPosition = recyclerViewManager.findLastVisibleItemPosition()
-
-                    if (lastVisibleItemPosition == messagesAdapter.itemCount.minus(1)) {
-                        presenter.loadOlderMessages()
-                    }
-                }
-            })
+//            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                    super.onScrolled(recyclerView, dx, dy)
+//
+//                    val lastVisibleItemPosition = recyclerViewManager.findLastVisibleItemPosition()
+//
+//                    if (lastVisibleItemPosition == messagesAdapter.itemCount.minus(1)) {
+//                        presenter.loadOlderMessages()
+//                    }
+//                }
+//            })
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener{
+            presenter.loadOlderMessages()
         }
     }
 
@@ -75,6 +77,20 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
             if (shouldScroll) {
                 binding.rvMessages.scrollToPosition(0)
             }
+        }
+    }
+
+    override fun displayOlderMessages(messages: List<Message>) {
+        val previousItemCount = messagesAdapter.itemCount
+        messagesAdapter.submitList(messages) {
+            val newItemCount = messagesAdapter.itemCount
+            val difference = newItemCount - previousItemCount
+
+            if (difference > 0) {
+                val newScrollPosition = newItemCount - difference
+                recyclerViewManager.scrollToPosition(newScrollPosition)
+            }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
