@@ -1,7 +1,9 @@
 package com.rafalskrzypczyk.firestore.data
 
 import com.google.firebase.firestore.AggregateSource
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
@@ -25,6 +27,8 @@ class FirestoreService @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val resourceProvider: ResourceProvider,
 ) : FirestoreApi {
+
+
     override fun getUserData(userId: String): Flow<Response<UserDataDTO>> = flow {
         emit(Response.Loading)
         val result = firestore.collection(FirestoreCollections.USER_DATA_COLLECTION)
@@ -118,6 +122,7 @@ class FirestoreService @Inject constructor(
     override fun getLatestMessages(): Flow<Response<List<MessageDTO>>> = flow {
         emit(Response.Loading)
         val messages = firestore.collection(FirestoreCollections.MESSAGES)
+            .orderBy("timestamp", Query.Direction.DESCENDING).limit(15)
             .get().await()
             .toObjects(MessageDTO::class.java)
         emit(Response.Success(messages))
@@ -125,12 +130,17 @@ class FirestoreService @Inject constructor(
 
     override fun getUpdatedMessages(): Flow<List<MessageDTO>> = callbackFlow {
         val listener = firestore.collection(FirestoreCollections.MESSAGES)
-            .addSnapshotListener{ value, error ->
-                if(error != null) {
+            .orderBy("timestamp", Query.Direction.DESCENDING).limit(15)
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if (error != null) {
                     close(error)
                     return@addSnapshotListener
                 }
-                value?.let { trySend(it.toObjects(MessageDTO::class.java)) }
+                val toSend = value?.documentChanges?.filter { it.type == DocumentChange.Type.ADDED }?.map {
+                    it.document.toObject(MessageDTO::class.java)
+                }
+                toSend?.let { trySend(it) }
             }
         awaitClose{ listener.remove() }
     }
