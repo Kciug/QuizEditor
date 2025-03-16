@@ -16,20 +16,24 @@
             <menu>
                 <item
                     android:id="@+id/nav_quiz_mode"
+                    android:checkable="true"
                     android:icon="@drawable/ic_keyboard_arrow_right_24"
                     android:title="@string/drawer_menu_title_quiz" />
                 <item
                     android:id="@+id/nav_swipe_quiz_mode"
+                    android:checkable="true"
                     android:icon="@drawable/ic_keyboard_arrow_right_24"
                     android:enabled="false"
                     android:title="@string/drawer_menu_title_swipe_quiz" />
                 <item
                     android:id="@+id/nav_slideshow"
+                    android:checkable="true"
                     android:icon="@drawable/ic_keyboard_arrow_right_24"
                     android:enabled="false"
                     android:title="@string/drawer_menu_title_calculations" />
                 <item
                     android:id="@+id/nav_mode_scenarios"
+                    android:checkable="true"
                     android:icon="@drawable/ic_keyboard_arrow_right_24"
                     android:enabled="false"
                     android:title="@string/drawer_menu_title_scenarios" />
