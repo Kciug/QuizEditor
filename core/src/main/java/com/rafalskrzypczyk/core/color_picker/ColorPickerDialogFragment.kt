@@ -47,6 +47,7 @@ class ColorPickerDialogFragment : DialogFragment() {
         selectedColor = arguments?.getInt("currentColor") ?: 0
 
         createPredefinedColorsRadioButtons()
+        (binding.buttonSubmit.background as GradientDrawable).setColor(selectedColor)
 
         val hueColors = IntArray(361) { i ->
             val hsv = floatArrayOf(i.toFloat(), 1f, 1f)
