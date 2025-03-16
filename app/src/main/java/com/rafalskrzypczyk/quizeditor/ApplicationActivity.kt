@@ -61,7 +61,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    override fun setupActionBarMenu(menuRes: Int, callback: (MenuItem) -> Boolean){
+    override fun setupActionBarMenu(menuRes: Int?, callback: ((MenuItem) -> Boolean)?){
         actionMenuRes = menuRes
         actionMenuCallback = callback
         invalidateOptionsMenu()

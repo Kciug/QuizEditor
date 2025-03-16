@@ -3,7 +3,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
@@ -36,6 +35,9 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
     override fun onViewBound() {
         super.onViewBound()
 
+        actionMenuRes = R.menu.action_bar_quiz_mode
+        actionMenuCallback = { actionMenuCallback(it) }
+
         adapter = CategoriesAdapter(
             onCategoryClicked = { openCategoryDetailsSheet(it.id) },
             onCategoryRemoved = { presenter.removeCategory(it) }
@@ -44,8 +46,6 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
 
         binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
         binding.searchBar.setOnClearClick { presenter.searchBy("") }
-
-        (requireActivity() as ActionBarBuilder).setupActionBarMenu(R.menu.action_bar_quiz_mode) { actionMenuCallback(it) }
 
         actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
         actionBarMenuBuilder.setupOnSelectListeners(

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
@@ -41,6 +40,9 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
     override fun onViewBound() {
         super.onViewBound()
 
+        actionMenuRes = R.menu.action_bar_quiz_mode
+        actionMenuCallback = { actionMenuCallback(it) }
+
         adapter = QuestionsAdapter(
             onItemClicked = { openQuestionDetailsSheet(it.id) },
             onItemDeleted = { presenter.removeQuestion(it) }
@@ -49,8 +51,6 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
         binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
         binding.searchBar.setOnClearClick { presenter.searchBy("") }
-
-        (requireActivity() as ActionBarBuilder).setupActionBarMenu(R.menu.action_bar_quiz_mode) { actionMenuCallback(it) }
 
         actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
         actionBarMenuBuilder.setupOnSelectListeners(
