@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.chat.databinding.FragmentChatBinding
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.base.BaseFragment
@@ -37,6 +38,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
                 presenter.sendMessage(sectionMessageInput.etNewMessage.text.toString())
                 sectionMessageInput.etNewMessage.text.clear()
             }
+
+            popoverNewMessages.setOnClickListener {
+                rvMessages.smoothScrollToPosition(0)
+                hideNewMessagesPopover()
+            }
+
+            swipeRefreshLayout.setOnRefreshListener{
+                presenter.loadOlderMessages()
+            }
         }
     }
 
@@ -53,29 +63,29 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
         with(binding.rvMessages) {
             adapter = messagesAdapter
             layoutManager = recyclerViewManager
-//            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                    super.onScrolled(recyclerView, dx, dy)
-//
-//                    val lastVisibleItemPosition = recyclerViewManager.findLastVisibleItemPosition()
-//
-//                    if (lastVisibleItemPosition == messagesAdapter.itemCount.minus(1)) {
-//                        presenter.loadOlderMessages()
-//                    }
-//                }
-//            })
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val firstVisibleItemPosition = recyclerViewManager.findFirstVisibleItemPosition()
+
+                    if (firstVisibleItemPosition == 0) hideNewMessagesPopover()
+                }
+            })
         }
-        binding.swipeRefreshLayout.setOnRefreshListener{
-            presenter.loadOlderMessages()
-        }
+
     }
 
     override fun displayMessages(messages: List<Message>) {
-        val shouldScroll = recyclerViewManager.findFirstVisibleItemPosition() == 0
+        val firstVisibleItemPosition = recyclerViewManager.findFirstVisibleItemPosition()
 
         messagesAdapter.submitList(messages) {
-            if (shouldScroll) {
+            if (firstVisibleItemPosition == 0) {
                 binding.rvMessages.scrollToPosition(0)
+            } else if (firstVisibleItemPosition == -1) {
+                return@submitList
+            } else {
+                showNewMessagesPopover()
             }
         }
     }
@@ -103,5 +113,33 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun showNewMessagesPopover() {
+        with(binding.popoverNewMessages) {
+            if (visibility == View.VISIBLE) return
+            visibility = View.VISIBLE
+            scaleX = 0f
+            scaleY = 0f
+            animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(200)
+                .start()
+        }
+    }
+
+    private fun hideNewMessagesPopover() {
+        with(binding.popoverNewMessages) {
+            if (visibility == View.GONE) return
+            scaleX = 1f
+            scaleY = 1f
+            animate()
+                .scaleX(0f)
+                .scaleY(0f)
+                .setDuration(200)
+                .withEndAction { visibility = View.GONE }
+                .start()
+        }
     }
 }
