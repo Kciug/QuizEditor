@@ -84,13 +84,44 @@ HomeScreenContract.View {
             statCalculationsMode.tvElementsCount.text = String.format(statistics.calculationsModeStatistics.toString())
             statScenariosMode.tvElementsCount.text = String.format(statistics.scenariosModeStatistics.toString())
         }
+        animateScaleOut(binding.statisticsLoading.root) {
+            binding.statisticsLoading.root.visibility = View.GONE
+            animateScaleIn(binding.statisticsDev.root)
+        }
     }
 
     override fun displayLoading() {
-
+        binding.statisticsDev.root.visibility = View.INVISIBLE
+        binding.statisticsLoading.root.visibility = View.VISIBLE
     }
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun animateScaleOut(view: View, onEnd: () -> Unit) {
+        view.animate()
+            .scaleX(0f)
+            .scaleY(0f)
+            .alpha(0f)
+            .setDuration(200)
+            .withEndAction {
+                view.visibility = View.GONE
+                onEnd()
+            }
+            .start()
+    }
+
+    private fun animateScaleIn(view: View) {
+        view.scaleX = 0f
+        view.scaleY = 0f
+        view.alpha = 0f
+        view.visibility = View.VISIBLE
+        view.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .alpha(1f)
+            .setDuration(200)
+            .start()
     }
 }
