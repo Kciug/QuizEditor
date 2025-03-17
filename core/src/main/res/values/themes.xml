@@ -14,6 +14,7 @@
         <item name="android:navigationBarColor">?android:attr/colorBackground</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
+        <item name="dialogTheme">@style/QuizEditorDialog</item>
     </style>
     <style name="Theme.QuizEditor.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -21,6 +22,8 @@
 
         <item name="android:textViewStyle">@style/DefaultTextStyle</item>
         <item name="editTextStyle">@style/DefaultTextInputStyle</item>
+
+        <item name="android:dialogTheme">@style/QuizEditorDialog</item>
     </style>
     <style name="Theme.QuizEditor.DrawerBar" parent="ThemeOverlay.AppCompat.Dark">
         <item name="colorPrimary">@color/primary</item>

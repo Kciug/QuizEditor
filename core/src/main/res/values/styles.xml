@@ -10,6 +10,10 @@
     <style name="ActionButtonStyle" parent="Widget.AppCompat.ActionButton">
         <item name="android:tint">@color/primary</item>
     </style>
+    <style name="QuizEditorDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@drawable/background_dialog</item>
+        <item name="colorPrimary">@color/primary</item>
+    </style>
     <style name="FadeInOutAnimation" parent="android:Animation.Dialog">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>

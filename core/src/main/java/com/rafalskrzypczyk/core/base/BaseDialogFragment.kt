@@ -39,7 +39,6 @@ abstract class BaseDialogFragment<VB : ViewBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog?.window?.attributes?.windowAnimations = R.style.FadeInOutAnimation
         dialog?.window?.setLayout(
             (resources.displayMetrics.widthPixels * widthRatio).toInt(),

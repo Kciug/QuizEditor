@@ -37,5 +37,4 @@
             android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
     </application>
-
 </manifest>
