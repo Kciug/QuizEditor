@@ -1,6 +1,9 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
+import android.annotation.SuppressLint
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -32,6 +35,7 @@ class QuestionsAdapter(
 
         val deleteBubbleManager = DeleteBubbleManager(view.context)
 
+        @SuppressLint("ClickableViewAccessibility")
         fun bind(question: QuestionUIModel) {
             val categoryLabelsAdapter = CategoriesPreviewAdapter()
             questionText.text = question.text
@@ -47,11 +51,27 @@ class QuestionsAdapter(
             validationMessage.setTextColor(itemView.context.getColor(question.validationMessage.color))
             validationIcon.setColorFilter(itemView.context.getColor(question.validationMessage.color))
 
+            val gestureDetector = GestureDetector(itemView.context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    itemView.performClick()
+                    return super.onSingleTapUp(e)
+                }
+            })
+
             itemView.setOnLongClickListener { view ->
                 deleteBubbleManager.showDeleteBubble(view) {
                     onItemDeleted(question)
                 }
                 true
+            }
+
+            categoryLabelsRecyclerView.setOnTouchListener { view , event ->
+                if (gestureDetector.onTouchEvent(event)){
+                    view.performClick()
+                    true
+                } else{
+                    false
+                }
             }
 
             itemView.setOnClickListener {
