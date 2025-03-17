@@ -3,6 +3,8 @@ package com.rafalskrzypczyk.quiz_mode.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -34,6 +36,21 @@ class QuizModeFragment : BaseFragment<FragmentQuizModeBinding>(FragmentQuizModeB
 
         val bottomNavigateView: BottomNavigationView = binding.navQuizModeBottomBar
         bottomNavigateView.setupWithNavController(navController)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navQuizModeBottomBar) { view, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(0, 0, 0, systemBarsInsets.bottom)
+            ViewCompat.onApplyWindowInsets(view, insets)
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navHostFragmentQuizMode.rootView) { v, insets ->
+            @Suppress("SENSELESS_COMPARISON")
+            if(view == null || !isAdded) return@setOnApplyWindowInsetsListener insets
+
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            binding.navQuizModeBottomBar.visibility = if (imeVisible) View.GONE else View.VISIBLE
+            ViewCompat.onApplyWindowInsets(v, insets)
+        }
     }
 
     override fun onDestroyView() {
