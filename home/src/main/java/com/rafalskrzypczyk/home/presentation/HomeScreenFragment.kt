@@ -64,14 +64,26 @@ HomeScreenContract.View {
 
     override fun displayStatistics(statistics: DataStatistics) {
         val statisticsView = binding.statisticsDev
-        with(binding.statisticsDev){
+        with(binding.statisticsDev) {
             statisticsView.statDbName.text = statistics.dataBaseName
             with(statisticsView.statQuizMode){
-                tvModeName.text = "QuizMode"
+                tvModeName.text = "Main Quiz"
                 tvTypeFirstName.text = "Kategorie"
-                tvTypeSecondName.text = "Liczba pytań"
+                tvTypeSecondName.text = "Pytania"
                 tvFirstElementsCount.text = statistics.quizModeStatistics.numberOfCategories.toString()
                 tvSecondElementsCount.text = statistics.quizModeStatistics.numberOfQuestions.toString()
+            }
+            with(statisticsView.statSwipeMode){
+                tvModeName.text = "Swipe Quiz"
+                tvElementsCount.text = statistics.swipeQuizModeStatistics.toString()
+            }
+            with(statisticsView.statCalculationsMode){
+                tvModeName.text = "Obliczenia"
+                tvElementsCount.text = statistics.calculationsModeStatistics.toString()
+            }
+            with(statisticsView.statScenariosMode){
+                tvModeName.text = "Scenariusze"
+                tvElementsCount.text = statistics.scenariosModeStatistics.toString()
             }
         }
     }
