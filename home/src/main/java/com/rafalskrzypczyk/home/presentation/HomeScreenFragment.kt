@@ -7,6 +7,7 @@ import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
+import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,7 +37,17 @@ HomeScreenContract.View {
     override fun onViewBound() {
         super.onViewBound()
 
-        binding.btnContinueWork.setOnClickListener { presenter.onContinueWork() }
+        with(binding) {
+            btnContinueWork.setOnClickListener { presenter.onContinueWork() }
+            with(statisticsDev.statQuizMode){
+                tvModeName.text = getString(R.string.statistics_title_quiz_mode)
+                tvTypeFirstName.text = getString(R.string.statistics_title_quiz_mode_categories)
+                tvTypeSecondName.text = getString(R.string.statistics_title_quiz_mode_questions)
+            }
+            statisticsDev.statSwipeMode.tvModeName.text = getString(R.string.statistics_title_swipe_mode)
+            statisticsDev.statCalculationsMode.tvModeName.text = getString(R.string.statistics_title_calculations_mode)
+            statisticsDev.statScenariosMode.tvModeName.text = getString(R.string.statistics_title_scenarios_mode)
+        }
     }
 
     override fun onDestroyView() {
@@ -63,28 +74,15 @@ HomeScreenContract.View {
     }
 
     override fun displayStatistics(statistics: DataStatistics) {
-        val statisticsView = binding.statisticsDev
         with(binding.statisticsDev) {
-            statisticsView.statDbName.text = statistics.dataBaseName
-            with(statisticsView.statQuizMode){
-                tvModeName.text = "Main Quiz"
-                tvTypeFirstName.text = "Kategorie"
-                tvTypeSecondName.text = "Pytania"
-                tvFirstElementsCount.text = statistics.quizModeStatistics.numberOfCategories.toString()
-                tvSecondElementsCount.text = statistics.quizModeStatistics.numberOfQuestions.toString()
+            statDbName.text = statistics.dataBaseName
+            with(statQuizMode) {
+                tvFirstElementsCount.text = String.format(statistics.quizModeStatistics.numberOfCategories.toString())
+                tvSecondElementsCount.text = String.format(statistics.quizModeStatistics.numberOfQuestions.toString())
             }
-            with(statisticsView.statSwipeMode){
-                tvModeName.text = "Swipe Quiz"
-                tvElementsCount.text = statistics.swipeQuizModeStatistics.toString()
-            }
-            with(statisticsView.statCalculationsMode){
-                tvModeName.text = "Obliczenia"
-                tvElementsCount.text = statistics.calculationsModeStatistics.toString()
-            }
-            with(statisticsView.statScenariosMode){
-                tvModeName.text = "Scenariusze"
-                tvElementsCount.text = statistics.scenariosModeStatistics.toString()
-            }
+            statSwipeMode.tvElementsCount.text = String.format(statistics.swipeQuizModeStatistics.toString())
+            statCalculationsMode.tvElementsCount.text = String.format(statistics.calculationsModeStatistics.toString())
+            statScenariosMode.tvElementsCount.text = String.format(statistics.scenariosModeStatistics.toString())
         }
     }
 

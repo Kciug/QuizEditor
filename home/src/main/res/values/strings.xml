@@ -10,4 +10,10 @@
     <string name="home_message_guide_part2">Kliknij</string>
     <string name="home_message_guide_part3">i wybierz tryb, by zacząć edytować pytania!</string>
     <string name="home_stats">Statystyki</string>
+    <string name="statistics_title_quiz_mode">Main Quiz</string>
+    <string name="statistics_title_quiz_mode_categories">Kategorie</string>
+    <string name="statistics_title_quiz_mode_questions">Pytania</string>
+    <string name="statistics_title_swipe_mode">Swipe Quiz</string>
+    <string name="statistics_title_calculations_mode">Obliczenia</string>
+    <string name="statistics_title_scenarios_mode">Scenariusze</string>
 </resources>
