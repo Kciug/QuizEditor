@@ -3,10 +3,12 @@ package com.rafalskrzypczyk.chat.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.chat.databinding.FragmentChatBinding
 import com.rafalskrzypczyk.chat.domain.Message
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,6 +85,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
             if (firstVisibleItemPosition == 0) {
                 binding.rvMessages.scrollToPosition(0)
             } else if (firstVisibleItemPosition == -1) {
+                if(binding.loading.root.isVisible)
+                    QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, binding.rvMessages)
                 return@submitList
             } else {
                 showNewMessagesPopover()
@@ -108,38 +112,28 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
     }
 
     override fun displayLoading() {
-
+        binding.rvMessages.visibility = View.INVISIBLE
+        binding.loading.root.visibility = View.VISIBLE
     }
 
     override fun displayError(message: String) {
+        with(binding.loading.root) { if(visibility == View.VISIBLE) visibility = View.GONE }
+        with(binding.swipeRefreshLayout) { if(isRefreshing) isRefreshing = false }
+
         ErrorDialog(requireContext(), message).show()
     }
 
     private fun showNewMessagesPopover() {
         with(binding.popoverNewMessages) {
             if (visibility == View.VISIBLE) return
-            visibility = View.VISIBLE
-            scaleX = 0f
-            scaleY = 0f
-            animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(200)
-                .start()
+            QuizEditorAnimations.animateScaleIn(this)
         }
     }
 
     private fun hideNewMessagesPopover() {
         with(binding.popoverNewMessages) {
             if (visibility == View.GONE) return
-            scaleX = 1f
-            scaleY = 1f
-            animate()
-                .scaleX(0f)
-                .scaleY(0f)
-                .setDuration(200)
-                .withEndAction { visibility = View.GONE }
-                .start()
+            QuizEditorAnimations.animateScaleOut(this)
         }
     }
 }
