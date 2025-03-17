@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.Window
-import com.rafalskrzypczyk.core.R
 
 abstract class BaseDialog(context: Context) : Dialog(context) {
     val widthRatio = 0.9
@@ -22,6 +21,5 @@ abstract class BaseDialog(context: Context) : Dialog(context) {
             (context.resources.displayMetrics.widthPixels * widthRatio).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        window?.attributes?.windowAnimations = R.style.FadeInOutAnimation
     }
 }

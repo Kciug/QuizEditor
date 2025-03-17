@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
-import com.rafalskrzypczyk.core.R
 
 abstract class BaseDialogFragment<VB : ViewBinding>(
     private val bindingInflater: (LayoutInflater) -> VB
@@ -39,7 +38,6 @@ abstract class BaseDialogFragment<VB : ViewBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.window?.attributes?.windowAnimations = R.style.FadeInOutAnimation
         dialog?.window?.setLayout(
             (resources.displayMetrics.widthPixels * widthRatio).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
