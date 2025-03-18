@@ -3,11 +3,12 @@ package com.rafalskrzypczyk.login_screen.login
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.login_screen.R
 import com.rafalskrzypczyk.login_screen.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,12 +51,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     override fun displayLoading() {
-        val toast = Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT)
-        toast.show()
+        QuizEditorAnimations.animateReplaceScaleOutIn(binding.content, binding.loading.root)
     }
 
     override fun displayError(message: String) {
-        val errorDialog = ErrorDialog(requireContext(), message)
-        errorDialog.show()
+        ErrorDialog(requireContext(), message).show()
+        binding.loading.root.makeGone()
     }
 }

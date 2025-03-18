@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,69 +8,76 @@
     android:gravity="center"
     tools:context=".LoginActivity">
 
-    <!-- App Title -->
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center" />
-
-    <!-- Email Input -->
-    <EditText
-        android:id="@+id/input_email"
+    <LinearLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints="emailAddress"
-        android:hint="@string/hint_email"
-        android:inputType="textEmailAddress"
-        android:drawableStart="@drawable/ic_email_24"
-        android:drawableTint="?attr/colorPrimary"
-        android:drawablePadding="12dp"
-        android:layout_marginTop="32dp"
-        android:padding="12dp"
-        android:background="@drawable/background_rounded_edit_text"/>
-        <!--android:background="@drawable/input_background" /> -->
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
 
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center" />
 
-    <!-- Password Input -->
-    <EditText
-        android:id="@+id/passwordInput"
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="emailAddress"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:drawableStart="@drawable/ic_email_24"
+            android:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="12dp"
+            android:layout_marginTop="32dp"
+            android:padding="12dp"
+            android:background="@drawable/background_rounded_edit_text"/>
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="password"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:drawableStart="@drawable/ic_password_24"
+            android:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="12dp"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:background="@drawable/background_rounded_edit_text"/>
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_login"
+            android:layout_marginTop="24dp"
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/resetPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_forgot_password"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/loading"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints="password"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:drawableStart="@drawable/ic_password_24"
-        android:drawableTint="?attr/colorPrimary"
-        android:drawablePadding="12dp"
-        android:layout_marginTop="16dp"
-        android:padding="12dp"
-        android:background="@drawable/background_rounded_edit_text"/>
-        <!--android:background="@drawable/input_background" /> -->
-
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_login"
-        android:layout_marginTop="24dp"
-        android:padding="12dp" />
-
-    <!-- Reset Password Text -->
-    <TextView
-        android:id="@+id/resetPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_forgot_password"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:focusable="true" />
-
-</LinearLayout>
+        android:layout_height="match_parent"
+        layout="@layout/layout_loading"
+        android:visibility="gone"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

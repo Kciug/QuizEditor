@@ -3,9 +3,13 @@ package com.rafalskrzypczyk.home.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeInvisible
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
@@ -60,8 +64,8 @@ HomeScreenContract.View {
     }
 
     override fun setStartWorkGuide() {
-        binding.btnContinueWork.visibility = View.GONE
-        binding.tvContinueWorkMessage.visibility = View.GONE
+        binding.btnContinueWork.makeGone()
+        binding.tvContinueWorkMessage.makeGone()
 
         if(startWorkGuideView == null) {
             val startWorkGuideStub = binding.stubStartWorkGuide
@@ -84,44 +88,15 @@ HomeScreenContract.View {
             statCalculationsMode.tvElementsCount.text = String.format(statistics.calculationsModeStatistics.toString())
             statScenariosMode.tvElementsCount.text = String.format(statistics.scenariosModeStatistics.toString())
         }
-        animateScaleOut(binding.statisticsLoading.root) {
-            binding.statisticsLoading.root.visibility = View.GONE
-            animateScaleIn(binding.statisticsDev.root)
-        }
+        QuizEditorAnimations.animateReplaceScaleOutIn(binding.statisticsLoading.root, binding.statisticsDev.root)
     }
 
     override fun displayLoading() {
-        binding.statisticsDev.root.visibility = View.INVISIBLE
-        binding.statisticsLoading.root.visibility = View.VISIBLE
+        binding.statisticsDev.root.makeInvisible()
+        binding.statisticsLoading.root.makeVisible()
     }
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
-    }
-
-    private fun animateScaleOut(view: View, onEnd: () -> Unit) {
-        view.animate()
-            .scaleX(0f)
-            .scaleY(0f)
-            .alpha(0f)
-            .setDuration(200)
-            .withEndAction {
-                view.visibility = View.GONE
-                onEnd()
-            }
-            .start()
-    }
-
-    private fun animateScaleIn(view: View) {
-        view.scaleX = 0f
-        view.scaleY = 0f
-        view.alpha = 0f
-        view.visibility = View.VISIBLE
-        view.animate()
-            .scaleX(1f)
-            .scaleY(1f)
-            .alpha(1f)
-            .setDuration(200)
-            .start()
     }
 }

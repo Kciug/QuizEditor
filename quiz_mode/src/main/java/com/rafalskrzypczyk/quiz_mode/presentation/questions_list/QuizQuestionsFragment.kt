@@ -4,8 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.isVisible
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.R
@@ -88,6 +92,8 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
 
     override fun displayQuestions(questions: List<QuestionUIModel>) {
         adapter.submitList(questions)
+        if(binding.loading.root.isVisible)
+            QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerViewQuestions)
     }
 
     override fun displaySortMenu(
@@ -132,6 +138,8 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
     }
 
     override fun displayLoading() {
+        binding.recyclerViewQuestions.makeGone()
+        binding.loading.root.makeVisible()
     }
 
     override fun displayError(message: String) {
