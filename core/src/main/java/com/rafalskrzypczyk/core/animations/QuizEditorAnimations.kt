@@ -52,6 +52,22 @@ object QuizEditorAnimations {
             .start()
     }
 
+    fun animateExpandFromLeft(view: View, onEnd: (() -> Unit)? = null) {
+        view.apply {
+            scaleX = 0f
+            alpha = 0f
+            visibility = View.VISIBLE
+        }
+
+        view.animate()
+            .scaleX(1f)
+            .alpha(1f)
+            .setDuration(ANIMATION_DURATION)
+            .setStartDelay(ANIMATION_DELAY)
+            .withEndAction { onEnd?.invoke() }
+            .start()
+    }
+
     fun animateReplaceScaleOutIn(view1: View, view2: View) {
         animateScaleOut(view1) {
             animateScaleIn(view2)

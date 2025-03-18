@@ -4,4 +4,5 @@
     <string name="hint_chat_make_a_text">Napisz wiadomość…</string>
     <string name="ic_desc_chat_send_message">Wyślij wiadomość</string>
     <string name="label_chat_popover_new_messages">Masz nowe wiadomości!</string>
+    <string name="ic_desc_chat_scroll_to_bottom">Wróć do najnowszych</string>
 </resources>

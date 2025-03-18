@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingVertical="5dp"
+    android:paddingHorizontal="5dp"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/background_tile"
+    android:backgroundTintMode="src_in"
+    android:backgroundTint="@color/secondary_variant">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_keyboard_arrow_down_24"
+        android:contentDescription="@string/ic_desc_chat_scroll_to_bottom"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/popover_new_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:text="@string/label_chat_popover_new_messages"
+        android:textColor="@color/black"
+        android:gravity="center" />
+
+</LinearLayout>

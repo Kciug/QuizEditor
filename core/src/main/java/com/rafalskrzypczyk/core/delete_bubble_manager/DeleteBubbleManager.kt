@@ -10,9 +10,9 @@ import android.widget.PopupWindow
 import com.rafalskrzypczyk.core.R
 
 class DeleteBubbleManager(private val context: Context) {
-    fun showDeleteBubble(view: View, onDelete: () -> Unit) {
+    fun showDeleteBubble(anchorView: View, onDelete: () -> Unit) {
         val inflater = LayoutInflater.from(context)
-        val bubbleView = inflater.inflate(R.layout.bubble_delete, view.rootView as ViewGroup, false)
+        val bubbleView = inflater.inflate(R.layout.bubble_delete, anchorView.rootView as ViewGroup, false)
 
         bubbleView.measure(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
@@ -27,24 +27,24 @@ class DeleteBubbleManager(private val context: Context) {
         )
 
         val location = IntArray(2)
-        view.getLocationOnScreen(location)
+        anchorView.getLocationOnScreen(location)
 
-        val popupX = location[0] + (view.width / 2) - bubbleView.measuredWidth / 2
-        val popupY = location[1] + (view.height / 2) - bubbleView.measuredHeight / 2
+        val popupX = location[0] + (anchorView.width / 2) - bubbleView.measuredWidth / 2
+        val popupY = location[1] + (anchorView.height / 2) - bubbleView.measuredHeight / 2
 
         popupWindow.animationStyle = android.R.style.Animation_Dialog
-        ObjectAnimator.ofFloat(view, "alpha", 1f, 0.35f).apply {
+        ObjectAnimator.ofFloat(anchorView, "alpha", 1f, 0.35f).apply {
             duration = 150
             start()
         }
         popupWindow.setOnDismissListener {
-            ObjectAnimator.ofFloat(view, "alpha", 0.35f, 1f).apply {
+            ObjectAnimator.ofFloat(anchorView, "alpha", 0.35f, 1f).apply {
                 duration = 150
                 start()
             }
         }
 
-        popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, popupX, popupY)
+        popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, popupX, popupY)
 
         bubbleView.setOnClickListener {
             onDelete()

@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.chat.presentation
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,9 @@ import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeInvisible
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,9 +45,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
                 sectionMessageInput.etNewMessage.text.clear()
             }
 
-            popoverNewMessages.setOnClickListener {
+            popoverScrollToBottom.root.setOnClickListener {
                 rvMessages.smoothScrollToPosition(0)
-                hideNewMessagesPopover()
             }
 
             swipeRefreshLayout.setOnRefreshListener{
@@ -71,11 +74,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
 
                     val firstVisibleItemPosition = recyclerViewManager.findFirstVisibleItemPosition()
 
-                    if (firstVisibleItemPosition == 0) hideNewMessagesPopover()
+                    if (firstVisibleItemPosition == 0) hideScrollToBottomPopover()
+                    else showScrollToBottomPopover()
                 }
             })
         }
-
     }
 
     override fun displayMessages(messages: List<Message>) {
@@ -112,28 +115,37 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
     }
 
     override fun displayLoading() {
-        binding.rvMessages.visibility = View.INVISIBLE
-        binding.loading.root.visibility = View.VISIBLE
+        binding.rvMessages.makeInvisible()
+        binding.loading.root.makeVisible()
     }
 
     override fun displayError(message: String) {
-        with(binding.loading.root) { if(visibility == View.VISIBLE) visibility = View.GONE }
+        with(binding.loading.root) { if(isVisible) makeGone() }
         with(binding.swipeRefreshLayout) { if(isRefreshing) isRefreshing = false }
 
         ErrorDialog(requireContext(), message).show()
     }
 
-    private fun showNewMessagesPopover() {
-        with(binding.popoverNewMessages) {
-            if (visibility == View.VISIBLE) return
+    private fun showScrollToBottomPopover() {
+        with(binding.popoverScrollToBottom.root) {
+            if (isVisible) return
             QuizEditorAnimations.animateScaleIn(this)
         }
     }
 
-    private fun hideNewMessagesPopover() {
-        with(binding.popoverNewMessages) {
-            if (visibility == View.GONE) return
-            QuizEditorAnimations.animateScaleOut(this)
+    private fun hideScrollToBottomPopover() {
+        with(binding.popoverScrollToBottom) {
+            if (root.isGone) return
+            QuizEditorAnimations.animateScaleOut(root)
+            popoverNewMessages.makeGone()
+        }
+    }
+
+    private fun showNewMessagesPopover() {
+        with(binding.popoverScrollToBottom) {
+            if (root.isVisible) {
+                QuizEditorAnimations.animateExpandFromLeft(popoverNewMessages)
+            }
         }
     }
 }
