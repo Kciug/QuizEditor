@@ -1,12 +1,13 @@
-package com.rafalskrzypczyk.login_screen.login
+package com.rafalskrzypczyk.login_screen.reset_password
 
 import com.rafalskrzypczyk.core.base.BaseContract
 
-interface LoginContract {
+interface ResetPasswordContract {
     interface View : BaseContract.View {
+        fun displayMailSentSuccessfully()
         fun displayToastMessage(messageResId: Int)
     }
     interface Presenter : BaseContract.Presenter<View> {
-        fun login(email: String, password: String)
+        fun resetPassword(email: String)
     }
 }

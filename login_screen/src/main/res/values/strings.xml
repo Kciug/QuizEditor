@@ -8,4 +8,7 @@
     <string name="button_login">Zaloguj</string>
     <string name="button_forgot_password">Zapomniałem hasła</string>
     <string name="button_reset_password">Odzyskaj hasło</string>
+    <string name="reset_password_successfully_prompt">E-mail z instrukcjami resetowania hasła został wysłany. Sprawdź swoją skrzynkę pocztową (oraz folder SPAM) i postępuj zgodnie z instrukcjami.</string>
+    <string name="warning_missing_login_data">Dane logowania nie mogą być puste!</string>
+    <string name="warning_reset_password_missing_email">E-mail nie może być pusty!</string>
 </resources>

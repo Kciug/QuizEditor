@@ -4,6 +4,8 @@ import android.app.Activity
 import com.rafalskrzypczyk.login_screen.SuccessLoginHandler
 import com.rafalskrzypczyk.login_screen.login.LoginContract
 import com.rafalskrzypczyk.login_screen.login.LoginPresenter
+import com.rafalskrzypczyk.login_screen.reset_password.ResetPasswordContract
+import com.rafalskrzypczyk.login_screen.reset_password.ResetPasswordPresenter
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -24,7 +26,10 @@ object QuizQuestionDetailsActivityModule {
 
 @Module
 @InstallIn(FragmentComponent::class)
-abstract class LoginMdule {
+abstract class LoginModule {
     @Binds
-    abstract fun bindPresenter(presenter: LoginPresenter): LoginContract.Presenter
+    abstract fun bindLoginPresenter(presenter: LoginPresenter): LoginContract.Presenter
+
+    @Binds
+    abstract fun bindResetPasswordPresenter(presenter: ResetPasswordPresenter): ResetPasswordContract.Presenter
 }

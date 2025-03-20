@@ -1,6 +1,8 @@
 package com.rafalskrzypczyk.core.animations
 
 import android.view.View
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeVisible
 
 object QuizEditorAnimations {
     const val ANIMATION_DURATION = 200L
@@ -13,7 +15,12 @@ object QuizEditorAnimations {
             .alpha(0f)
             .setDuration(ANIMATION_DURATION)
             .withEndAction {
-                view.visibility = View.GONE
+                view.apply {
+                    makeGone()
+                    scaleX = 1f
+                    scaleY = 1f
+                    alpha = 1f
+                }
                 onEnd?.invoke()
             }
             .start()
@@ -21,10 +28,10 @@ object QuizEditorAnimations {
 
     fun animateScaleIn(view: View, onEnd: (() -> Unit)? = null) {
         view.apply {
-            view.scaleX = 0f
-            view.scaleY = 0f
-            view.alpha = 0f
-            view.visibility = View.VISIBLE
+            scaleX = 0f
+            scaleY = 0f
+            alpha = 0f
+            makeVisible()
         }
 
         view.animate()
@@ -40,7 +47,7 @@ object QuizEditorAnimations {
         view.apply {
             scaleY = 0f
             alpha = 0f
-            visibility = View.VISIBLE
+            makeVisible()
         }
 
         view.animate()
@@ -56,7 +63,7 @@ object QuizEditorAnimations {
         view.apply {
             scaleX = 0f
             alpha = 0f
-            visibility = View.VISIBLE
+            makeVisible()
         }
 
         view.animate()

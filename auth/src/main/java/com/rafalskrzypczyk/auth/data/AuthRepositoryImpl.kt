@@ -8,6 +8,8 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.user.UserData
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
@@ -51,24 +53,23 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun sendPasswordResetToEmail(email: String) = callbackFlow {
+        trySend(Response.Loading)
         firebaseAuth.sendPasswordResetEmail(email)
-            .addOnCompleteListener {
-                trySend(
-                    Response.Error(
-                        it.exception?.localizedMessage
-                            ?: resourcesProvider.getString(R.string.error_unknown)
-                    )
-                )
+            .addOnFailureListener {
+                trySend(Response.Error(it.localizedMessage ?: resourcesProvider.getString(R.string.error_unknown)))
             }.addOnSuccessListener {
                 trySend(Response.Success(Unit))
             }
+        awaitClose { this.cancel() }
     }
 
     override fun changePassword(newPassword: String): Flow<Response<Unit>> = callbackFlow {
+        trySend(Response.Loading)
         firebaseAuth.currentUser?.updatePassword(newPassword)?.addOnSuccessListener {
                 trySend(Response.Success(Unit))
             }?.addOnFailureListener {
                 trySend(Response.Error(it.localizedMessage ?: resourcesProvider.getString(R.string.error_unknown)))
             }
+        awaitClose { this.cancel() }
     }
 }
