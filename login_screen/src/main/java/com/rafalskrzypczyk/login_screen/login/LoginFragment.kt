@@ -36,11 +36,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     override fun onViewBound() {
         super.onViewBound()
 
-        binding.loginButton.setOnClickListener {
-            presenter.login(binding.inputEmail.text.toString(), binding.passwordInput.text.toString())
+        binding.btnLogin.setOnClickListener {
+            presenter.login(binding.inputEmail.text.toString(), binding.inputPassword.text.toString())
         }
 
-        binding.resetPassword.setOnClickListener {
+        binding.btnResetPassword.setOnClickListener {
             navController.navigate(R.id.navigation_reset_password)
         }
     }
