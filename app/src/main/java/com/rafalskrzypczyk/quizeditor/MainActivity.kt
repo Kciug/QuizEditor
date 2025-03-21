@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if(result.resultCode == RESULT_OK){
                 startMainAppActivity()
+            } else {
+                finish()
             }
         }
 

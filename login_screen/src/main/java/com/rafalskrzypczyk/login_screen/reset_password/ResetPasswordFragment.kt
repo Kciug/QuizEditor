@@ -15,6 +15,7 @@ import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.login_screen.databinding.FragmentResetPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.rafalskrzypczyk.login_screen.R
 
 @AndroidEntryPoint
 class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding>(FragmentResetPasswordBinding::inflate), ResetPasswordContract.View {
@@ -42,7 +43,7 @@ class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding>(Fragmen
         navController = findNavController()
 
         binding.buttonBack.setOnClickListener {
-            navController.popBackStack()
+            navController.navigate(R.id.action_reset_password_to_login)
         }
 
         binding.content.buttonResetPassword.setOnClickListener {

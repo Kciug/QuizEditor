@@ -9,12 +9,24 @@
         android:id="@+id/navigation_login"
         android:name="com.rafalskrzypczyk.login_screen.login.LoginFragment"
         android:label="@string/nav_login"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_to_reset_password"
+            app:destination="@id/navigation_reset_password"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_reset_password"
         android:name="com.rafalskrzypczyk.login_screen.reset_password.ResetPasswordFragment"
         android:label="@string/nav_reset_password"
-        tools:layout="@layout/fragment_reset_password"/>
+        tools:layout="@layout/fragment_reset_password">
+
+        <action
+            android:id="@+id/action_reset_password_to_login"
+            app:destination="@id/navigation_login"
+            app:popUpTo="@id/navigation_login"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
 </navigation>

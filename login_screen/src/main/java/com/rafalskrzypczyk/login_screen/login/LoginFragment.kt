@@ -33,6 +33,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter.onAttach(this)
         presenter.onViewCreated()
         navController = findNavController()
 
@@ -47,7 +48,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
 
         binding.btnResetPassword.setOnClickListener {
-            navController.navigate(R.id.navigation_reset_password)
+            navController.navigate(R.id.action_login_to_reset_password)
         }
 
         binding.inputPassword.setOnEditorActionListener { _, _, _ ->
