@@ -3,7 +3,6 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="QuizEditor.quiz_mode_arch" target="21" />
-      <module name="QuizEditor.swipe_mode" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
