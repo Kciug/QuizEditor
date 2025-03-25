@@ -6,10 +6,12 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.generateId
+import com.rafalskrzypczyk.core.utils.Constants
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -28,6 +30,7 @@ class ChatPresenter @Inject constructor(
         view.setupMessagesReceiver(repository.getCurrentUserId())
 
         presenterScope.launch{
+            delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getLatestMessages().collectLatest{
                 processResponse(it)
             }
