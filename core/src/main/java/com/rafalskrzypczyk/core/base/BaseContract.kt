@@ -7,7 +7,7 @@ interface BaseContract {
     }
 
     interface Presenter<V : View> {
-        fun onAttach(view: V)
+        fun onAttachView(view: V)
         fun onViewCreated()
         fun onDestroy()
     }

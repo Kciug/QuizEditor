@@ -6,10 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import javax.inject.Inject
 
-abstract class BaseDialogFragment<VB : ViewBinding>(
+abstract class BaseDialogFragment<VB : ViewBinding, V : BaseContract.View, P : BaseContract.Presenter<V>>(
     private val bindingInflater: (LayoutInflater) -> VB
 ) : DialogFragment() {
+    @Inject
+    lateinit var presenter: P
+
     private var _binding: VB? = null
 
     /**
@@ -38,6 +42,11 @@ abstract class BaseDialogFragment<VB : ViewBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        @Suppress("UNCHECKED_CAST")
+        presenter.onAttachView(this as V)
+        presenter.onViewCreated()
+
         dialog?.window?.setLayout(
             (resources.displayMetrics.widthPixels * widthRatio).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -45,8 +54,9 @@ abstract class BaseDialogFragment<VB : ViewBinding>(
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        presenter.onDestroy()
         _binding = null
+        super.onDestroyView()
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -19,12 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestionDetailsBinding>(
-    FragmentQuizQuestionDetailsBinding::inflate,
-), QuizQuestionDetailsContract.View {
-
-    @Inject
-    lateinit var presenter: QuizQuestionDetailsContract.Presenter
+class QuizQuestionDetailsFragment :
+    BaseBottomSheetFragment<FragmentQuizQuestionDetailsBinding, QuizQuestionDetailsContract.View, QuizQuestionDetailsContract.Presenter>(
+        FragmentQuizQuestionDetailsBinding::inflate,
+    ), QuizQuestionDetailsContract.View {
 
     @Inject
     lateinit var parentInteractor: QuizQuestionDetailsInteractor
@@ -34,15 +31,9 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
 
     private lateinit var keyboardController: KeyboardController
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         keyboardController = KeyboardController(requireContext())
-        presenter.onViewCreated()
         presenter.getData(arguments)
     }
 
@@ -78,11 +69,6 @@ class QuizQuestionDetailsFragment : BaseBottomSheetFragment<FragmentQuizQuestion
                 fieldNewAnswer.text.clear()
             }
         }
-    }
-
-    override fun onDestroy() {
-        presenter.onDestroy()
-        super.onDestroy()
     }
 
     override fun displayQuestionText(questionText: String) {

@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import javax.inject.Inject
 import kotlin.math.pow
 
-abstract class BaseBottomSheetFragment<VB: ViewBinding> (
+abstract class BaseBottomSheetFragment<VB: ViewBinding, V : BaseContract.View, P : BaseContract.Presenter<V>> (
     private val bindingInflater: (inflater: LayoutInflater) -> VB
 ) : BottomSheetDialogFragment() {
     companion object{
@@ -18,10 +19,10 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
         private const val HEIGHT_MODIFIER = 0.97f
     }
 
+    @Inject
+    lateinit var presenter: P
+
     private var _binding: VB? = null
-
-    private var onDismiss: (() -> Unit)? = null
-
 
     /**
      * Gets the view binding for this fragment.
@@ -54,20 +55,25 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        @Suppress("UNCHECKED_CAST")
+        presenter.onAttachView(this as V)
+        presenter.onViewCreated()
+
         _bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
         setupBottomSheetDialog()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        onDismiss?.invoke()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        presenter.onDestroy()
         _bottomSheet = null
         _binding = null
         activeSheetsCount = maxOf(0, activeSheetsCount - 1)
+        super.onDestroyView()
     }
 
     /**
@@ -93,9 +99,5 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding> (
      */
     protected open fun onViewBound(){
         // Optional: Subclasses can override this to perform actions after binding is set.
-    }
-
-    fun setOnDismiss(onDismissCallback: () -> Unit) {
-        onDismiss = onDismissCallback
     }
 }

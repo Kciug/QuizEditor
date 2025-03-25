@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.login_screen.login
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -15,28 +14,19 @@ import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.login_screen.R
 import com.rafalskrzypczyk.login_screen.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate), LoginContract.View {
-
-    @Inject
-    lateinit var presenter: LoginContract.Presenter
+class LoginFragment :
+    BaseFragment<FragmentLoginBinding, LoginContract.View, LoginContract.Presenter>(
+        FragmentLoginBinding::inflate
+    ), LoginContract.View {
 
     private lateinit var navController: NavController
     private lateinit var keyboardController: KeyboardController
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.onAttach(this)
-        presenter.onViewCreated()
         navController = findNavController()
-
         keyboardController = KeyboardController(requireContext())
     }
 
@@ -55,11 +45,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             onLogin()
             true
         }
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     override fun displayLoading() {

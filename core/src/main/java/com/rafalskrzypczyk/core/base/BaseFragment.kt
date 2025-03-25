@@ -8,11 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
+import javax.inject.Inject
 
 
-abstract class BaseFragment<VB: ViewBinding> (
+abstract class BaseFragment<VB: ViewBinding, V : BaseContract.View, P : BaseContract.Presenter<V>> (
     private val bindingInflater: (LayoutInflater) -> VB
 ) : Fragment() {
+
+    @Inject
+    lateinit var presenter: P
+
     private var _binding: VB? = null
 
     /**
@@ -40,12 +45,18 @@ abstract class BaseFragment<VB: ViewBinding> (
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        @Suppress("UNCHECKED_CAST")
+        presenter.onAttachView(this as V)
+        presenter.onViewCreated()
+
         activityActionBarBuilder?.setupActionBarMenu(actionMenuRes, actionMenuCallback)
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        presenter.onDestroy()
         _binding = null
+        super.onDestroyView()
     }
 
     /**

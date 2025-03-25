@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.login_screen.reset_password
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,28 +11,21 @@ import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.utils.KeyboardController
+import com.rafalskrzypczyk.login_screen.R
 import com.rafalskrzypczyk.login_screen.databinding.FragmentResetPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-import com.rafalskrzypczyk.login_screen.R
 
 @AndroidEntryPoint
-class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding>(FragmentResetPasswordBinding::inflate), ResetPasswordContract.View {
-
-    @Inject
-    lateinit var presenter: ResetPasswordContract.Presenter
+class ResetPasswordFragment :
+    BaseFragment<FragmentResetPasswordBinding, ResetPasswordContract.View, ResetPasswordContract.Presenter>(
+        FragmentResetPasswordBinding::inflate
+    ), ResetPasswordContract.View {
 
     private lateinit var navController: NavController
     private lateinit var keyboardController: KeyboardController
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
         keyboardController = KeyboardController(requireContext())
     }
 
@@ -54,11 +46,6 @@ class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding>(Fragmen
             onResetPassword()
             true
         }
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     override fun displayMailSentSuccessfully() {

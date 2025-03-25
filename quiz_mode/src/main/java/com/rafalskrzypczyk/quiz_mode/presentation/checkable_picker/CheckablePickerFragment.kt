@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -11,30 +10,20 @@ import com.rafalskrzypczyk.quiz_mode.databinding.FragmentCheckablePickerBinding
 import com.rafalskrzypczyk.quiz_mode.domain.CheckablePickerInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class CheckablePickerFragment (
-    private val parentInteractor: CheckablePickerInteractor
-) : BaseBottomSheetFragment<FragmentCheckablePickerBinding>(
+class CheckablePickerFragment(
+    private val parentInteractor: CheckablePickerInteractor,
+) : BaseBottomSheetFragment<FragmentCheckablePickerBinding, CheckablePickerContract.View, CheckablePickerContract.Presenter>(
     FragmentCheckablePickerBinding::inflate
 ), CheckablePickerContract.View {
-    @Inject
-    lateinit var presenter: CheckablePickerContract.Presenter
-
     private lateinit var adapter: CheckablePickerAdapter
 
     private var noElementsView: View? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-        presenter.attachInteractor(parentInteractor)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        presenter.attachInteractor(parentInteractor)
         super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
     }
 
     override fun onViewBound() {
@@ -52,11 +41,6 @@ class CheckablePickerFragment (
         binding.buttonSubmit.setOnClickListener {
             dismiss()
         }
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     override fun displayTitle(title: String) {

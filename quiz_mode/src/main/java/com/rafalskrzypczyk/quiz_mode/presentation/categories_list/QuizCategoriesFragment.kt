@@ -16,25 +16,17 @@ import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
-    FragmentQuizCategoriesBinding::inflate
-), QuizCategoriesContract.View {
-    @Inject
-    lateinit var presenter: QuizCategoriesContract.Presenter
+class QuizCategoriesFragment :
+    BaseFragment<FragmentQuizCategoriesBinding, QuizCategoriesContract.View, QuizCategoriesContract.Presenter>(
+        FragmentQuizCategoriesBinding::inflate
+    ), QuizCategoriesContract.View {
 
     private lateinit var adapter: CategoriesAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
 
     private var noElementsView: View? = null
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.onAttach(this)
-        presenter.onViewCreated()
-    }
 
     override fun onViewBound() {
         super.onViewBound()
@@ -57,11 +49,6 @@ class QuizCategoriesFragment : BaseFragment<FragmentQuizCategoriesBinding>(
             onSortTypeSelected = { presenter.sortByType(it) },
             onFilterSelected = { presenter.filterBy(it) }
         )
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     private fun actionMenuCallback(item: MenuItem): Boolean {

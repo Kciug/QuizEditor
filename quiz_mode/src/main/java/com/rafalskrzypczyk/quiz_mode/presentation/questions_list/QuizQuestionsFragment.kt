@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -17,29 +16,17 @@ import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
-    FragmentQuizQuestionsBinding::inflate
-), QuizQuestionsContract.View {
-    @Inject
-    lateinit var presenter: QuizQuestionsContract.Presenter
+class QuizQuestionsFragment :
+    BaseFragment<FragmentQuizQuestionsBinding, QuizQuestionsContract.View, QuizQuestionsContract.Presenter>(
+        FragmentQuizQuestionsBinding::inflate
+    ), QuizQuestionsContract.View {
 
     private lateinit var adapter: QuestionsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
 
     private var noElementsView: View? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
-    }
 
     override fun onViewBound() {
         super.onViewBound()
@@ -62,11 +49,6 @@ class QuizQuestionsFragment : BaseFragment<FragmentQuizQuestionsBinding>(
             onSortTypeSelected = { presenter.sortByType(it) },
             onFilterSelected = { presenter.filterBy(it) }
         )
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     private fun actionMenuCallback(item: MenuItem): Boolean {

@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.home.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
@@ -14,27 +13,19 @@ import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeScreenFragment : BaseFragment<FragmentHomeScreenBinding>(FragmentHomeScreenBinding::inflate),
-HomeScreenContract.View {
-
-    @Inject
-    lateinit var presenter: HomeScreenContract.Presenter
+class HomeScreenFragment :
+    BaseFragment<FragmentHomeScreenBinding, HomeScreenContract.View, HomeScreenContract.Presenter>(
+        FragmentHomeScreenBinding::inflate
+    ),
+    HomeScreenContract.View {
 
     private var startWorkGuideView: View? = null
     private var activityDrawerNavigationHandler: DrawerNavigationHandler? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.onAttach(this)
-        presenter.onViewCreated()
         activityDrawerNavigationHandler = activity as? DrawerNavigationHandler
     }
 
@@ -52,11 +43,6 @@ HomeScreenContract.View {
             statisticsDev.statCalculationsMode.tvModeName.text = getString(R.string.statistics_title_calculations_mode)
             statisticsDev.statScenariosMode.tvModeName.text = getString(R.string.statistics_title_scenarios_mode)
         }
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     override fun displayUserName(name: String) {

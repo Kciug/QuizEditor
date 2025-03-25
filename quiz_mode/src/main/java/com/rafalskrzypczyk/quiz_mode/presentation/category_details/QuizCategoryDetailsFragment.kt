@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -26,26 +25,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategoryDetailsBinding>(
-    FragmentQuizCategoryDetailsBinding::inflate
-), QuizCategoryDetailsContract.View {
-    @Inject
-    lateinit var presenter: QuizCategoryDetailsContract.Presenter
+class QuizCategoryDetailsFragment :
+    BaseBottomSheetFragment<FragmentQuizCategoryDetailsBinding, QuizCategoryDetailsContract.View, QuizCategoryDetailsContract.Presenter>(
+        FragmentQuizCategoryDetailsBinding::inflate
+    ), QuizCategoryDetailsContract.View {
     @Inject
     lateinit var parentInteractor: QuizCategoryDetailsInteractor
 
     private lateinit var adapter: QuestionsSimpleAdapter
     private lateinit var keyboardController: KeyboardController
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         keyboardController = KeyboardController(requireContext())
-        presenter.onViewCreated()
         presenter.getData(arguments)
     }
 
@@ -62,11 +54,6 @@ class QuizCategoryDetailsFragment : BaseBottomSheetFragment<FragmentQuizCategory
             sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
             sectionQuestionsList.buttonAddFromDb.setOnClickListener { presenter.onQuestionFromList() }
         }
-    }
-
-    override fun onDestroy() {
-        presenter.onDestroy()
-        super.onDestroy()
     }
 
     override fun setupView() {

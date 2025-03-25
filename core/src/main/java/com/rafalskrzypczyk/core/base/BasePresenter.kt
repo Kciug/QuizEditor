@@ -17,7 +17,7 @@ abstract class BasePresenter<V: BaseContract.View> : BaseContract.Presenter<V> {
 
     protected var presenterScope : CoroutineScope? = null
 
-    override fun onAttach(view: V) {
+    override fun onAttachView(view: V) {
         _view = view
     }
 

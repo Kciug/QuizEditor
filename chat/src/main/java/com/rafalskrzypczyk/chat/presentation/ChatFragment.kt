@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.chat.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
@@ -16,24 +15,17 @@ import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::inflate), ChatContract.View {
-    @Inject
-    lateinit var presenter: ChatContract.Presenter
+class ChatFragment :
+    BaseFragment<FragmentChatBinding, ChatContract.View, ChatContract.Presenter>(FragmentChatBinding::inflate),
+    ChatContract.View {
 
     private lateinit var messagesAdapter: MessagesAdapter
     private lateinit var recyclerViewManager: LinearLayoutManager
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter.onAttach(this)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.onViewCreated()
     }
 
     override fun onViewBound() {
@@ -53,11 +45,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(FragmentChatBinding::infl
                 presenter.loadOlderMessages()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        presenter.onDestroy()
-        super.onDestroyView()
     }
 
     override fun setupMessagesReceiver(currentUserId: String) {
