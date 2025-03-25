@@ -5,6 +5,7 @@ import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import kotlinx.coroutines.flow.Flow
 
@@ -24,6 +25,12 @@ interface FirestoreApi {
     suspend fun addQuizQuestion(question: QuestionDTO): Response<Unit>
     suspend fun updateQuizQuestion(question: QuestionDTO): Response<Unit>
     suspend fun deleteQuizQuestion(questionId: Long): Response<Unit>
+
+    fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>>
+    fun getUpdatedSwipeQuestions(): Flow<List<SwipeQuestionDTO>>
+    suspend fun addSwipeQuestion(question: SwipeQuestionDTO): Response<Unit>
+    suspend fun updateSwipeQuestion(question: SwipeQuestionDTO): Response<Unit>
+    suspend fun deleteSwipeQuestion(questionId: Long): Response<Unit>
 
     fun getLatestMessages(): Flow<Response<List<MessageDTO>>>
     fun getOlderMessages(): Flow<Response<List<MessageDTO>>>

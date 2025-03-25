@@ -13,6 +13,7 @@ import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
 import kotlinx.coroutines.channels.awaitClose
@@ -118,6 +119,35 @@ class FirestoreService @Inject constructor(
 
     override suspend fun deleteQuizQuestion(questionId: Long): Response<Unit> =
         deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+
+    override fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>> = flow {
+        emit(Response.Loading)
+        val questions = firestore.collection(FirestoreCollections.TEST_SWIPE_QUESTIONS)
+            .get().await()
+            .toObjects(SwipeQuestionDTO::class.java)
+        emit(Response.Success(questions))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedSwipeQuestions(): Flow<List<SwipeQuestionDTO>> = callbackFlow {
+        val listener = firestore.collection(FirestoreCollections.TEST_SWIPE_QUESTIONS)
+            .addSnapshotListener { value, error ->
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                value?.let { trySend(it.toObjects(SwipeQuestionDTO::class.java)) }
+            }
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun addSwipeQuestion(question: SwipeQuestionDTO): Response<Unit> =
+        addFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_SWIPE_QUESTIONS)
+
+    override suspend fun updateSwipeQuestion(question: SwipeQuestionDTO): Response<Unit> =
+        modifyFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_SWIPE_QUESTIONS)
+
+    override suspend fun deleteSwipeQuestion(questionId: Long): Response<Unit> =
+        deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_SWIPE_QUESTIONS)
 
     private val messagesLimit = 15L
     private var lastObservedMessage: MessageDTO? = null
