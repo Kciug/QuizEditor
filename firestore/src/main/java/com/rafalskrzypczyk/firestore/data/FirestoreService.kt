@@ -73,6 +73,7 @@ class FirestoreService @Inject constructor(
     override fun getUpdatedQuizCategories(): Flow<List<CategoryDTO>> = callbackFlow {
         val listener = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
             .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
                     close(error)
                     return@addSnapshotListener
@@ -102,6 +103,7 @@ class FirestoreService @Inject constructor(
     override fun getUpdatedQuizQuestions(): Flow<List<QuestionDTO>> = callbackFlow {
         val listener = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
             .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
                     close(error)
                     return@addSnapshotListener
@@ -131,6 +133,7 @@ class FirestoreService @Inject constructor(
     override fun getUpdatedSwipeQuestions(): Flow<List<SwipeQuestionDTO>> = callbackFlow {
         val listener = firestore.collection(FirestoreCollections.TEST_SWIPE_QUESTIONS)
             .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
                     close(error)
                     return@addSnapshotListener
