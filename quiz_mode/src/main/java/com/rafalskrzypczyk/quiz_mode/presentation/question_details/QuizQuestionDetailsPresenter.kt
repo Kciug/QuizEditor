@@ -3,7 +3,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.R
@@ -11,10 +10,6 @@ import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,10 +17,8 @@ import kotlin.collections.map
 
 class QuizQuestionDetailsPresenter @Inject constructor(
     private val interactor: QuizQuestionDetailsInteractor,
-    private val resourceProvider: ResourceProvider,
-    @MainDispatcher dispatcher: CoroutineDispatcher
+    private val resourceProvider: ResourceProvider
 ) : BasePresenter<QuizQuestionDetailsContract.View>(), QuizQuestionDetailsContract.Presenter {
-    private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
     private var isQuestionLoaded = false
 
     override fun onViewCreated() {
@@ -41,13 +34,13 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             return
         }
 
-        presenterScope.launch{
+        presenterScope?.launch{
             interactor.getQuestion(questionId).collectLatest { handleQuestionResponse(it) }
         }
     }
 
     private fun attachChangeListener() {
-        presenterScope.launch {
+        presenterScope?.launch {
             interactor.getUpdatedQuestion().collectLatest { it?.let { updateUI(it) } }
         }
     }
@@ -81,7 +74,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_question_text))
             return
         }
-        presenterScope.launch {
+        presenterScope?.launch {
             handleQuestionResponse(interactor.instantiateNewQuestion(questionText))
         }
     }
@@ -122,7 +115,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateLinkedCategories() {
-        presenterScope.launch {
+        presenterScope?.launch {
             interactor.getLinkedCategories().collectLatest {
                 when (it) {
                     is Response.Success -> view.displayLinkedCategories(it.data.map { it.toSimplePresentation() })
@@ -139,7 +132,6 @@ class QuizQuestionDetailsPresenter @Inject constructor(
 
     override fun onDestroy() {
         interactor.saveCachedQuestion()
-        presenterScope.cancel()
         super.onDestroy()
     }
 }

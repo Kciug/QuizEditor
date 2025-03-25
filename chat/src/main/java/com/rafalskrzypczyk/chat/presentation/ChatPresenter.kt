@@ -4,13 +4,8 @@ import com.rafalskrzypczyk.chat.domain.ChatRepository
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.core.utils.Constants
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -18,18 +13,15 @@ import java.util.Date
 import javax.inject.Inject
 
 class ChatPresenter @Inject constructor(
-    private val repository: ChatRepository,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher
+    private val repository: ChatRepository
 ): BasePresenter<ChatContract.View>(), ChatContract.Presenter {
-    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-
     private var loadOldMessagesTriggered = false
 
     override fun onViewCreated() {
         super.onViewCreated()
         view.setupMessagesReceiver(repository.getCurrentUserId())
 
-        presenterScope.launch{
+        presenterScope?.launch{
             delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getLatestMessages().collectLatest{
                 processResponse(it)
@@ -39,7 +31,7 @@ class ChatPresenter @Inject constructor(
 
     override fun sendMessage(message: String) {
         if(message.isBlank()) return
-        presenterScope.launch{
+        presenterScope?.launch{
             repository.sendMessage(Message(
                 id = Long.generateId(),
                 senderId = repository.getCurrentUserId(),
@@ -53,7 +45,7 @@ class ChatPresenter @Inject constructor(
     override fun loadOlderMessages() {
         if(loadOldMessagesTriggered) return
         loadOldMessagesTriggered = true
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getOlderMessages().collectLatest {
                 when (it) {
                     is Response.Success -> {
@@ -65,11 +57,6 @@ class ChatPresenter @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        presenterScope.cancel()
-        super.onDestroy()
     }
 
     private fun processResponse(response: Response<List<Message>>) {
@@ -84,7 +71,7 @@ class ChatPresenter @Inject constructor(
     }
 
     private fun attachMessagesListener() {
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getUpdatedMessages().collectLatest {
                 displayMessages(it)
             }

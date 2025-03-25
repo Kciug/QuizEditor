@@ -3,15 +3,10 @@ package com.rafalskrzypczyk.home.presentation
 import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.StatisticsRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,16 +15,13 @@ class HomeScreenPresenter @Inject constructor(
     private val statisticsRepository: StatisticsRepository,
     private val userManager: UserManager,
     private val sharedPreferences: SharedPreferencesApi,
-    private val resourceProvider: ResourceProvider,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher
+    private val resourceProvider: ResourceProvider
 ) : BasePresenter<HomeScreenContract.View>(), HomeScreenContract.Presenter {
-    private var presenterScope: CoroutineScope? = null
 
     private var lastEditedMode: Int = 0
 
     override fun onViewCreated() {
         super.onViewCreated()
-        presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
 
         lastEditedMode = sharedPreferences.getLastEditedMode()
         if (lastEditedMode == 0) view.setStartWorkGuide()
@@ -56,10 +48,5 @@ class HomeScreenPresenter @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        presenterScope?.cancel()
-        super.onDestroy()
     }
 }

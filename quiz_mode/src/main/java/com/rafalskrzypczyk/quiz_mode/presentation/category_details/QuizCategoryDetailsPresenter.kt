@@ -3,7 +3,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.ResourceProvider
@@ -12,20 +11,14 @@ import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toSelectableMenuItem
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class QuizCategoryDetailsPresenter @Inject constructor(
     private val interactor: QuizCategoryDetailsInteractor,
-    private val resourceProvider: ResourceProvider,
-    @MainDispatcher dispatcher: CoroutineDispatcher,
+    private val resourceProvider: ResourceProvider
 ) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
-    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
     private var isDataLoaded = false
 
     private var initialCategoryTitle: String = ""
@@ -42,7 +35,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             return
         }
 
-        presenterScope.launch {
+        presenterScope?.launch {
             interactor.getCategory(categoryId).collectLatest { handleCategoryResponse(it) }
         }
     }
@@ -60,7 +53,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     private fun attachChangeListener(){
-        presenterScope.launch {
+        presenterScope?.launch {
             interactor.getUpdatedCategory().collectLatest {
                 it?.let { updateUI(it) }
             }
@@ -88,7 +81,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             view.displayToastMessage(resourceProvider.getString(R.string.warning_empty_category_text))
             return
         }
-        presenterScope.launch {
+        presenterScope?.launch {
             handleCategoryResponse(interactor.instantiateNewCategory(categoryTitle))
         }
     }
@@ -128,7 +121,7 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun updateQuestionList() {
-        presenterScope.launch {
+        presenterScope?.launch {
             interactor.getLinkedQuestions().collectLatest {
                 when (it) {
                     is Response.Success -> {
@@ -152,7 +145,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
 
     override fun onDestroy() {
         interactor.saveCachedCategory()
-        presenterScope.cancel()
         super.onDestroy()
     }
 }

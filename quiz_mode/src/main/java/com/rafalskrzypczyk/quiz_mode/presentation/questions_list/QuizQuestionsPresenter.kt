@@ -2,7 +2,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
@@ -18,10 +17,6 @@ import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.Quest
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionSort.Companion.toSortType
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.toUIModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,10 +27,7 @@ import javax.inject.Inject
 
 class QuizQuestionsPresenter @Inject constructor(
     private val repository: QuizModeRepository,
-    @MainDispatcher dispatcher: CoroutineDispatcher
 ) : BasePresenter<QuizQuestionsContract.View>(), QuizQuestionsContract.Presenter {
-    private val presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-
     private val data = MutableStateFlow<List<Question>>(emptyList())
     private val categoriesData = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
@@ -49,7 +41,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun getData(){
-        presenterScope.launch {
+        presenterScope?.launch {
             delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllQuestions().collectLatest{
                 when (it) {
@@ -67,7 +59,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun observeDataChanges(){
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getUpdatedQuestions().collectLatest { data.value = it }
         }
     }
@@ -78,7 +70,7 @@ class QuizQuestionsPresenter @Inject constructor(
             return
         }
 
-        presenterScope.launch {
+        presenterScope?.launch {
             combine(
                 data,
                 searchQuery,
@@ -95,7 +87,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun displayCombinedData(questions: Flow<List<Question>>) {
-        presenterScope.launch{
+        presenterScope?.launch{
             combine(
                 questions,
                 categoriesData
@@ -113,7 +105,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun getCategoriesData() {
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getAllCategories().collectLatest { if (it is Response.Success) {
                     categoriesData.value = it.data
                     observeCategoriesDataChanges()
@@ -123,7 +115,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     private fun observeCategoriesDataChanges() {
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getUpdatedCategories().collectLatest { categoriesData.value = it }
         }
     }
@@ -149,7 +141,7 @@ class QuizQuestionsPresenter @Inject constructor(
     }
 
     override fun removeQuestion(question: QuestionUIModel) {
-        presenterScope.launch {
+        presenterScope?.launch {
             val response = repository.deleteQuestion(question.id)
             if (response is Response.Error) view.displayError(response.error)
         }
@@ -182,10 +174,5 @@ class QuizQuestionsPresenter @Inject constructor(
 
     override fun filterBy(filter: SelectableMenuItem) {
         filterType.value = filter.toFilterOption() ?: QuestionFilter.Companion.defaultFilter
-    }
-
-    override fun onDestroy() {
-        presenterScope.cancel()
-        super.onDestroy()
     }
 }

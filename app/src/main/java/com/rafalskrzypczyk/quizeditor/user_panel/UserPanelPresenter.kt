@@ -14,7 +14,6 @@ class UserPanelPresenter @Inject constructor(
         super.onViewCreated()
 
         val user = userManager.getCurrentLoggedUser()
-        //view.displayUserIcon(user.iconResId)
         user?.let { view.displayUserData(it.name, it.email, it.role?.name ?: "Użytkownik") }
     }
 

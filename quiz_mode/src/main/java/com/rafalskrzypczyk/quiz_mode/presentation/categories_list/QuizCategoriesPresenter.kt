@@ -2,7 +2,6 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
@@ -15,10 +14,6 @@ import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.Cate
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSelectableMenuItem
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSortOption
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategorySort.Companion.toSortType
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,10 +23,7 @@ import javax.inject.Inject
 
 class QuizCategoriesPresenter @Inject constructor(
     private val repository: QuizModeRepository,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher,
 ) : BasePresenter<QuizCategoriesContract.View>(), QuizCategoriesContract.Presenter {
-    private var presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-
     private val data = MutableStateFlow<List<Category>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<CategorySort.SortOptions>(CategorySort.Companion.defaultSortOption)
@@ -40,12 +32,11 @@ class QuizCategoriesPresenter @Inject constructor(
 
     override fun onViewCreated() {
         super.onViewCreated()
-        presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
         getData()
     }
 
     private fun getData(){
-        presenterScope.launch {
+        presenterScope?.launch {
             delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllCategories().collectLatest {
                 when (it) {
@@ -62,7 +53,7 @@ class QuizCategoriesPresenter @Inject constructor(
     }
 
     private fun observeDataChanges(){
-        presenterScope.launch {
+        presenterScope?.launch {
             repository.getUpdatedCategories().collectLatest { data.value = it }
         }
     }
@@ -73,7 +64,7 @@ class QuizCategoriesPresenter @Inject constructor(
             return
         }
 
-        presenterScope.launch {
+        presenterScope?.launch {
             combine(
                 data,
                 searchQuery,
@@ -110,7 +101,7 @@ class QuizCategoriesPresenter @Inject constructor(
     }
 
     override fun removeCategory(category: Category) {
-        presenterScope.launch {
+        presenterScope?.launch {
             val response = repository.deleteCategory(category.id)
             if (response is Response.Error) view.displayError(response.error)
         }
@@ -155,10 +146,5 @@ class QuizCategoriesPresenter @Inject constructor(
 
     override fun filterBy(filter: SelectableMenuItem) {
         filterType.value = filter.toFilterOption() ?: CategoryFilters.Companion.defaultFilter
-    }
-
-    override fun onDestroy() {
-        presenterScope.cancel()
-        super.onDestroy()
     }
 }
