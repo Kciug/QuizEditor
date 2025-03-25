@@ -4,6 +4,7 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +50,7 @@ class QuizQuestionsPresenter @Inject constructor(
 
     private fun getData(){
         presenterScope.launch {
+            delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllQuestions().collectLatest{
                 when (it) {
                     is Response.Success -> {

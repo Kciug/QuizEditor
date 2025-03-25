@@ -4,6 +4,7 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.di.MainDispatcher
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -39,11 +41,12 @@ class QuizCategoriesPresenter @Inject constructor(
     override fun onViewCreated() {
         super.onViewCreated()
         presenterScope = CoroutineScope(SupervisorJob() + dispatcher)
-        presenterScope.launch { getData() }
+        getData()
     }
 
     private fun getData(){
         presenterScope.launch {
+            delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllCategories().collectLatest {
                 when (it) {
                     is Response.Success -> {
