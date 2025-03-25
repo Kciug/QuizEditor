@@ -43,11 +43,13 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":quiz_mode"))
     implementation(project(":auth"))
     implementation(project(":login_screen"))
     implementation(project(":home"))
     implementation(project(":chat"))
+
+    implementation(project(":quiz_mode"))
+    implementation(project(":swipe_mode"))
 
     coreKtx()
     ui()

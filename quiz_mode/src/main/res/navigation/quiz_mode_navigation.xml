@@ -10,7 +10,7 @@
         android:name="com.rafalskrzypczyk.quiz_mode.presentation.categories_list.QuizCategoriesFragment"
         android:label="@string/bottom_bar_title_categories"
         app:restoreState="true"
-        tools:layout="@layout/fragment_quiz_categories" >
+        tools:layout="@layout/fragment_list" >
     </fragment>
 
 

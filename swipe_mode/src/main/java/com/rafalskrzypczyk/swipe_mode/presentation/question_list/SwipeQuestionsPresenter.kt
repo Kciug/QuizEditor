@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SwipeQuestionPresenter @Inject constructor(
+class SwipeQuestionsPresenter @Inject constructor(
     private val repository: SwipeModeRepository,
 ) : BasePresenter<SwipeQuestionsContract.View>(), SwipeQuestionsContract.Presenter {
     private val data = MutableStateFlow<List<SwipeQuestion>>(emptyList())

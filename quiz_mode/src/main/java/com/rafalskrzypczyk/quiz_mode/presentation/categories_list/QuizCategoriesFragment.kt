@@ -6,21 +6,21 @@ import android.view.View
 import androidx.core.view.isVisible
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
+import com.rafalskrzypczyk.core.databinding.FragmentListBinding
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoriesBinding
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.presentation.category_details.QuizCategoryDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class QuizCategoriesFragment :
-    BaseFragment<FragmentQuizCategoriesBinding, QuizCategoriesContract.View, QuizCategoriesContract.Presenter>(
-        FragmentQuizCategoriesBinding::inflate
+    BaseFragment<FragmentListBinding, QuizCategoriesContract.View, QuizCategoriesContract.Presenter>(
+        FragmentListBinding::inflate
     ), QuizCategoriesContract.View {
 
     private lateinit var adapter: CategoriesAdapter
@@ -99,7 +99,12 @@ class QuizCategoriesFragment :
     override fun displayNoElementsView() {
         if(noElementsView == null) {
             val stub = binding.stubEmptyList
-            noElementsView = stub.inflate()
+            noElementsView = stub.inflate().apply {
+                scaleX = 0f
+                scaleY = 0f
+            }
+
+            QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
         }
 
         val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)

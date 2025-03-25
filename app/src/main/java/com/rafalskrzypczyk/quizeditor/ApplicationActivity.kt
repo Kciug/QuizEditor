@@ -71,7 +71,8 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         appBarConfiguration = AppBarConfiguration(setOf(
             R.id.nav_home,
             R.id.nav_chat,
-            R.id.nav_quiz_mode
+            R.id.nav_quiz_mode,
+            R.id.nav_swipe_quiz_mode,
         ), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.drawerNavView.setupWithNavController(navController)

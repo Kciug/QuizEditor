@@ -99,7 +99,12 @@ class QuizQuestionsFragment :
     override fun displayNoElementsView() {
         if(noElementsView == null) {
             val stub = binding.stubEmptyList
-            noElementsView = stub.inflate()
+            noElementsView = stub.inflate().apply {
+                scaleX = 0f
+                scaleY = 0f
+            }
+
+            QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
         }
 
         val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
