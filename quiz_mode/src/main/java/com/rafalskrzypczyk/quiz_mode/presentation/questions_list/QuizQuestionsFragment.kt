@@ -8,6 +8,7 @@ import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
@@ -25,8 +26,6 @@ class QuizQuestionsFragment :
 
     private lateinit var adapter: QuestionsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
-
-    private var noElementsView: View? = null
 
     override fun onViewBound() {
         super.onViewBound()
@@ -97,17 +96,12 @@ class QuizQuestionsFragment :
     }
 
     override fun displayNoElementsView() {
-        if(noElementsView == null) {
-            val stub = binding.stubEmptyList
-            noElementsView = stub.inflate().apply {
-                scaleX = 0f
-                scaleY = 0f
-            }
+        val stub = binding.stubEmptyList
+        val noElementsView = stub.inflate().apply { makeInvisible() }
 
-            QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
-        }
+        QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
 
-        val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+        val buttonAddNew = noElementsView.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
         buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
     }
 

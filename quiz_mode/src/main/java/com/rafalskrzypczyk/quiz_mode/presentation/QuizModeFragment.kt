@@ -40,7 +40,6 @@ class QuizModeFragment : Fragment() {
         navController = navHostFragment.navController
 
         val bottomNavigateView : BottomNavigationView = view.findViewById(R.id.nav_quiz_mode_bottom_bar)
-        Log.d("KURWA", "onViewCreated: $bottomNavigateView")
         bottomNavigateView.setupWithNavController(navController)
 
         return view.rootView
