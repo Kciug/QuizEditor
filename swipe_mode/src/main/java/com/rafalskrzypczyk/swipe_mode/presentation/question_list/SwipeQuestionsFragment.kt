@@ -11,6 +11,7 @@ import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
+import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsFragment
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionSimpleUIModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -65,7 +66,8 @@ class SwipeQuestionsFragment :
     }
 
     private fun openNewQuestionSheet() {
-
+        val newQuestionSheet = SwipeQuestionDetailsFragment()
+        newQuestionSheet.show(parentFragmentManager, newQuestionSheet.tag)
     }
 
     override fun displayLoading() {

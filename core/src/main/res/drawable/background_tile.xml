@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/container_pane" />
-<!--    <stroke android:color="?android:attr/colorBackground" android:width="30dp"/>-->
     <corners android:radius="@dimen/tile_rounded_corner_radius" />
 </shape>

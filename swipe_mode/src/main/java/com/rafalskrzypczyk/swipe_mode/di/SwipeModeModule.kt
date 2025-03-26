@@ -2,8 +2,10 @@ package com.rafalskrzypczyk.swipe_mode.di
 
 import com.rafalskrzypczyk.swipe_mode.data.SwipeModeRepositoryImpl
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeModeRepository
-import com.rafalskrzypczyk.swipe_mode.presentation.question_list.SwipeQuestionsPresenter
+import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsContract
+import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsPresenter
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.SwipeQuestionsContract
+import com.rafalskrzypczyk.swipe_mode.presentation.question_list.SwipeQuestionsPresenter
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -23,6 +25,9 @@ abstract class SwipeModeModule {
 @InstallIn(FragmentComponent::class)
 abstract class SwipeQuestionsModule {
     @Binds
-    abstract fun bindPresenter(presenter: SwipeQuestionsPresenter): SwipeQuestionsContract.Presenter
+    abstract fun bindQuestionsPresenter(presenter: SwipeQuestionsPresenter): SwipeQuestionsContract.Presenter
+
+    @Binds
+    abstract fun bindQuestionDetailsPresenter(presenter: SwipeQuestionDetailsPresenter): SwipeQuestionDetailsContract.Presenter
 }
 

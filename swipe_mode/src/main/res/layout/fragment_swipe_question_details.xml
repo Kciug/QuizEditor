@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:padding="10dp">
+
+    <include
+        android:id="@+id/navbar"
+        layout="@layout/layout_bottom_sheet_nav_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_question_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Pytanie"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navbar" />
+
+    <EditText
+        android:id="@+id/input_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="name"
+        android:background="@drawable/background_tile"
+        android:hint="Treść pytania"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_question_header"
+        tools:ignore="TextFields" />
+
+    <include
+        android:id="@+id/creation_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/layout_creation_details"
+        app:layout_constraintTop_toBottomOf="@id/input_question"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <FrameLayout
+        android:id="@+id/answer_indicator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/background_tile"
+        app:layout_constraintStart_toStartOf="@id/btn_answer_unknown"
+        app:layout_constraintEnd_toEndOf="@id/btn_answer_unknown"
+        app:layout_constraintTop_toTopOf="@id/btn_answer_unknown"
+        app:layout_constraintBottom_toBottomOf="@id/btn_answer_unknown" />
+
+    <ImageView
+        android:id="@+id/btn_answer_false"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:contentDescription="Fałsz"
+        android:src="@drawable/ic_close_24"
+        android:layout_marginTop="40dp"
+        android:padding="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_answer_unknown"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/creation_details" />
+
+    <ImageView
+        android:id="@+id/btn_answer_true"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:contentDescription="Prawda"
+        android:src="@drawable/ic_check_24"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/btn_answer_false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_answer_unknown"
+        app:layout_constraintTop_toTopOf="@id/btn_answer_false"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/btn_answer_unknown"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:contentDescription="Wybierz czy pytanie jest prawdziwe"
+        android:src="@drawable/ic_question_mark_24"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/btn_answer_false"
+        app:layout_constraintEnd_toStartOf="@+id/btn_answer_true"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_answer_false"
+        app:layout_constraintTop_toTopOf="@id/btn_answer_false"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btn_add_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dodaj kolejne"
+        app:layout_constraintTop_toBottomOf="@id/btn_answer_false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"
+        android:padding="20dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
