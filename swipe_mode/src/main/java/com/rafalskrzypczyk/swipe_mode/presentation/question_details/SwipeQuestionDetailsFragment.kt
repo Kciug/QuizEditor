@@ -84,11 +84,12 @@ class SwipeQuestionDetailsFragment :
 
     override fun replaceWithNewQuestion() {
         with(binding) {
-            QuizEditorAnimations.animateScaleOut(binding.root)
-            inputQuestion.setText("")
-            changeCorrectSelection(null, correctnessPicker.btnAnswerUnknown, false)
-            creationDetails.root.makeInvisible()
-            QuizEditorAnimations.animateScaleIn(binding.root)
+            QuizEditorAnimations.animateScaleOut(binding.root) {
+                inputQuestion.setText("")
+                changeCorrectSelection(null, correctnessPicker.btnAnswerUnknown, false)
+                creationDetails.root.makeInvisible()
+                QuizEditorAnimations.animateScaleIn(binding.root)
+            }
         }
     }
 
