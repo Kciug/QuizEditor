@@ -18,5 +18,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <TextView
+        android:id="@+id/label_correctness"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/text_placeholder_short"
+        app:layout_constraintTop_toBottomOf="@id/tv_question_text"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/background_category_label"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
