@@ -41,6 +41,10 @@ class SwipeQuestionsAdapter (
         fun bind(item: SwipeQuestionSimpleUIModel){
             questionTitle.text = item.text
 
+            itemView.setOnClickListener {
+                onCategoryClicked(item.id)
+            }
+
             itemView.setOnLongClickListener { view ->
                 deleteBubbleManager.showDeleteBubble(view) {
                     onCategoryRemoved(item.id)

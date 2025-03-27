@@ -18,8 +18,6 @@
     <string name="label_category_questions_amount_singular">pytanie</string>
     <string name="label_category_questions_amount_few">pytania</string>
     <string name="label_category_questions_amount_many">pytań</string>
-    <string name="label_created_on">Utworzono</string>
-    <string name="label_created_by">przez</string>
     <string name="label_answers_count_one">odpowiedź</string>
     <string name="label_answers_count_many">odpowiedzi</string>
 

@@ -34,5 +34,8 @@
     <string name="label_no_elements_guide_part1">Kliknij</string>
     <string name="label_no_elements_guide_part2">by dodać pierwszy element!</string>
 
+    <string name="label_created_on">Utworzono</string>
+    <string name="label_created_by">przez</string>
+
     <string name="ic_desc_nav_drawer">Panel Nawigacji</string>
 </resources>

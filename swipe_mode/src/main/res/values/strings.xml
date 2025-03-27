@@ -1,2 +1,4 @@
 <resources>
+    <string name="warning_question_text_is_empty">Treść pytania nie może być pusta!</string>
+    <string name="warning_question_is_correct_not_set">Należy ustawić czy pytanie jest poprawne!</string>
 </resources>

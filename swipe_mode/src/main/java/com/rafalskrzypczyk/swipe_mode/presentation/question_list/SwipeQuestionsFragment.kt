@@ -1,5 +1,7 @@
 package com.rafalskrzypczyk.swipe_mode.presentation.question_list
 
+import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isVisible
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
@@ -11,6 +13,7 @@ import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
+import com.rafalskrzypczyk.swipe_mode.R
 import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsFragment
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionSimpleUIModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,20 +27,36 @@ class SwipeQuestionsFragment :
     private lateinit var adapter: SwipeQuestionsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
 
+    private var noElementsView : View? = null
+
     override fun onViewBound() {
         super.onViewBound()
+
+        actionMenuRes = R.menu.action_bar_swipe_mode
+        actionMenuCallback = { actionMenuCallback(it) }
 
         adapter = SwipeQuestionsAdapter(
             onCategoryClicked = { openQuestionDetailsSheet(it) },
             onCategoryRemoved = { presenter.removeCategory(it) }
         )
         binding.recyclerViewCategories.adapter = adapter
+
+        binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
+        binding.searchBar.setOnClearClick { presenter.searchBy("") }
+
+        actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
+        actionBarMenuBuilder.setupOnSelectListeners(
+            onSortOptionSelected = { presenter.sortByOption(it) },
+            onSortTypeSelected = { presenter.sortByType(it) },
+            onFilterSelected = { presenter.filterBy(it) }
+        )
     }
 
     override fun displayQuestions(questions: List<SwipeQuestionSimpleUIModel>) {
         adapter.submitList(questions)
         if(binding.loading.root.isVisible)
             QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerViewCategories)
+        noElementsView?.rootView?.makeGone()
     }
 
     override fun displaySortMenu(
@@ -53,21 +72,41 @@ class SwipeQuestionsFragment :
 
     override fun displayNoElementsView() {
         val stub = binding.stubEmptyList
-        val noElementsView = stub.inflate().apply { makeInvisible() }
+        noElementsView = stub.inflate().apply { makeInvisible() }
 
         QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
 
-        val buttonAddNew = noElementsView.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+        val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
         buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
     }
 
     private fun openQuestionDetailsSheet(categoryId: Long) {
-
+        val questionDetailsSheet = SwipeQuestionDetailsFragment()
+        questionDetailsSheet.arguments = Bundle().apply { putLong("questionId", categoryId) }
+        questionDetailsSheet.show(parentFragmentManager, questionDetailsSheet.tag)
     }
 
     private fun openNewQuestionSheet() {
         val newQuestionSheet = SwipeQuestionDetailsFragment()
         newQuestionSheet.show(parentFragmentManager, newQuestionSheet.tag)
+    }
+
+    private fun actionMenuCallback(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_sort -> {
+                presenter.onSortMenuOpened()
+                true
+            }
+            R.id.action_filter -> {
+                presenter.onFilterMenuOpened()
+                true
+            }
+            R.id.action_add_new -> {
+                openNewQuestionSheet()
+                true
+            }
+            else -> false
+        }
     }
 
     override fun displayLoading() {

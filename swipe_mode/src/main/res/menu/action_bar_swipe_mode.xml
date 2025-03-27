@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_sort"
+        android:title="@string/ic_desc_sort"
+        android:icon="@drawable/ic_sort_24"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_filter"
+        android:title="@string/ic_desc_filter"
+        android:icon="@drawable/ic_filter_list_24"
+        android:orderInCategory="110"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_add_new"
+        android:title="@string/ic_desc_add"
+        android:icon="@drawable/ic_add_24"
+        android:orderInCategory="120"
+        app:showAsAction="always" />
+</menu>
