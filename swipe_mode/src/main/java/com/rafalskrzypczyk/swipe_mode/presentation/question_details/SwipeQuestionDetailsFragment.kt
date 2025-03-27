@@ -13,7 +13,9 @@ import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.swipe_mode.R
@@ -86,6 +88,7 @@ class SwipeQuestionDetailsFragment :
     override fun displayCreatedDetails(dateCreated: String) {
         binding.creationDetails.labelCreationDate.text = dateCreated
         QuizEditorAnimations.animateScaleIn(binding.creationDetails.root)
+        binding.navbar.buttonSave.makeGone()
     }
 
     override fun replaceWithNewQuestion() {
@@ -95,6 +98,7 @@ class SwipeQuestionDetailsFragment :
                 changeCorrectSelection(null, correctnessPicker.btnAnswerUnknown, false)
                 creationDetails.root.makeInvisible()
                 QuizEditorAnimations.animateScaleIn(binding.root)
+                binding.navbar.buttonSave.makeVisible()
             }
         }
     }
@@ -104,6 +108,7 @@ class SwipeQuestionDetailsFragment :
     }
 
     override fun openKeyboard() {
+        binding.inputQuestion.requestFocus()
         keyboardController.showKeyboardWithDelay(binding.inputQuestion)
     }
 
