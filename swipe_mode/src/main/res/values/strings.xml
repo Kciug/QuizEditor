@@ -4,4 +4,13 @@
 
     <string name="label_question_correct">Prawda</string>
     <string name="label_question_incorrect">Fałsz</string>
+
+    <string name="sort_ascending">Rosnąco</string>
+    <string name="sort_descending">Malejąco</string>
+    <string name="sort_by_date">Najnowsze</string>
+    <string name="sort_by_title">Alfabetycznie</string>
+
+    <string name="filter_none">Brak</string>
+    <string name="filter_by_correct">Prawda</string>
+    <string name="filter_by_incorrect">Fałsz</string>
 </resources>

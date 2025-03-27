@@ -63,11 +63,18 @@ class SwipeQuestionsFragment :
         sortOptions: List<SelectableMenuItem>,
         sortTypes: List<SelectableMenuItem>,
     ) {
-        TODO("Not yet implemented")
+        actionBarMenuBuilder.showSortMenu(
+            anchorView = requireActivity().findViewById(R.id.action_sort),
+            sortOptionsList = sortOptions,
+            sortTypesList = sortTypes
+        )
     }
 
     override fun displayFilterMenu(filterOptions: List<SelectableMenuItem>) {
-        TODO("Not yet implemented")
+        actionBarMenuBuilder.showFilterMenu(
+            ahchorView = requireActivity().findViewById(R.id.action_filter),
+            filterOptions = filterOptions
+        )
     }
 
     override fun displayNoElementsView() {
