@@ -47,7 +47,12 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateIsCorrect(isCorrect: Boolean?) {
-        if(isCorrect == null) return
+        if(question == null) return
+        if(isCorrect == null) {
+            view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
+            return
+        }
+
         question?.isCorrect = isCorrect
         updateQuestion()
     }
