@@ -43,28 +43,26 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
 
     override fun updateQuestionText(questionText: String) {
         question?.text = questionText
+        updateQuestion()
     }
 
     override fun updateIsCorrect(isCorrect: Boolean?) {
-        question?.isCorrect
+        if(isCorrect == null) return
+        question?.isCorrect = isCorrect
+        updateQuestion()
     }
 
     override fun saveNewQuestion(questionText: String, isCorrect: Boolean?) {
         if(!validateQuestion(questionText, isCorrect)) return
+        if(question != null) return
 
         presenterScope?.launch {
-            if(question != null) {
-                val response = repository.updateQuestion(question!!)
-                if(response is Response.Error) view.displayError(response.error)
-            }
-            else {
-                val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
-                var response = repository.addQuestion(newQuestion)
-                if(response is Response.Error) view.displayError(response.error)
-                if(response is Response.Success) {
-                    question = newQuestion
-                    view.displayCreatedDetails(String.formatDate(question!!.dateCreated))
-                }
+            val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
+            var response = repository.addQuestion(newQuestion)
+            if(response is Response.Error) view.displayError(response.error)
+            if(response is Response.Success) {
+                question = newQuestion
+                view.displayCreatedDetails(String.formatDate(question!!.dateCreated))
             }
         }
     }
@@ -73,11 +71,7 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         if(!validateQuestion(questionText, isCorrect)) return
 
         if(question != null) {
-            presenterScope?.launch {
-                val response = repository.updateQuestion(question!!)
-                if(response is Response.Error) view.displayError(response.error)
-                if(response is Response.Success) replaceWithNewQuestion()
-            }
+            replaceWithNewQuestion()
             return
         }
 
@@ -108,5 +102,13 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
 
         return true
+    }
+
+    private fun updateQuestion() {
+        if(question == null) return
+        presenterScope?.launch {
+            val response = repository.updateQuestion(question!!)
+            if(response is Response.Error) view.displayError(response.error)
+        }
     }
 }

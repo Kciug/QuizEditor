@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
@@ -42,11 +43,16 @@ class SwipeQuestionDetailsFragment :
             inputQuestion.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             inputQuestion.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    presenter.updateQuestionText(inputQuestion.text.toString())
+                    //presenter.updateQuestionText(inputQuestion.text.toString())
                     if(inputQuestion.text.isNotEmpty()) keyboardController.hideKeyboard(inputQuestion)
                     true
                 } else false
             }
+            inputQuestion.addTextChangedListener(
+                afterTextChanged = {
+                    presenter.updateQuestionText(it.toString())
+                }
+            )
 
             changeCorrectSelection(null, correctnessPicker.btnAnswerUnknown, false)
 
