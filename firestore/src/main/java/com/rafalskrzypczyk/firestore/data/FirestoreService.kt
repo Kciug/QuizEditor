@@ -9,6 +9,8 @@ import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.data_statistics.StatisticsQuizMode
+import com.rafalskrzypczyk.core.database_management.Database
+import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
@@ -27,12 +29,22 @@ import javax.inject.Inject
 class FirestoreService @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val resourceProvider: ResourceProvider,
+    private val databaseManager: DatabaseManager,
 ) : FirestoreApi {
+    private var userDataCollection = FirestoreCollections.USER_DATA_COLLECTION
+    private var messagesCollection = FirestoreCollections.MESSAGES
+    private var quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
+    private var quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
+    private var swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
 
+    init {
+        setDatabaseCollections(databaseManager.getDatabase())
+        databaseManager.setDatabaseChangedCallback { setDatabaseCollections(it) }
+    }
 
     override fun getUserData(userId: String): Flow<Response<UserDataDTO>> = flow {
         emit(Response.Loading)
-        val result = firestore.collection(FirestoreCollections.USER_DATA_COLLECTION)
+        val result = firestore.collection(userDataCollection)
             .document(userId)
             .get()
             .await()
@@ -64,14 +76,14 @@ class FirestoreService @Inject constructor(
 
     override fun getQuizCategories(): Flow<Response<List<CategoryDTO>>> = flow {
         emit(Response.Loading)
-        val categories = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        val categories = firestore.collection(quizCategoriesCollection)
             .get().await()
             .toObjects(CategoryDTO::class.java)
         emit(Response.Success(categories))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getUpdatedQuizCategories(): Flow<List<CategoryDTO>> = callbackFlow {
-        val listener = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        val listener = firestore.collection(quizCategoriesCollection)
             .addSnapshotListener { value, error ->
                 if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
@@ -84,24 +96,24 @@ class FirestoreService @Inject constructor(
     }
 
     override suspend fun addQuizCategory(category: CategoryDTO): Response<Unit> =
-        addFirestoreDocument(category.id.toString(), category, FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        addFirestoreDocument(category.id.toString(), category, quizCategoriesCollection)
 
     override suspend fun updateQuizCategory(category: CategoryDTO): Response<Unit> =
-        modifyFirestoreDocument(category.id.toString(), category, FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        modifyFirestoreDocument(category.id.toString(), category, quizCategoriesCollection)
 
     override suspend fun deleteQuizCategory(categoryId: Long): Response<Unit> =
-        deleteFirestoreDocument(categoryId.toString(), FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES)
+        deleteFirestoreDocument(categoryId.toString(), quizCategoriesCollection)
 
     override fun getQuizQuestions(): Flow<Response<List<QuestionDTO>>> = flow {
         emit(Response.Loading)
-        val questions = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+        val questions = firestore.collection(quizQuestionsCollection)
             .get().await()
             .toObjects(QuestionDTO::class.java)
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getUpdatedQuizQuestions(): Flow<List<QuestionDTO>> = callbackFlow {
-        val listener = firestore.collection(FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+        val listener = firestore.collection(quizQuestionsCollection)
             .addSnapshotListener { value, error ->
                 if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
@@ -114,24 +126,24 @@ class FirestoreService @Inject constructor(
     }
 
     override suspend fun addQuizQuestion(question: QuestionDTO): Response<Unit> =
-        addFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+        addFirestoreDocument(question.id.toString(), question, quizQuestionsCollection)
 
     override suspend fun updateQuizQuestion(question: QuestionDTO): Response<Unit> =
-        modifyFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+        modifyFirestoreDocument(question.id.toString(), question, quizQuestionsCollection)
 
     override suspend fun deleteQuizQuestion(questionId: Long): Response<Unit> =
-        deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS)
+        deleteFirestoreDocument(questionId.toString(), quizQuestionsCollection)
 
     override fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>> = flow {
         emit(Response.Loading)
-        val questions = firestore.collection(FirestoreCollections.TEST_SWIPE_QUESTIONS)
+        val questions = firestore.collection(swipeQuestionsCollection)
             .get().await()
             .toObjects(SwipeQuestionDTO::class.java)
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getUpdatedSwipeQuestions(): Flow<List<SwipeQuestionDTO>> = callbackFlow {
-        val listener = firestore.collection(FirestoreCollections.TEST_SWIPE_QUESTIONS)
+        val listener = firestore.collection(swipeQuestionsCollection)
             .addSnapshotListener { value, error ->
                 if(value?.metadata?.isFromCache == true) return@addSnapshotListener
                 if(error != null) {
@@ -144,20 +156,20 @@ class FirestoreService @Inject constructor(
     }
 
     override suspend fun addSwipeQuestion(question: SwipeQuestionDTO): Response<Unit> =
-        addFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_SWIPE_QUESTIONS)
+        addFirestoreDocument(question.id.toString(), question, swipeQuestionsCollection)
 
     override suspend fun updateSwipeQuestion(question: SwipeQuestionDTO): Response<Unit> =
-        modifyFirestoreDocument(question.id.toString(), question, FirestoreCollections.TEST_SWIPE_QUESTIONS)
+        modifyFirestoreDocument(question.id.toString(), question, swipeQuestionsCollection)
 
     override suspend fun deleteSwipeQuestion(questionId: Long): Response<Unit> =
-        deleteFirestoreDocument(questionId.toString(), FirestoreCollections.TEST_SWIPE_QUESTIONS)
+        deleteFirestoreDocument(questionId.toString(), swipeQuestionsCollection)
 
     private val messagesLimit = 15L
     private var lastObservedMessage: MessageDTO? = null
 
     override fun getLatestMessages(): Flow<Response<List<MessageDTO>>> = flow {
         emit(Response.Loading)
-        val messages = firestore.collection(FirestoreCollections.MESSAGES)
+        val messages = firestore.collection(messagesCollection)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(messagesLimit)
             .get().await()
@@ -168,7 +180,7 @@ class FirestoreService @Inject constructor(
 
     override fun getOlderMessages(): Flow<Response<List<MessageDTO>>> = flow {
         emit(Response.Loading)
-        val olderMessages = firestore.collection(FirestoreCollections.MESSAGES)
+        val olderMessages = firestore.collection(messagesCollection)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .startAfter(lastObservedMessage?.timestamp)
             .limit(messagesLimit)
@@ -180,7 +192,7 @@ class FirestoreService @Inject constructor(
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override fun getUpdatedMessages(): Flow<List<MessageDTO>> = callbackFlow {
-        val listener = firestore.collection(FirestoreCollections.MESSAGES)
+        val listener = firestore.collection(messagesCollection)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(messagesLimit)
             .addSnapshotListener { value, error ->
@@ -199,7 +211,7 @@ class FirestoreService @Inject constructor(
 
     override suspend fun sendMessage(message: MessageDTO): Response<Unit> {
         return try {
-            firestore.collection(FirestoreCollections.MESSAGES)
+            firestore.collection(messagesCollection)
                 .document()
                 .set(message)
                 .await()
@@ -253,6 +265,26 @@ class FirestoreService @Inject constructor(
             Response.Success(Unit)
         } catch (e: Exception) {
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    private fun setDatabaseCollections(database: Database) {
+        when (database) {
+            Database.TEST -> {
+                quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
+                quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
+                swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
+            }
+            Database.DEVELOPMENT -> {
+                quizCategoriesCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_CATEGORIES
+                quizQuestionsCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_QUESTIONS
+                swipeQuestionsCollection = FirestoreCollections.DEVELOPMENT_SWIPE_QUESTIONS
+            }
+            Database.PRODUCTION -> {
+                quizCategoriesCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_CATEGORIES
+                quizQuestionsCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_QUESTIONS
+                swipeQuestionsCollection = FirestoreCollections.PRODUCTION_SWIPE_QUESTIONS
+            }
         }
     }
 }

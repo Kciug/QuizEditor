@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.core.local_preferences
 
 import android.content.SharedPreferences
+import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.user.UserData
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -11,6 +12,7 @@ class SharedPreferencesService @Inject constructor(
     companion object{
         const val KEY_CURRENT_USER = "current_user"
         const val KEY_LAST_EDITED_MODE = "last_edited_mode"
+        const val KEY_CURRENT_DATABASE = "current_database"
 
         const val DEFAULT_STRING_VALUE = ""
         const val DEFAULT_NUMBER_VALUE = 0
@@ -42,5 +44,15 @@ class SharedPreferencesService @Inject constructor(
 
     override fun getLastEditedMode(): Int {
         return sharedPreferences.getInt(KEY_LAST_EDITED_MODE, DEFAULT_NUMBER_VALUE)
+    }
+
+    override fun setCurrentDatabase(database: Database) {
+        sharedPreferences.edit()
+            .putString(KEY_CURRENT_DATABASE, database.name)
+            .apply()
+    }
+
+    override fun getCurrentDatabase(): Database {
+        return Database.valueOf(sharedPreferences.getString(KEY_CURRENT_DATABASE, Database.TEST.name)!!)
     }
 }
