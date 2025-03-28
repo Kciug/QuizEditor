@@ -72,7 +72,10 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         presenterScope?.launch {
             val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
             when(val response = repository.addQuestion(newQuestion)){
-                is Response.Success -> view.displayCreatedDetails(String.formatDate(newQuestion.dateCreated))
+                is Response.Success -> {
+                    view.displayCreatedDetails(String.formatDate(newQuestion.dateCreated))
+                    allowChange = true
+                }
                 is Response.Error -> view.displayError(response.error)
                 is Response.Loading -> view.displayLoading()
             }
