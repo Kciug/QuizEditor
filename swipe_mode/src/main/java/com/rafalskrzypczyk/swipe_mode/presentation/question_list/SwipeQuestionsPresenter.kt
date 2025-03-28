@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.swipe_mode.presentation.question_list
 
+import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
@@ -22,7 +23,7 @@ import javax.inject.Inject
 class SwipeQuestionsPresenter @Inject constructor(
     private val repository: SwipeModeRepository,
 ) : BasePresenter<SwipeQuestionsContract.View>(), SwipeQuestionsContract.Presenter {
-    private val data = MutableStateFlow<List<SwipeQuestion>>(emptyList())
+    private val questionsData = MutableStateFlow<List<SwipeQuestion>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<SwipeQuestionsSort.SortOptions>(SwipeQuestionsSort.Companion.defaultSortOption)
     private val sortType = MutableStateFlow<SwipeQuestionsSort.SortTypes>(SwipeQuestionsSort.Companion.defaultSortType)
@@ -35,7 +36,7 @@ class SwipeQuestionsPresenter @Inject constructor(
             repository.getAllQuestions().collectLatest {
                 when(it){
                     is Response.Success -> {
-                        data.value = it.data
+                        questionsData.value = it.data
                         observeDataChanges()
                         displayData()
                     }
@@ -47,14 +48,14 @@ class SwipeQuestionsPresenter @Inject constructor(
     }
 
     private fun displayData() {
-        if (data.value.isEmpty()) {
+        if (questionsData.value.isEmpty()) {
             view.displayNoElementsView()
             return
         }
 
         presenterScope?.launch {
             combine(
-                data,
+                questionsData,
                 searchQuery,
                 sortOption,
                 sortType,
@@ -65,6 +66,7 @@ class SwipeQuestionsPresenter @Inject constructor(
                 searchedQuestions = filterData(searchedQuestions, filter)
                 searchedQuestions
             }.collectLatest {
+                Log.d("KURWA", "data displayed: $it")
                 view.displayQuestions(it.map { it.toSimpleUIModel() })
             }
         }
@@ -91,7 +93,7 @@ class SwipeQuestionsPresenter @Inject constructor(
 
     private fun observeDataChanges() {
         presenterScope?.launch {
-            repository.getUpdatedQuestions().collectLatest { data.value = it }
+            repository.getUpdatedQuestions().collectLatest { questionsData.value = it }
         }
     }
 

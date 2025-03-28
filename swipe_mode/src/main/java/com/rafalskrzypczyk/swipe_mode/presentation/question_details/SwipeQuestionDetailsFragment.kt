@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
@@ -142,7 +141,6 @@ class SwipeQuestionDetailsFragment :
             constraintSet.connect(answerIndicator.id, ConstraintSet.BOTTOM, target.id, ConstraintSet.BOTTOM)
         }
 
-        Log.d("KURWA", "animated: $animated")
         if(animated) TransitionManager.beginDelayedTransition(pickerLayout)
 
         constraintSet.applyTo(pickerLayout)

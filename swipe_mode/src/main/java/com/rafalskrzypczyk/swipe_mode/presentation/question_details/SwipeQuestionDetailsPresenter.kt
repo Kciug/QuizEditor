@@ -19,9 +19,11 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
 
     private var question: SwipeQuestion? = null
 
+    private var allowChange: Boolean = false
+
     override fun getData(arguments: Bundle?) {
-        val questionId = arguments?.getLong("questionId")
-        if (questionId == null || questionId == 0.toLong()) {
+        val questionId = arguments?.getLong("questionId") ?: 0L
+        if (questionId == 0L) {
             view.openKeyboard()
             return
         }
@@ -33,6 +35,7 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
                         question = it.data
                         view.displayQuestionDetails(it.data.text, it.data.isCorrect)
                         view.displayCreatedDetails(String.formatDate(it.data.dateCreated))
+                        allowChange = true
                     }
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayLoading()
@@ -42,32 +45,36 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateQuestionText(questionText: String) {
-        question?.text = questionText
-        updateQuestion()
+        question?.let {
+            if(questionText.isBlank()) {
+                view.displayToastMessage(resourceProvider.getString(R.string.warning_question_text_is_empty))
+                return
+            }
+            it.text = questionText
+            updateQuestion()
+        }
     }
 
     override fun updateIsCorrect(isCorrect: Boolean?) {
-        if(question == null) return
-        if(isCorrect == null) {
-            view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
-            return
+        question?.let {
+            if(isCorrect == null) {
+                view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
+                return
+            }
+            it.isCorrect = isCorrect
+            updateQuestion()
         }
-
-        question?.isCorrect = isCorrect
-        updateQuestion()
     }
 
     override fun saveNewQuestion(questionText: String, isCorrect: Boolean?) {
-        if(!validateQuestion(questionText, isCorrect)) return
-        if(question != null) return
+        if(question != null || !validateQuestion(questionText, isCorrect)) return
 
         presenterScope?.launch {
             val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
-            var response = repository.addQuestion(newQuestion)
-            if(response is Response.Error) view.displayError(response.error)
-            if(response is Response.Success) {
-                question = newQuestion
-                view.displayCreatedDetails(String.formatDate(question!!.dateCreated))
+            when(val response = repository.addQuestion(newQuestion)){
+                is Response.Success -> view.displayCreatedDetails(String.formatDate(newQuestion.dateCreated))
+                is Response.Error -> view.displayError(response.error)
+                is Response.Loading -> view.displayLoading()
             }
         }
     }
@@ -81,10 +88,10 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
 
         presenterScope?.launch {
-            var response = repository.addQuestion(SwipeQuestion.new(questionText, isCorrect!!))
-            if(response is Response.Error) view.displayError(response.error)
-            if(response is Response.Success) {
-                replaceWithNewQuestion()
+            when(val response = repository.addQuestion(SwipeQuestion.new(questionText, isCorrect!!))){
+                is Response.Success -> replaceWithNewQuestion()
+                is Response.Error -> view.displayError(response.error)
+                is Response.Loading -> view.displayLoading()
             }
         }
     }
@@ -96,24 +103,26 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     }
 
     private fun validateQuestion(questionText: String, isCorrect: Boolean?) : Boolean {
-        if(questionText.isEmpty()) {
-            view.displayToastMessage(resourceProvider.getString(R.string.warning_question_text_is_empty))
-            return false
+        return when {
+            questionText.isBlank() -> {
+                view.displayToastMessage(resourceProvider.getString(R.string.warning_question_text_is_empty))
+                false
+            }
+            isCorrect == null -> {
+                view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
+                false
+            }
+            else -> true
         }
-
-        if(isCorrect == null) {
-            view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
-            return false
-        }
-
-        return true
     }
 
     private fun updateQuestion() {
-        if(question == null) return
+        if(!allowChange) return
+
         presenterScope?.launch {
-            val response = repository.updateQuestion(question!!)
-            if(response is Response.Error) view.displayError(response.error)
+            repository.updateQuestion(question!!).let {
+                if(it is Response.Error) view.displayError(it.error)
+            }
         }
     }
 }

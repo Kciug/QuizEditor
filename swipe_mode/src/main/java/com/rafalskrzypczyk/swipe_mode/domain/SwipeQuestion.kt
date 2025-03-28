@@ -36,5 +36,5 @@ fun SwipeQuestion.toDTO() = SwipeQuestionDTO(
     text = text,
     isCorrect = isCorrect,
     dateCreated = dateCreated,
-    dateModified = dateModified
+    dateModified = Date()
 )
