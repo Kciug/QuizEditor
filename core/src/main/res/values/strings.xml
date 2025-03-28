@@ -38,4 +38,8 @@
     <string name="label_created_by">przez</string>
 
     <string name="ic_desc_nav_drawer">Panel Nawigacji</string>
+
+    <string name="elements_count_label_singular">element</string>
+    <string name="elements_count_label_few">elementy</string>
+    <string name="elements_count_label_many">elementów</string>
 </resources>

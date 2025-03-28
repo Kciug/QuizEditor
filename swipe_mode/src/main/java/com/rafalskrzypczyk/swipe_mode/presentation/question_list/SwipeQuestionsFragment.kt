@@ -87,6 +87,10 @@ class SwipeQuestionsFragment :
         buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
     }
 
+    override fun displayElementsCount(count: Int) {
+        binding.searchBar.setElementsCount(count)
+    }
+
     private fun openQuestionDetailsSheet(categoryId: Long) {
         val questionDetailsSheet = SwipeQuestionDetailsFragment()
         questionDetailsSheet.arguments = Bundle().apply { putLong("questionId", categoryId) }

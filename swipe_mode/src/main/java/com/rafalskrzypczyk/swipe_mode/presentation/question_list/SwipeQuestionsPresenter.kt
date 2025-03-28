@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.swipe_mode.presentation.question_list
 
-import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
@@ -66,8 +65,8 @@ class SwipeQuestionsPresenter @Inject constructor(
                 searchedQuestions = filterData(searchedQuestions, filter)
                 searchedQuestions
             }.collectLatest {
-                Log.d("KURWA", "data displayed: $it")
                 view.displayQuestions(it.map { it.toSimpleUIModel() })
+                view.displayElementsCount(it.size)
             }
         }
     }
