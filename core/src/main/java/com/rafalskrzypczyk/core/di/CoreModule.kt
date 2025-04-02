@@ -2,6 +2,7 @@ package com.rafalskrzypczyk.core.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesService
 import com.rafalskrzypczyk.core.utils.ResourceProvider
@@ -36,6 +37,10 @@ class CoreModule {
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences(context.packageName + "_preferences", Context.MODE_PRIVATE)
     }
+
+    @Provides
+    @Singleton
+    fun provideDatabaseManager(sharedPreferencesApi: SharedPreferencesApi) : DatabaseManager = DatabaseManager(sharedPreferencesApi)
 
     @Provides
     @Singleton

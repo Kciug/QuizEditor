@@ -3,6 +3,7 @@ package com.rafalskrzypczyk.quizeditor
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -13,6 +14,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
+import com.rafalskrzypczyk.core.database_management.Database
+import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
@@ -31,6 +34,10 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
 
     @Inject
     lateinit var sharedPreferences: SharedPreferencesApi
+
+    @Inject
+    lateinit var databaseManager: DatabaseManager
+
 
     private var actionMenuRes: Int? = null
     private var actionMenuCallback: ((MenuItem) -> Boolean)? = null
@@ -92,6 +99,20 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             navController.navigate(menuItem.itemId)
             binding.drawerLayout.closeDrawers()
             true
+        }
+
+        binding.selectorDatabase.text = databaseManager.getDatabase().name
+        binding.selectorDatabase.setOnClickListener {
+            val popupMenu = PopupMenu(this, it)
+            Database.entries.forEach {
+                popupMenu.menu.add(it.name)
+            }
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                databaseManager.changeDatabase(enumValueOf<Database>(menuItem.title.toString()))
+                binding.selectorDatabase.text = menuItem.title.toString()
+                true
+            }
+            popupMenu.show()
         }
 
         setupDrawerHeader()
