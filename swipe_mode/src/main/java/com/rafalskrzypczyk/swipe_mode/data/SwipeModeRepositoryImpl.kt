@@ -7,30 +7,23 @@ import com.rafalskrzypczyk.swipe_mode.domain.SwipeQuestion
 import com.rafalskrzypczyk.swipe_mode.domain.toDTO
 import com.rafalskrzypczyk.swipe_mode.domain.toDomain
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SwipeModeRepositoryImpl @Inject constructor(
     private val firestore: FirestoreApi
 ) : SwipeModeRepository {
-    private var cachedQuestions: List<SwipeQuestion>? = null
-
     override fun getAllQuestions(): Flow<Response<List<SwipeQuestion>>> =
-        if(cachedQuestions != null) flowOf(Response.Success(cachedQuestions!!))
-        else firestore.getSwipeQuestions().map { response ->
+        firestore.getSwipeQuestions().map { response ->
             when (response) {
-                is Response.Success -> {
-                    cachedQuestions = response.data.map { it.toDomain() }
-                    Response.Success(cachedQuestions!!)
-                }
+                is Response.Success -> Response.Success(response.data.map { it.toDomain() })
                 is Response.Error -> response
                 is Response.Loading -> response
             }
         }
 
     override fun getUpdatedQuestions(): Flow<List<SwipeQuestion>> =
-        firestore.getUpdatedSwipeQuestions().map { it.map { dto -> dto.toDomain() }.also { cachedQuestions = it } }
+        firestore.getUpdatedSwipeQuestions().map { it.map { dto -> dto.toDomain() } }
 
     override fun getQuestionById(questionId: Long): Flow<Response<SwipeQuestion>> =
         getAllQuestions().map {
