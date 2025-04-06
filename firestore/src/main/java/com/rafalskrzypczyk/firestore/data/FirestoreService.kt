@@ -4,7 +4,9 @@ import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
@@ -76,9 +78,7 @@ class FirestoreService @Inject constructor(
 
     override fun getQuizCategories(): Flow<Response<List<CategoryDTO>>> = flow {
         emit(Response.Loading)
-        val categories = firestore.collection(quizCategoriesCollection)
-            .get().await()
-            .toObjects(CategoryDTO::class.java)
+        val categories = getFirestoreData(quizCategoriesCollection)?.toObjects(CategoryDTO::class.java) ?: emptyList()
         emit(Response.Success(categories))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -106,9 +106,7 @@ class FirestoreService @Inject constructor(
 
     override fun getQuizQuestions(): Flow<Response<List<QuestionDTO>>> = flow {
         emit(Response.Loading)
-        val questions = firestore.collection(quizQuestionsCollection)
-            .get().await()
-            .toObjects(QuestionDTO::class.java)
+        val questions = getFirestoreData(quizQuestionsCollection)?.toObjects(QuestionDTO::class.java) ?: emptyList()
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -136,9 +134,7 @@ class FirestoreService @Inject constructor(
 
     override fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>> = flow {
         emit(Response.Loading)
-        val questions = firestore.collection(swipeQuestionsCollection)
-            .get().await()
-            .toObjects(SwipeQuestionDTO::class.java)
+        val questions = getFirestoreData(swipeQuestionsCollection)?.toObjects(SwipeQuestionDTO::class.java) ?: emptyList()
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -219,6 +215,14 @@ class FirestoreService @Inject constructor(
         } catch (e: Exception) {
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
         }
+    }
+
+    private suspend fun getFirestoreData(collection: String): QuerySnapshot? {
+        return firestore.collection(collection)
+            .get(Source.CACHE)
+            .await()
+            .takeIf { it.isEmpty.not() }
+            ?: firestore.collection(collection).get(Source.SERVER).await()
     }
 
     private suspend fun <T : Any> addFirestoreDocument(
