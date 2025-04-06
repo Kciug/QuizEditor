@@ -112,6 +112,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 changeDatabase(enumValueOf<Database>(menuItem.title.toString()))
                 binding.selectorDatabase.text = menuItem.title.toString()
+                binding.drawerLayout.closeDrawers()
                 true
             }
             popupMenu.show()

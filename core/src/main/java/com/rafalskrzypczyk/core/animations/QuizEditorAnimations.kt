@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.core.animations
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeVisible
 
@@ -9,6 +10,7 @@ object QuizEditorAnimations {
     const val ANIMATION_DELAY = 50L
 
     fun animateScaleOut(view: View, onEnd: (() -> Unit)? = null) {
+        if(view.isVisible.not()) return
         view.animate()
             .scaleX(0f)
             .scaleY(0f)
@@ -27,6 +29,7 @@ object QuizEditorAnimations {
     }
 
     fun animateScaleIn(view: View, onEnd: (() -> Unit)? = null) {
+        if(view.isVisible) return
         view.apply {
             scaleX = 0f
             scaleY = 0f
