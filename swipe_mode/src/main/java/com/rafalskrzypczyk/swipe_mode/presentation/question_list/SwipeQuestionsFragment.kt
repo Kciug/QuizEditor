@@ -39,7 +39,7 @@ class SwipeQuestionsFragment :
             onCategoryClicked = { openQuestionDetailsSheet(it) },
             onCategoryRemoved = { presenter.removeCategory(it) }
         )
-        binding.recyclerViewCategories.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
         binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
         binding.searchBar.setOnClearClick { presenter.searchBy("") }
@@ -54,9 +54,13 @@ class SwipeQuestionsFragment :
 
     override fun displayQuestions(questions: List<SwipeQuestionSimpleUIModel>) {
         adapter.submitList(questions)
-        if(binding.loading.root.isVisible)
-            QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerViewCategories)
-        noElementsView?.rootView?.makeGone()
+
+        if (binding.loading.root.isVisible) {
+            QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerView)
+        }
+        if (noElementsView?.isVisible == true) {
+            QuizEditorAnimations.animateReplaceScaleOutIn(noElementsView!!, binding.recyclerView)
+        }
     }
 
     override fun displaySortMenu(
@@ -78,13 +82,24 @@ class SwipeQuestionsFragment :
     }
 
     override fun displayNoElementsView() {
-        val stub = binding.stubEmptyList
-        noElementsView = stub.inflate().apply { makeInvisible() }
+        if (noElementsView == null) {
+            noElementsView = binding.stubEmptyList.inflate().apply { makeInvisible() }
 
-        QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
+            noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+                ?.setOnClickListener { openNewQuestionSheet() }
+        }
 
-        val buttonAddNew = noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
-        buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
+        when {
+            binding.loading.root.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
+            }
+            binding.recyclerView.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.recyclerView, noElementsView!!)
+            }
+            else -> {
+                noElementsView?.makeVisible()
+            }
+        }
     }
 
     override fun displayElementsCount(count: Int) {
@@ -121,7 +136,7 @@ class SwipeQuestionsFragment :
     }
 
     override fun displayLoading() {
-        binding.recyclerViewCategories.makeGone()
+        binding.recyclerView.makeGone()
         binding.loading.root.makeVisible()
     }
 

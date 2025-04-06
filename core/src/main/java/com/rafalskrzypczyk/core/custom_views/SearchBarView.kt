@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.R
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.utils.UITextHelpers
 
 class SearchBarView @JvmOverloads constructor(
@@ -54,6 +55,8 @@ class SearchBarView @JvmOverloads constructor(
     }
 
     fun setElementsCount(count: Int){
+        QuizEditorAnimations.animateScaleIn(elementsCount)
+        QuizEditorAnimations.animateScaleIn(elementsCountLabel)
         elementsCount.text = String.format(count.toString())
         elementsCountLabel.text = UITextHelpers.provideDeclinedNumberText(
             count,

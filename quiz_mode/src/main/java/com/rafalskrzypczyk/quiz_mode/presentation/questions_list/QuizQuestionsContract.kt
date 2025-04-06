@@ -10,6 +10,7 @@ interface QuizQuestionsContract{
         fun displaySortMenu(sortOptions: List<SelectableMenuItem>, sortTypes: List<SelectableMenuItem>)
         fun displayFilterMenu(filterOptions: List<SelectableMenuItem>)
         fun displayNoElementsView()
+        fun displayElementsCount(count: Int)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun removeQuestion(question: QuestionUIModel)

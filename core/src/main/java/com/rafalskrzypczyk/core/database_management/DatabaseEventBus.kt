@@ -7,7 +7,7 @@ object DatabaseEventBus {
     private val _eventReloadData = MutableSharedFlow<Unit>()
     val eventReloadData = _eventReloadData.asSharedFlow()
 
-    fun publish() {
-        _eventReloadData.tryEmit(Unit)
+    suspend fun publish() {
+        _eventReloadData.emit(Unit)
     }
 }

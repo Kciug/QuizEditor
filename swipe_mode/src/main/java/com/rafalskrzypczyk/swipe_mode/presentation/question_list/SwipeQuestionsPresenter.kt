@@ -2,7 +2,9 @@ package com.rafalskrzypczyk.swipe_mode.presentation.question_list
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeModeRepository
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeQuestion
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionsFilters
@@ -13,6 +15,7 @@ import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.Swipe
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionsSort.Companion.toSortOption
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionsSort.Companion.toSortType
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.toSimpleUIModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -30,8 +33,13 @@ class SwipeQuestionsPresenter @Inject constructor(
 
     override fun onViewCreated() {
         super.onViewCreated()
+        getData()
+        observeDatabaseEvent()
+    }
 
+    private fun getData() {
         presenterScope?.launch{
+            delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllQuestions().collectLatest {
                 when(it){
                     is Response.Success -> {
@@ -47,11 +55,6 @@ class SwipeQuestionsPresenter @Inject constructor(
     }
 
     private fun displayData() {
-        if (questionsData.value.isEmpty()) {
-            view.displayNoElementsView()
-            return
-        }
-
         presenterScope?.launch {
             combine(
                 questionsData,
@@ -65,7 +68,8 @@ class SwipeQuestionsPresenter @Inject constructor(
                 searchedQuestions = filterData(searchedQuestions, filter)
                 searchedQuestions
             }.collectLatest {
-                view.displayQuestions(it.map { it.toSimpleUIModel() })
+                if(questionsData.value.isEmpty()) view.displayNoElementsView()
+                else view.displayQuestions(it.map { it.toSimpleUIModel() })
                 view.displayElementsCount(it.size)
             }
         }
@@ -93,6 +97,14 @@ class SwipeQuestionsPresenter @Inject constructor(
     private fun observeDataChanges() {
         presenterScope?.launch {
             repository.getUpdatedQuestions().collectLatest { questionsData.value = it }
+        }
+    }
+
+    private fun observeDatabaseEvent() {
+        presenterScope?.launch {
+            DatabaseEventBus.eventReloadData.collectLatest {
+                getData()
+            }
         }
     }
 

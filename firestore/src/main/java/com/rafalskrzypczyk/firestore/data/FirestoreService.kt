@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.firestore.data
 
+import android.util.Log
 import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
@@ -135,6 +136,7 @@ class FirestoreService @Inject constructor(
     override fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>> = flow {
         emit(Response.Loading)
         val questions = getFirestoreData(swipeQuestionsCollection)?.toObjects(SwipeQuestionDTO::class.java) ?: emptyList()
+        Log.d("KURWA", questions.toString())
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 

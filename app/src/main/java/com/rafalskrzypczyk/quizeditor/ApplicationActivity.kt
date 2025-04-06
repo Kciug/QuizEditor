@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -21,6 +22,7 @@ import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import com.rafalskrzypczyk.quizeditor.user_panel.UserPanelFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -108,7 +110,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
                 popupMenu.menu.add(it.name)
             }
             popupMenu.setOnMenuItemClickListener { menuItem ->
-                databaseManager.changeDatabase(enumValueOf<Database>(menuItem.title.toString()))
+                changeDatabase(enumValueOf<Database>(menuItem.title.toString()))
                 binding.selectorDatabase.text = menuItem.title.toString()
                 true
             }
@@ -116,6 +118,12 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         }
 
         setupDrawerHeader()
+    }
+
+    fun changeDatabase(database: Database) {
+        lifecycleScope.launch{
+            databaseManager.changeDatabase(database)
+        }
     }
 
     private fun setupDrawerHeader() {

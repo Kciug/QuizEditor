@@ -2,6 +2,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
@@ -33,6 +34,7 @@ class QuizCategoriesPresenter @Inject constructor(
     override fun onViewCreated() {
         super.onViewCreated()
         getData()
+        observeDatabaseEvent()
     }
 
     private fun getData(){
@@ -58,12 +60,15 @@ class QuizCategoriesPresenter @Inject constructor(
         }
     }
 
-    private fun displayData(){
-        if(data.value.isEmpty()) {
-            view.displayNoElementsView()
-            return
+    private fun observeDatabaseEvent() {
+        presenterScope?.launch {
+            DatabaseEventBus.eventReloadData.collectLatest {
+                getData()
+            }
         }
+    }
 
+    private fun displayData(){
         presenterScope?.launch {
             combine(
                 data,
@@ -77,7 +82,9 @@ class QuizCategoriesPresenter @Inject constructor(
                 searchedCategories = filterData(searchedCategories, filter)
                 searchedCategories
             }.collectLatest {
-                view.displayCategories(it)
+                if (data.value.isEmpty()) view.displayNoElementsView()
+                else view.displayCategories(it)
+                view.displayElementsCount(it.size)
             }
         }
     }

@@ -27,6 +27,8 @@ class QuizQuestionsFragment :
     private lateinit var adapter: QuestionsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
 
+    private var noElementsView : View? = null
+
     override fun onViewBound() {
         super.onViewBound()
 
@@ -37,7 +39,7 @@ class QuizQuestionsFragment :
             onItemClicked = { openQuestionDetailsSheet(it.id) },
             onItemDeleted = { presenter.removeQuestion(it) }
         )
-        binding.recyclerViewQuestions.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
         binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
         binding.searchBar.setOnClearClick { presenter.searchBy("") }
@@ -73,8 +75,13 @@ class QuizQuestionsFragment :
 
     override fun displayQuestions(questions: List<QuestionUIModel>) {
         adapter.submitList(questions)
-        if(binding.loading.root.isVisible)
-            QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerViewQuestions)
+
+        if (binding.loading.root.isVisible) {
+            QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerView)
+        }
+        if (noElementsView?.isVisible == true) {
+            QuizEditorAnimations.animateReplaceScaleOutIn(noElementsView!!, binding.recyclerView)
+        }
     }
 
     override fun displaySortMenu(
@@ -96,13 +103,28 @@ class QuizQuestionsFragment :
     }
 
     override fun displayNoElementsView() {
-        val stub = binding.stubEmptyList
-        val noElementsView = stub.inflate().apply { makeInvisible() }
+        if (noElementsView == null) {
+            noElementsView = binding.stubEmptyList.inflate().apply { makeInvisible() }
 
-        QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
+            noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
+                ?.setOnClickListener { openNewQuestionSheet() }
+        }
 
-        val buttonAddNew = noElementsView.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
-        buttonAddNew?.setOnClickListener { openNewQuestionSheet() }
+        when {
+            binding.loading.root.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
+            }
+            binding.recyclerView.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.recyclerView, noElementsView!!)
+            }
+            else -> {
+                noElementsView?.makeVisible()
+            }
+        }
+    }
+
+    override fun displayElementsCount(count: Int) {
+        binding.searchBar.setElementsCount(count)
     }
 
     private fun openQuestionDetailsSheet(questionId: Long) {
@@ -119,7 +141,7 @@ class QuizQuestionsFragment :
     }
 
     override fun displayLoading() {
-        binding.recyclerViewQuestions.makeGone()
+        binding.recyclerView.makeGone()
         binding.loading.root.makeVisible()
     }
 

@@ -15,7 +15,7 @@ class DatabaseManager @Inject constructor(
 
     fun getDatabase(): Database = database
 
-    fun changeDatabase(database: Database) {
+    suspend fun changeDatabase(database: Database) {
         this.database = database
         sharedPreferencesApi.setCurrentDatabase(database)
 
