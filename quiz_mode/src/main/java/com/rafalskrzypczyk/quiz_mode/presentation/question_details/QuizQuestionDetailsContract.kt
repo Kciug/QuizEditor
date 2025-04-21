@@ -7,6 +7,7 @@ import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.Sim
 
 interface QuizQuestionDetailsContract {
     interface View : BaseContract.View {
+        fun displayContent()
         fun displayQuestionText(questionText: String)
         fun displayAnswersDetails(answersCount: Int, correctAnswersCount: Int)
         fun displayAnswersList(answers: List<AnswerUIModel>)

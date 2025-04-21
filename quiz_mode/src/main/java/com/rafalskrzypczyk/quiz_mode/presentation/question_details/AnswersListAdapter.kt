@@ -5,10 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
@@ -33,6 +35,7 @@ class AnswersListAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val answerText: EditText = itemView.findViewById(R.id.field_question_text)
         val correctSwitch: SwitchCompat = itemView.findViewById(R.id.switch_correct)
+        val tvIsCorrect: TextView = itemView.findViewById(R.id.tv_is_correct)
 
         val deleteBubbleManager = DeleteBubbleManager(itemView.context)
 
@@ -47,9 +50,16 @@ class AnswersListAdapter(
                 true
             }
 
+            changeIsCorrect(answer.isCorrect)
+
             correctSwitch.setOnCheckedChangeListener { _, isChecked ->
                 answer.isCorrect = isChecked
                 onAnswerChanged(answer)
+
+                QuizEditorAnimations.animateScaleOut(tvIsCorrect) {
+                    changeIsCorrect(isChecked)
+                    QuizEditorAnimations.animateScaleIn(tvIsCorrect)
+                }
             }
 
             answerText.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
@@ -65,6 +75,16 @@ class AnswersListAdapter(
                     onAnswerChanged(answer)
                 }
             )
+        }
+
+        private fun changeIsCorrect(isCorrect: Boolean) {
+            if(isCorrect) {
+                tvIsCorrect.setText(R.string.label_correct_answer)
+                tvIsCorrect.setTextColor(itemView.context.getColor(com.rafalskrzypczyk.core.R.color.green))
+            } else {
+                tvIsCorrect.setText(R.string.label_incorrect_answer)
+                tvIsCorrect.setTextColor(itemView.context.getColor(com.rafalskrzypczyk.core.R.color.red))
+            }
         }
     }
 

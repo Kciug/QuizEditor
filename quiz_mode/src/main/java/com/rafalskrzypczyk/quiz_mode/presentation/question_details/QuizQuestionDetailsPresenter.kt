@@ -65,6 +65,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             displayAnswersDetails(question.answers.count(), question.answers.count { it.isCorrect })
             displayAnswersList(question.answers.map { it.toSimplePresentation() })
             displayCreatedOn(String.formatDate(question.creationDate), question.createdBy)
+            displayContent()
         }
         updateLinkedCategories()
     }
@@ -111,7 +112,11 @@ class QuizQuestionDetailsPresenter @Inject constructor(
 
     private fun displayAnswers() {
         view.displayAnswersDetails(interactor.answerCount(), interactor.correctAnswerCount())
-        view.displayAnswersList(interactor.getAnswers().map { it.toSimplePresentation() })
+        view.displayAnswersList(
+            interactor.getAnswers()
+                .sortedByDescending { it.dateCreated }
+                .map { it.toSimplePresentation() }
+        )
     }
 
     override fun updateLinkedCategories() {
@@ -120,7 +125,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
                 when (it) {
                     is Response.Success -> view.displayLinkedCategories(it.data.map { it.toSimplePresentation() })
                     is Response.Error -> view.displayError(it.error)
-                    is Response.Loading -> view.displayLoading()
+                    is Response.Loading -> view.displayCategoriesListLoading()
                 }
             }
         }

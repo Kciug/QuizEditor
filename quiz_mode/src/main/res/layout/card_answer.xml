@@ -5,26 +5,21 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/transparent"
-    android:padding="10dp"
+    android:background="@drawable/background_tile"
+    android:paddingHorizontal="10dp"
     android:elevation="5dp"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    android:layout_marginBottom="5dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/field_question_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/field_question_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="name"
-            android:background="@color/transparent"
-            android:hint="@string/hint_answer"
-            tools:ignore="TextFields" />
-
-    </LinearLayout>
+        android:autofillHints="name"
+        android:layout_marginTop="10dp"
+        android:background="@color/transparent"
+        android:hint="@string/hint_answer"
+        tools:ignore="TextFields" />
 
     <LinearLayout
         android:id="@+id/correct_answer_section"
@@ -32,12 +27,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginTop="10dp">
+        android:layout_marginBottom="10dp">
 
         <TextView
+            android:id="@+id/tv_is_correct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_correct_answer"/>
+            android:textStyle="bold"
+            android:text="@string/label_incorrect_answer"
+            android:textColor="@color/red"/>
 
         <View
             android:layout_width="0dp"
@@ -50,14 +48,6 @@
             android:layout_height="wrap_content"
             tools:ignore="UseSwitchCompatOrMaterialXml"
             app:thumbTint="@color/selector_correct_switch_tint"/>
-
     </LinearLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="-10dp"
-        android:layout_marginHorizontal="-10dp"/>
 
 </LinearLayout>

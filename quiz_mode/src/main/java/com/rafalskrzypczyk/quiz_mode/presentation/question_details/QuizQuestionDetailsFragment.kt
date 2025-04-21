@@ -5,8 +5,12 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeInvisible
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
@@ -40,44 +44,52 @@ class QuizQuestionDetailsFragment :
     override fun onViewBound() {
         super.onViewBound()
 
-        with(binding){
-            fieldQuestionText.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
-            fieldQuestionText.setOnEditorActionListener { _, actionId, _ ->
+        with(binding) {
+            questionDetails.inputQuestionText.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+            questionDetails.inputQuestionText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    presenter.updateQuestionText(fieldQuestionText.text.toString())
-                    if(fieldQuestionText.text.isNotEmpty()) keyboardController.hideKeyboard(fieldQuestionText)
+                    presenter.updateQuestionText(questionDetails.inputQuestionText.text.toString())
+                    if(questionDetails.inputQuestionText.text.isNotEmpty()) keyboardController.hideKeyboard(questionDetails.inputQuestionText)
                     true
                 } else false
             }
 
-            fieldNewAnswer.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
-            fieldNewAnswer.setOnEditorActionListener { _, actionId, _ ->
+            newAnswerBar.inputNewAnswer.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+            newAnswerBar.inputNewAnswer.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    presenter.addAnswer(fieldNewAnswer.text.toString())
-                    fieldNewAnswer.text.clear()
+                    presenter.addAnswer(newAnswerBar.inputNewAnswer.text.toString())
+                    newAnswerBar.inputNewAnswer.text.clear()
                     true
                 } else false
             }
 
-            bottomSheetBar.buttonClose.setOnClickListener { dismiss() }
-            bottomSheetBar.buttonSave.setOnClickListener { presenter.saveNewQuestion(fieldQuestionText.text.toString()) }
+            sectionNavbar.buttonClose.setOnClickListener { dismiss() }
+            sectionNavbar.buttonSave.setOnClickListener { presenter.saveNewQuestion(questionDetails.inputQuestionText.text.toString()) }
 
-            buttonAssignCategory.setOnClickListener { presenter.onAssignCategory() }
+            questionDetails.btnAssignCategory.setOnClickListener { presenter.onAssignCategory() }
 
-            buttonAddAnswer.setOnClickListener {
-                presenter.addAnswer(binding.fieldNewAnswer.text.toString())
-                fieldNewAnswer.text.clear()
+            newAnswerBar.btnAddAnswer.setOnClickListener {
+                presenter.addAnswer(newAnswerBar.inputNewAnswer.text.toString())
+                newAnswerBar.inputNewAnswer.text.clear()
             }
         }
     }
 
+    override fun displayContent() {
+        binding.loading.root.makeGone()
+        binding.content.makeVisible()
+        binding.contentDetails.makeVisible()
+    }
+
     override fun displayQuestionText(questionText: String) {
-        binding.fieldQuestionText.setText(questionText)
+        binding.questionDetails.inputQuestionText.setText(questionText)
     }
 
     override fun displayAnswersDetails(answersCount: Int, correctAnswersCount: Int) {
-        binding.allAnswersCount.text = String.format(answersCount.toString())
-        binding.correctAnswersCount.text = String.format(correctAnswersCount.toString())
+        with(binding.answersDetails) {
+            countAnswers.text = String.format(answersCount.toString())
+            countCorrectAnswers.text = String.format(correctAnswersCount.toString())
+        }
     }
 
     override fun displayAnswersList(answers: List<AnswerUIModel>) {
@@ -85,27 +97,22 @@ class QuizQuestionDetailsFragment :
     }
 
     override fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>) {
-        if (categories.isEmpty()) {
-            binding.labelNoCategories.alpha = 0f
-            binding.labelNoCategories.visibility = View.VISIBLE
-            binding.labelNoCategories.animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start()
-        } else {
-            categoriesPreviewAdapter.submitList(categories)
-            binding.categoriesRecyclerView.alpha = 0f
-            binding.categoriesRecyclerView.visibility = View.VISIBLE
-            binding.categoriesRecyclerView.animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start()
+        with (binding.questionDetails) {
+            categoriesLoading.makeGone()
+            if(categories.isEmpty()) {
+                categoriesPreviewAdapter.submitList(categories)
+                categoriesRecyclerView.makeGone()
+                QuizEditorAnimations.animateFadeIn(labelNoCategories)
+            } else {
+                categoriesPreviewAdapter.submitList(categories)
+                labelNoCategories.makeGone()
+                QuizEditorAnimations.animateFadeIn(categoriesRecyclerView)
+            }
         }
     }
 
     override fun displayCreatedOn(date: String, user: String) {
-        binding.labelCreationDate.text = date
-        binding.createdByLabel.text = user
+        binding.creationDetails.labelCreationDate.text = date
     }
 
     override fun setupView() {
@@ -117,18 +124,16 @@ class QuizQuestionDetailsFragment :
         )
 
         with(binding){
-            categoriesRecyclerView.adapter = categoriesPreviewAdapter
-            answersRecyclerView.adapter = answersListAdapter
+            questionDetails.categoriesRecyclerView.adapter = categoriesPreviewAdapter
+            rvAnswers.adapter = answersListAdapter
 
-            bottomSheetBar.buttonSave.visibility = View.GONE
-            sectionAssignedCategories.visibility = View.VISIBLE
-            sectionCreationDetails.visibility = View.VISIBLE
-            sectionAnswersDetails.visibility = View.VISIBLE
-            sectionAnswers.visibility = View.VISIBLE
+            sectionNavbar.buttonSave.makeGone()
+            questionDetails.groupDetailsEditionFields.makeVisible()
+            content.makeVisible()
 
-            if (fieldQuestionText.hasFocus()) fieldQuestionText.clearFocus()
+            if (questionDetails.inputQuestionText.hasFocus()) questionDetails.inputQuestionText.clearFocus()
 
-            fieldQuestionText.addTextChangedListener(
+            questionDetails.inputQuestionText.addTextChangedListener(
                 afterTextChanged = {
                     presenter.updateQuestionText(it.toString())
                 }
@@ -138,13 +143,12 @@ class QuizQuestionDetailsFragment :
 
     override fun setupNewElementView() {
         with(binding){
-            bottomSheetBar.buttonSave.visibility = View.VISIBLE
-            sectionAssignedCategories.visibility = View.GONE
-            sectionCreationDetails.visibility = View.GONE
-            sectionAnswersDetails.visibility = View.GONE
-            sectionAnswers.visibility = View.GONE
+            sectionNavbar.buttonSave.makeVisible()
+            questionDetails.groupDetailsEditionFields.makeGone()
+            content.makeGone()
+
+            keyboardController.showKeyboardWithDelay(questionDetails.inputQuestionText)
         }
-        keyboardController.showKeyboardWithDelay(binding.fieldQuestionText)
     }
 
     override fun displayCategoryPicker() {
@@ -153,6 +157,7 @@ class QuizQuestionDetailsFragment :
     }
 
     override fun displayCategoriesListLoading() {
+        binding.questionDetails.categoriesLoading.makeVisible()
     }
 
     override fun displayToastMessage(message: String) {
@@ -160,6 +165,9 @@ class QuizQuestionDetailsFragment :
     }
 
     override fun displayLoading() {
+        binding.content.makeInvisible()
+        binding.contentDetails.makeInvisible()
+        binding.loading.root.makeVisible()
     }
 
     override fun displayError(message: String) {

@@ -9,7 +9,7 @@
     <string name="ic_desc_add">Dodaj nowy</string>
 
     <!-- buttons -->
-    <string name="button_save">Zapisz</string>
+    <string name="button_save">Dodaj</string>
     <string name="button_edit">Edytuj</string>
     <string name="button_back">Wróć</string>
     <string name="button_ok">OK</string>

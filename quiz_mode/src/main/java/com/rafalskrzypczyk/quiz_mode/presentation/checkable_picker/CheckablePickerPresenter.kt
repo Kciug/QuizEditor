@@ -39,7 +39,7 @@ class CheckablePickerPresenter @Inject constructor() : BasePresenter<CheckablePi
                 when (it) {
                     is Response.Success -> {
                         if(isLoadedDataEmpty) view.displayNoItems(interactor.getPickerNoItemsMessage())
-                        else view.displayData(it.data)
+                        else view.displayData(it.data.sortedByDescending { it.isChecked })
                     }
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayLoading()

@@ -78,6 +78,29 @@ object QuizEditorAnimations {
             .start()
     }
 
+    fun animateFadeIn(view: View, onEnd: (() -> Unit)? = null) {
+        if(view.isVisible) return
+        view.apply {
+            alpha = 0f
+            makeVisible()
+        }
+
+        view.animate()
+            .alpha(1f)
+            .setDuration(ANIMATION_DURATION)
+            .withEndAction { onEnd?.invoke() }
+            .start()
+    }
+
+    fun animateFadeOut(view: View, onEnd: (() -> Unit)? = null) {
+        if(view.isVisible.not()) return
+        view.animate()
+            .alpha(0f)
+            .setDuration(ANIMATION_DURATION)
+            .withEndAction { onEnd?.invoke() }
+            .start()
+    }
+
     fun animateReplaceScaleOutIn(view1: View, view2: View) {
         animateScaleOut(view1) {
             animateScaleIn(view2)
@@ -88,6 +111,5 @@ object QuizEditorAnimations {
         animateScaleOut(view1) {
             animateExpandFromTop(view2)
         }
-
     }
 }
