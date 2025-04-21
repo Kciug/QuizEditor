@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesService
+import com.rafalskrzypczyk.core.user_management.UserManager
+import com.rafalskrzypczyk.core.user_management.UserManagerImpl
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import dagger.Binds
 import dagger.Module
@@ -40,7 +42,10 @@ class CoreModule {
 
     @Provides
     @Singleton
-    fun provideDatabaseManager(sharedPreferencesApi: SharedPreferencesApi) : DatabaseManager = DatabaseManager(sharedPreferencesApi)
+    fun provideDatabaseManager(
+        sharedPreferencesApi: SharedPreferencesApi,
+        userManager: UserManager
+    ) : DatabaseManager = DatabaseManager(sharedPreferencesApi, userManager)
 
     @Provides
     @Singleton
@@ -59,4 +64,8 @@ abstract class CoreModuleBinds {
     @Binds
     @Singleton
     abstract fun bindSharedPreferencesApi(sharedPreferencesService: SharedPreferencesService): SharedPreferencesApi
+
+    @Binds
+    @Singleton
+    abstract fun bindUserManager(manager: UserManagerImpl): UserManager
 }

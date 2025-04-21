@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.rafalskrzypczyk.auth.domain.UserManager
+import com.rafalskrzypczyk.auth.domain.AuthRepository
 import com.rafalskrzypczyk.login_screen.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var userManager: UserManager
+    lateinit var auth: AuthRepository
 
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
 
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if(userManager.isUserLogged()){
+        if(auth.isUserLoggedIn()){
             startMainAppActivity()
         } else {
             startLoginActivity()

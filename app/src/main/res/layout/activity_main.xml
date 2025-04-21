@@ -45,6 +45,8 @@
                 android:paddingHorizontal="10dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="invisible"
+                tools:visibility="visible"
                 app:drawableStartCompat="@drawable/baseline_storage_24"
                 app:drawableEndCompat="@drawable/ic_arrow_drop_up_24"
                 app:drawableTint="@color/primary"/>

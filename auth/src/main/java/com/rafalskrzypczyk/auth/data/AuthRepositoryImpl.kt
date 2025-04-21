@@ -2,7 +2,7 @@ package com.rafalskrzypczyk.auth.data
 
 import com.google.firebase.auth.FirebaseAuth
 import com.rafalskrzypczyk.auth.domain.AuthRepository
-import com.rafalskrzypczyk.auth.domain.UserManager
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.user.UserData
@@ -23,6 +23,9 @@ class AuthRepositoryImpl @Inject constructor(
     private val userManager: UserManager,
     private val resourcesProvider: ResourceProvider,
 ) : AuthRepository {
+
+    override fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser != null
+
     override fun loginWithEmailAndPassword(
         email: String,
         password: String,

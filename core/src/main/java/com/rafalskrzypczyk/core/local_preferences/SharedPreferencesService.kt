@@ -34,6 +34,7 @@ class SharedPreferencesService @Inject constructor(
     override fun clearUserData() {
         setCurrentUser(null)
         setLastEditedMode(DEFAULT_NUMBER_VALUE)
+        sharedPreferences.edit().remove(KEY_CURRENT_DATABASE).apply()
     }
 
     override fun setLastEditedMode(mode: Int) {
@@ -52,7 +53,8 @@ class SharedPreferencesService @Inject constructor(
             .apply()
     }
 
-    override fun getCurrentDatabase(): Database {
-        return Database.valueOf(sharedPreferences.getString(KEY_CURRENT_DATABASE, Database.TEST.name)!!)
+    override fun getCurrentDatabase(): Database? {
+        val databaseName = sharedPreferences.getString(KEY_CURRENT_DATABASE, null)
+        databaseName?.let { return Database.valueOf(it) } ?: return null
     }
 }

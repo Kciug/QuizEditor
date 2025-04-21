@@ -1,6 +1,6 @@
 package com.rafalskrzypczyk.chat.data
 
-import com.rafalskrzypczyk.auth.domain.UserManager
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.chat.domain.ChatRepository
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.chat.domain.toDTO

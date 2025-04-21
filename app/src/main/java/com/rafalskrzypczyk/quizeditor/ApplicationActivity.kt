@@ -12,13 +12,15 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.rafalskrzypczyk.auth.domain.UserManager
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
+import com.rafalskrzypczyk.core.user.UserRole
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import com.rafalskrzypczyk.quizeditor.user_panel.UserPanelFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,8 +48,18 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
 
     private lateinit var navController: NavController
 
+    private lateinit var userRole: UserRole
+
     override fun onViewBound() {
         super.onViewBound()
+
+        userRole = userManager.getCurrentLoggedUser()?.role ?: UserRole.USER
+
+        if (userRole != UserRole.ADMIN && userRole != UserRole.CREATOR) {
+            binding.drawerNavView.menu.findItem(R.id.nav_chat)?.isVisible = false
+        }
+
+        databaseManager.configure()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
         navController = navHostFragment.navController
@@ -103,6 +115,15 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             true
         }
 
+        setupDatabaseSelector()
+
+        setupDrawerHeader()
+    }
+
+    private fun setupDatabaseSelector() {
+        if(userRole != UserRole.ADMIN) return
+
+        binding.selectorDatabase.makeVisible()
         binding.selectorDatabase.text = databaseManager.getDatabase().name
         binding.selectorDatabase.setOnClickListener {
             val popupMenu = PopupMenu(this, it)
@@ -117,11 +138,9 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             }
             popupMenu.show()
         }
-
-        setupDrawerHeader()
     }
 
-    fun changeDatabase(database: Database) {
+    private fun changeDatabase(database: Database) {
         lifecycleScope.launch{
             databaseManager.changeDatabase(database)
         }

@@ -14,7 +14,6 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":auth"))
     implementation(project(":firestore"))
     implementation(libs.androidx.swiperefreshlayout)
 

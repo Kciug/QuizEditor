@@ -4,9 +4,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.rafalskrzypczyk.auth.data.AuthRepositoryImpl
-import com.rafalskrzypczyk.auth.data.UserManagerImpl
 import com.rafalskrzypczyk.auth.domain.AuthRepository
-import com.rafalskrzypczyk.auth.domain.UserManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,8 +26,4 @@ abstract class AuthModuleBinds {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(repo: AuthRepositoryImpl): AuthRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindUserManager(manager: UserManagerImpl): UserManager
 }

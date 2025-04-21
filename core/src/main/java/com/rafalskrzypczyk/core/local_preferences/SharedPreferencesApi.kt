@@ -12,5 +12,5 @@ interface SharedPreferencesApi {
     fun getLastEditedMode(): Int
 
     fun setCurrentDatabase(database: Database)
-    fun getCurrentDatabase(): Database
+    fun getCurrentDatabase(): Database?
 }
