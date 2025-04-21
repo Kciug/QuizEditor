@@ -3,9 +3,13 @@ package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
+import com.rafalskrzypczyk.core.databinding.FragmentListBinding
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
@@ -13,15 +17,14 @@ import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionsBinding
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class QuizQuestionsFragment :
-    BaseFragment<FragmentQuizQuestionsBinding, QuizQuestionsContract.View, QuizQuestionsContract.Presenter>(
-        FragmentQuizQuestionsBinding::inflate
+    BaseFragment<FragmentListBinding, QuizQuestionsContract.View, QuizQuestionsContract.Presenter>(
+        FragmentListBinding::inflate
     ), QuizQuestionsContract.View {
 
     private lateinit var adapter: QuestionsAdapter
@@ -39,10 +42,26 @@ class QuizQuestionsFragment :
             onItemClicked = { openQuestionDetailsSheet(it.id) },
             onItemDeleted = { presenter.removeQuestion(it) }
         )
-        binding.recyclerView.adapter = adapter
+        with(binding) {
+            recyclerView.adapter = adapter
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
 
-        binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
-        binding.searchBar.setOnClearClick { presenter.searchBy("") }
+                    val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                    if (firstVisibleItemPosition == 0) hideScrollToBottomPopover()
+                    else showScrollToBottomPopover()
+                }
+            })
+
+            popoverScrollUp.root.setOnClickListener {
+                recyclerView.smoothScrollToPosition(0)
+            }
+
+            searchBar.setOnTextChanged { presenter.searchBy(it) }
+            searchBar.setOnClearClick { presenter.searchBy("") }
+        }
 
         actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
         actionBarMenuBuilder.setupOnSelectListeners(
@@ -147,5 +166,19 @@ class QuizQuestionsFragment :
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun showScrollToBottomPopover() {
+        with(binding.popoverScrollUp.root) {
+            if (isVisible) return
+            QuizEditorAnimations.animateScaleIn(this)
+        }
+    }
+
+    private fun hideScrollToBottomPopover() {
+        with(binding.popoverScrollUp) {
+            if (root.isGone) return
+            QuizEditorAnimations.animateScaleOut(root)
+        }
     }
 }
