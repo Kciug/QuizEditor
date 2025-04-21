@@ -20,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Pytanie"
+        android:text="@string/label_question"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="name"
         android:background="@drawable/background_tile"
-        android:hint="Treść pytania"
+        android:hint="@string/hint_question"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +64,7 @@
         android:id="@+id/btn_add_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Zapisz i dodaj kolejne"
+        android:text="@string/button_save_and_add_another"
         android:background="@drawable/background_tile"
         app:layout_constraintTop_toBottomOf="@id/correctness_picker"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,5 +72,17 @@
         android:layout_marginTop="40dp"
         android:padding="20dp"/>
 
+    <include
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/layout_loading"
+        android:visibility="gone"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="tv_question_header, input_question, correctness_picker, btn_add_next"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

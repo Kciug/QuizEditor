@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
@@ -81,6 +82,11 @@ class SwipeQuestionDetailsFragment :
                     false -> correctnessPicker.btnAnswerFalse
                     else -> correctnessPicker.btnAnswerUnknown
             }, false)
+
+            if(loading.root.isVisible){
+                loading.root.makeGone()
+                content.makeVisible()
+            }
         }
     }
 
@@ -112,7 +118,8 @@ class SwipeQuestionDetailsFragment :
     }
 
     override fun displayLoading() {
-        TODO("Not yet implemented")
+        binding.content.makeInvisible()
+        binding.loading.root.makeVisible()
     }
 
     override fun displayError(message: String) {
