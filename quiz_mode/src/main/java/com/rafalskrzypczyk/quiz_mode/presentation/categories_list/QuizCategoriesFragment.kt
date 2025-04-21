@@ -3,7 +3,10 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.databinding.FragmentListBinding
@@ -39,10 +42,28 @@ class QuizCategoriesFragment :
             onCategoryClicked = { openCategoryDetailsSheet(it.id) },
             onCategoryRemoved = { presenter.removeCategory(it) }
         )
-        binding.recyclerView.adapter = adapter
 
-        binding.searchBar.setOnTextChanged { presenter.searchBy(it) }
-        binding.searchBar.setOnClearClick { presenter.searchBy("") }
+        with(binding) {
+            recyclerView.adapter = adapter
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
+                    if (firstVisibleItemPosition == 0) hideScrollToBottomPopover()
+                    else showScrollToBottomPopover()
+                }
+            })
+
+            popoverScrollUp.root.setOnClickListener {
+                recyclerView.smoothScrollToPosition(0)
+            }
+
+            searchBar.setOnTextChanged { presenter.searchBy(it) }
+            searchBar.setOnClearClick { presenter.searchBy("") }
+        }
+
 
         actionBarMenuBuilder = SortAndFilterMenuBuilder(requireContext())
         actionBarMenuBuilder.setupOnSelectListeners(
@@ -147,5 +168,19 @@ class QuizCategoriesFragment :
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun showScrollToBottomPopover() {
+        with(binding.popoverScrollUp.root) {
+            if (isVisible) return
+            QuizEditorAnimations.animateScaleIn(this)
+        }
+    }
+
+    private fun hideScrollToBottomPopover() {
+        with(binding.popoverScrollUp) {
+            if (root.isGone) return
+            QuizEditorAnimations.animateScaleOut(root)
+        }
     }
 }

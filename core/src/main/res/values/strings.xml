@@ -7,6 +7,7 @@
     <string name="ic_desc_close">Zamknij</string>
     <string name="ic_desc_edit">Edytuj</string>
     <string name="ic_desc_add">Dodaj nowy</string>
+    <string name="ic_desc_scroll_to_top">Wróć do góry</string>
 
     <!-- buttons -->
     <string name="button_save">Dodaj</string>

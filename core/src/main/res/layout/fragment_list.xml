@@ -41,4 +41,16 @@
         android:layout="@layout/layout_no_elements_to_display_with_button"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="4dp" />
+
+    <include
+        android:id="@+id/popover_scroll_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/popover_move_to_top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_bar"
+        android:layout_marginTop="25dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
