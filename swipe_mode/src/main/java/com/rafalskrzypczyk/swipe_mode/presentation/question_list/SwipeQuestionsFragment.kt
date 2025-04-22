@@ -32,6 +32,8 @@ class SwipeQuestionsFragment :
 
     private var noElementsView : View? = null
 
+    private var recyclerViewManager: LinearLayoutManager? = null
+
     override fun onViewBound() {
         super.onViewBound()
 
@@ -44,11 +46,12 @@ class SwipeQuestionsFragment :
         )
         with(binding) {
             recyclerView.adapter = adapter
+            recyclerViewManager = recyclerView.layoutManager as LinearLayoutManager
             recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    val firstVisibleItemPosition = recyclerViewManager?.findFirstVisibleItemPosition()
 
                     if (firstVisibleItemPosition == 0) hideScrollToBottomPopover()
                     else showScrollToBottomPopover()
@@ -72,7 +75,12 @@ class SwipeQuestionsFragment :
     }
 
     override fun displayQuestions(questions: List<SwipeQuestionSimpleUIModel>) {
-        adapter.submitList(questions)
+        val isFirstItemVisible = recyclerViewManager?.findFirstVisibleItemPosition() == 0
+
+        adapter.submitList(questions) {
+            if(isFirstItemVisible)
+                binding.recyclerView.scrollToPosition(0)
+        }
 
         if (binding.loading.root.isVisible) {
             QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerView)

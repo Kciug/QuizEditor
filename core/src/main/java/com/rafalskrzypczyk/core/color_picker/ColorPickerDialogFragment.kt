@@ -23,16 +23,16 @@ class ColorPickerDialogFragment : DialogFragment() {
     private val predefinedColors = mapOf(
         "White" to Color.parseColor("#FFFFFF"),
         "Black" to Color.parseColor("#000000"),
-        "Red" to Color.parseColor("#F44336"),
-        "Pink" to Color.parseColor("#E91E63"),
-        "Purple" to Color.parseColor("#9C27B0"),
-        "Deep Purple" to Color.parseColor("#673AB7"),
-        "Indigo" to Color.parseColor("#3F51B5"),
-        "Blue" to Color.parseColor("#2196F3"),
-        "Light Blue" to Color.parseColor("#03A9F4"),
-        "Cyan" to Color.parseColor("#00BCD4"),
-        "Teal" to Color.parseColor("#009688"),
-        "Green" to Color.parseColor("#4CAF50")
+        "Scarlet Red" to Color.parseColor("#D32F2F"),
+        "Coral" to Color.parseColor("#FF6F61"),
+        "Violet" to Color.parseColor("#7E57C2"),
+        "Midnight Blue" to Color.parseColor("#303F9F"),
+        "Sky Blue" to Color.parseColor("#81D4FA"),
+        "Turquoise" to Color.parseColor("#1DE9B6"),
+        "Mint" to Color.parseColor("#A5D6A7"),
+        "Olive Green" to Color.parseColor("#827717"),
+        "Amber" to Color.parseColor("#FFC107"),
+        "Burnt Orange" to Color.parseColor("#FF7043")
     )
 
     private var selectedColor: Int = 0
