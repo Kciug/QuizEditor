@@ -118,6 +118,15 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         setupDatabaseSelector()
 
         setupDrawerHeader()
+
+        navController.addOnDestinationChangedListener {_, destination, _ ->
+            val drawerNavView = binding.drawerNavView
+            val matchingItem = drawerNavView.menu.findItem(destination.id)
+
+            matchingItem?.let {
+                drawerNavView.setCheckedItem(it.itemId)
+            }
+        }
     }
 
     private fun setupDatabaseSelector() {
