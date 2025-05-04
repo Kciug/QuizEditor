@@ -1,13 +1,19 @@
 package com.rafalskrzypczyk.home.presentation
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
+import android.text.style.StyleSpan
 import android.view.View
-import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.rafalskrzypczyk.core.base.BaseFragment
-import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
-import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.home.R
@@ -32,17 +38,8 @@ class HomeScreenFragment :
     override fun onViewBound() {
         super.onViewBound()
 
-        with(binding) {
-            btnContinueWork.setOnClickListener { presenter.onContinueWork() }
-            with(statisticsDev.statQuizMode){
-                tvModeName.text = getString(R.string.statistics_title_quiz_mode)
-                tvTypeFirstName.text = getString(R.string.statistics_title_quiz_mode_categories)
-                tvTypeSecondName.text = getString(R.string.statistics_title_quiz_mode_questions)
-            }
-            statisticsDev.statSwipeMode.tvModeName.text = getString(R.string.statistics_title_swipe_mode)
-            statisticsDev.statCalculationsMode.tvModeName.text = getString(R.string.statistics_title_calculations_mode)
-            statisticsDev.statScenariosMode.tvModeName.text = getString(R.string.statistics_title_scenarios_mode)
-        }
+        binding.btnContinueWork.setOnClickListener { presenter.onContinueWork() }
+        binding.notificationNewMessages.setOnClickListener { navigateToChat() }
     }
 
     override fun displayUserName(name: String) {
@@ -57,32 +54,68 @@ class HomeScreenFragment :
             val startWorkGuideStub = binding.stubStartWorkGuide
             startWorkGuideView = startWorkGuideStub.inflate()
         }
+
+        val welcomeMessageTV = startWorkGuideView?.findViewById<TextView>(R.id.tv_welcome_message)
+        val startGuideTV = startWorkGuideView?.findViewById<TextView>(R.id.tv_guide_start)
+        if(welcomeMessageTV != null && startGuideTV != null) buildWelcomeMessage(welcomeMessageTV, startGuideTV)
+
     }
 
     override fun navigateToDestination(destination: Int) {
         activityDrawerNavigationHandler?.navigateToDestination(destination)
     }
 
-    override fun displayStatistics(statistics: DataStatistics) {
-        with(binding.statisticsDev) {
-            statDbName.text = statistics.dataBaseName
-            with(statQuizMode) {
-                tvFirstElementsCount.text = String.format(statistics.quizModeStatistics.numberOfCategories.toString())
-                tvSecondElementsCount.text = String.format(statistics.quizModeStatistics.numberOfQuestions.toString())
-            }
-            statSwipeMode.tvElementsCount.text = String.format(statistics.swipeQuizModeStatistics.toString())
-            statCalculationsMode.tvElementsCount.text = String.format(statistics.calculationsModeStatistics.toString())
-            statScenariosMode.tvElementsCount.text = String.format(statistics.scenariosModeStatistics.toString())
-        }
-        QuizEditorAnimations.animateReplaceScaleOutIn(binding.statisticsLoading.root, binding.statisticsDev.root)
+    override fun displayNewMessagesNotification() {
+        binding.notificationNewMessages.makeVisible()
     }
 
     override fun displayLoading() {
-        binding.statisticsDev.root.makeInvisible()
-        binding.statisticsLoading.root.makeVisible()
     }
 
     override fun displayError(message: String) {
         ErrorDialog(requireContext(), message).show()
+    }
+
+    private fun navigateToChat() {
+        activityDrawerNavigationHandler?.navigateToChat()
+    }
+
+    private fun buildWelcomeMessage(welcomeMessageTV: TextView, startGuideTV: TextView) {
+        val messageWelcome = getString(R.string.home_message_guide_part1)
+        val messageRelatedApp = getString(R.string.home_message_related_app)
+        val messageStartGuide = getString(R.string.home_message_guide_part2)
+        val messageStartGuideContinuation = getString(R.string.home_message_guide_part3)
+        val drawerIcon = ContextCompat.getDrawable(requireContext(), com.rafalskrzypczyk.core.R.drawable.ic_menu_24)
+        val colorPrimary = ContextCompat.getColor(requireContext(), com.rafalskrzypczyk.core.R.color.primary)
+
+        val spannableMessageWelcome = SpannableString("$messageWelcome $messageRelatedApp")
+        spannableMessageWelcome.setSpan(
+            StyleSpan(Typeface.BOLD),
+            messageWelcome.length,
+            spannableMessageWelcome.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannableMessageWelcome.setSpan(
+            ForegroundColorSpan(colorPrimary),
+            messageWelcome.length,
+            spannableMessageWelcome.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        drawerIcon?.let {
+            it.setBounds(0, 0, drawerIcon.intrinsicWidth, drawerIcon.intrinsicHeight)
+            it.setTint(colorPrimary)
+        }
+        val spanDrawerIcon = drawerIcon?.let { ImageSpan(it) }
+
+        val textBuilder = SpannableStringBuilder()
+        textBuilder.append("$messageStartGuide ")
+        val imageStart = textBuilder.length
+        textBuilder.append(" ")
+        spanDrawerIcon?.let { textBuilder.setSpan(spanDrawerIcon, imageStart, textBuilder.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        textBuilder.append(" $messageStartGuideContinuation")
+
+        welcomeMessageTV.text = spannableMessageWelcome
+        startGuideTV.text = textBuilder
     }
 }

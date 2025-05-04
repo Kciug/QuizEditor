@@ -16,4 +16,5 @@
     <string name="statistics_title_swipe_mode">Swipe Quiz</string>
     <string name="statistics_title_calculations_mode">Obliczenia</string>
     <string name="statistics_title_scenarios_mode">Scenariusze</string>
+    <string name="notification_chat_new_messages">Masz nowe wiadomości!</string>
 </resources>

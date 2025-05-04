@@ -1,14 +1,11 @@
 package com.rafalskrzypczyk.home.presentation
 
-import com.rafalskrzypczyk.core.user_management.UserManager
-import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.local_preferences.SharedPreferencesApi
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.StatisticsRepository
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeScreenPresenter @Inject constructor(
@@ -29,24 +26,10 @@ class HomeScreenPresenter @Inject constructor(
         val userName = userManager.getCurrentLoggedUser()?.name
         if(userName != null) view.displayUserName(userName)
         else view.displayError(resourceProvider.getString(R.string.error_user_name_not_found))
-
-        displayStatistics()
     }
 
     override fun onContinueWork() {
         if(lastEditedMode == 0) view.displayError("lastEditMode = 0")
         else view.navigateToDestination(lastEditedMode)
-    }
-
-    private fun displayStatistics() {
-        presenterScope?.launch {
-            statisticsRepository.getStatistics().collectLatest {
-                when (it) {
-                    is Response.Loading -> view.displayLoading()
-                    is Response.Error -> view.displayError(it.error)
-                    is Response.Success -> view.displayStatistics(it.data)
-                }
-            }
-        }
     }
 }

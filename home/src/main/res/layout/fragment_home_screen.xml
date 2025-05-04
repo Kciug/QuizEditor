@@ -6,18 +6,29 @@
     android:layout_height="match_parent"
     tools:context="com.rafalskrzypczyk.home.presentation.HomeScreenFragment">
 
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/applogo"
+        android:contentDescription="@string/ic_desc_app_icon"
+        app:tint="@color/primary" />
+
     <TextView
         android:id="@+id/tv_app_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:gravity="center"
         android:text="@string/app_name"
         android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/app_icon" />
 
     <TextView
         android:id="@+id/tv_welcome_message"
@@ -82,33 +93,21 @@
         tools:visibility="visible"/>
 
     <TextView
+        android:id="@+id/notification_new_messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/home_stats"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/statistics_dev"
-        android:padding="10dp"
-        android:textSize="20sp"/>
-
-    <include
-        android:id="@+id/statistics_dev"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/layout_db_statistics"
+        app:drawableStartCompat="@drawable/ic_chat_unread_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="30dp" />
-
-    <include
-        android:id="@+id/statistics_loading"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:text="@string/notification_chat_new_messages"
+        android:drawablePadding="5dp"
+        app:drawableTint="@color/primary"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="15dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/background_tile"
         android:visibility="gone"
-        layout="@layout/layout_statistics_loading"
-        app:layout_constraintStart_toStartOf="@id/statistics_dev"
-        app:layout_constraintTop_toTopOf="@id/statistics_dev"
-        app:layout_constraintEnd_toEndOf="@id/statistics_dev"
-        app:layout_constraintBottom_toBottomOf="@id/statistics_dev"/>
+        tools:visibility="visible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
