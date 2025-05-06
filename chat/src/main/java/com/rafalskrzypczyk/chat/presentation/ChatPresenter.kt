@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.chat.presentation
 
+import com.rafalskrzypczyk.chat.domain.ChatMessagesHandler
 import com.rafalskrzypczyk.chat.domain.ChatRepository
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.core.api_result.Response
@@ -13,7 +14,8 @@ import java.util.Date
 import javax.inject.Inject
 
 class ChatPresenter @Inject constructor(
-    private val repository: ChatRepository
+    private val repository: ChatRepository,
+    private val chatMessagesHandler: ChatMessagesHandler
 ): BasePresenter<ChatContract.View>(), ChatContract.Presenter {
     private var loadOldMessagesTriggered = false
 
@@ -21,9 +23,11 @@ class ChatPresenter @Inject constructor(
         super.onViewCreated()
         view.setupMessagesReceiver(repository.getCurrentUserId())
 
+        chatMessagesHandler.onChatOpened()
+
         presenterScope?.launch{
             delay(Constants.PRESENTER_INITIAL_DELAY)
-            repository.getLatestMessages().collectLatest{
+            repository.getLatestMessages().collectLatest {
                 processResponse(it)
             }
         }
@@ -59,6 +63,11 @@ class ChatPresenter @Inject constructor(
         }
     }
 
+    override fun onDestroy() {
+        chatMessagesHandler.onChatClosed()
+        super.onDestroy()
+    }
+
     private fun processResponse(response: Response<List<Message>>) {
         when(response) {
             is Response.Success -> {
@@ -72,13 +81,16 @@ class ChatPresenter @Inject constructor(
 
     private fun attachMessagesListener() {
         presenterScope?.launch {
-            repository.getUpdatedMessages().collectLatest {
+            chatMessagesHandler.newMessages.collectLatest {
                 displayMessages(it)
             }
         }
     }
 
     private fun displayMessages(messages: List<Message>) {
-        view.displayMessages(messages.sortedByDescending { it.timestamp })
+        messages.sortedByDescending { it.timestamp }.let {
+            view.displayMessages(it)
+            chatMessagesHandler.updateLastReadMessage(it.first().timestamp)
+        }
     }
 }

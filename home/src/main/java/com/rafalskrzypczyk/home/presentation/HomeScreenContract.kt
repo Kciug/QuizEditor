@@ -8,6 +8,7 @@ interface HomeScreenContract {
         fun setStartWorkGuide()
         fun navigateToDestination(destination: Int)
         fun displayNewMessagesNotification()
+        fun hideNewMessagesNotification()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun onContinueWork()

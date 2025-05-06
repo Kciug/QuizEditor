@@ -12,6 +12,7 @@
     <string name="nav_header_role">Administrator</string>
     <string name="nav_header_subtitle">zbigniew.drut@twojastara.com</string>
     <string name="drawer_menu_title_chat">Chat</string>
+    <string name="drawer_menu_title_chat_unread">Nowe wiadomości!</string>
     <string name="drawer_menu_header_modules">Tryby</string>
 
 </resources>

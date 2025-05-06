@@ -1,12 +1,12 @@
 package com.rafalskrzypczyk.chat.data
 
-import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.chat.domain.ChatRepository
 import com.rafalskrzypczyk.chat.domain.Message
 import com.rafalskrzypczyk.chat.domain.toDTO
 import com.rafalskrzypczyk.chat.domain.toDomain
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.user.UserData
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -57,8 +57,7 @@ class ChatRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUpdatedMessages(): Flow<List<Message>> =
-        firestoreApi.getUpdatedMessages().map {
+    override fun getUpdatedMessages(): Flow<List<Message>> = firestoreApi.getUpdatedMessages().map {
             val received = it.map { it.toDomain() }
             messages.addAll(received)
             messages

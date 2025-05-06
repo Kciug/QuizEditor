@@ -173,6 +173,7 @@ class FirestoreService @Inject constructor(
             .get().await()
         val mappedMessages = messages.toObjects(MessageDTO::class.java)
         lastObservedMessage = mappedMessages.lastOrNull()
+        Log.d("KURWA", "getter: $mappedMessages")
         emit(Response.Success(mappedMessages))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -202,6 +203,7 @@ class FirestoreService @Inject constructor(
                 val toSend = value?.documentChanges?.filter { it.type == DocumentChange.Type.ADDED }?.map {
                     it.document.toObject(MessageDTO::class.java)
                 }
+                toSend?.let { Log.d("KURWA", "listener: $it") }
                 toSend?.let { trySend(it) }
             }
         awaitClose{ listener.remove() }

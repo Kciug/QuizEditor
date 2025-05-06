@@ -11,10 +11,10 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
-import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.home.R
 import com.rafalskrzypczyk.home.databinding.FragmentHomeScreenBinding
@@ -66,7 +66,11 @@ class HomeScreenFragment :
     }
 
     override fun displayNewMessagesNotification() {
-        binding.notificationNewMessages.makeVisible()
+        QuizEditorAnimations.animateScaleIn(binding.notificationNewMessages)
+    }
+
+    override fun hideNewMessagesNotification() {
+        QuizEditorAnimations.animateScaleOut(binding.notificationNewMessages)
     }
 
     override fun displayLoading() {

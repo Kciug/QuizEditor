@@ -2,18 +2,22 @@ package com.rafalskrzypczyk.quizeditor
 
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import com.rafalskrzypczyk.chat.domain.ChatMessagesHandler
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
+import com.rafalskrzypczyk.core.internal_notifications.InAppNotificationManager
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import com.rafalskrzypczyk.quizeditor.drawerManager.DrawerManager
 import com.rafalskrzypczyk.quizeditor.drawerManager.DrawerManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,8 +33,13 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     @Inject
     lateinit var databaseManager: DatabaseManager
 
+    @Inject
+    lateinit var chatMessagesHandler: ChatMessagesHandler
+
     private var actionMenuRes: Int? = null
     private var actionMenuCallback: ((MenuItem) -> Boolean)? = null
+
+    private lateinit var inAppNotificationManager: InAppNotificationManager
 
     private lateinit var navController: NavController
 
@@ -59,6 +68,9 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             selectorDatabaseBinding = binding.selectorDatabase,
         )
         drawerManager.setupDrawer(appBarConfiguration)
+
+        inAppNotificationManager = InAppNotificationManager(this)
+        observeNewChatMessages()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -88,5 +100,21 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
 
     override fun navigateToChat() {
         navigateToDestination(R.id.nav_chat)
+    }
+
+    private fun observeNewChatMessages() {
+        chatMessagesHandler.setInAppNotificationManager(notificationManager = inAppNotificationManager) { navigateToChat() }
+
+        lifecycleScope.launch {
+            launch { chatMessagesHandler.observeNewMessages() }
+
+            chatMessagesHandler.hasNewMessages.collect {
+                if (it) {
+                    drawerManager.notifyUnreadChat()
+                } else {
+                    drawerManager.resetChatIcon()
+                }
+            }
+        }
     }
 }

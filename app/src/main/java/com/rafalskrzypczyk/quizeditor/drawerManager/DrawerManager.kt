@@ -4,6 +4,7 @@ import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -20,7 +21,6 @@ import com.rafalskrzypczyk.core.user.UserRole
 import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.quizeditor.R
 import com.rafalskrzypczyk.quizeditor.user_panel.UserPanelFragment
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
@@ -117,5 +117,17 @@ class DrawerManager (
         activity.lifecycleScope.launch {
             databaseManager.changeDatabase(database)
         }
+    }
+
+    fun notifyUnreadChat() {
+        val chatItem = navViewBinding.menu.findItem(R.id.nav_chat)
+        chatItem.icon = AppCompatResources.getDrawable(activity, com.rafalskrzypczyk.core.R.drawable.ic_chat_unread_24)
+        chatItem.title = activity.getString(R.string.drawer_menu_title_chat_unread)
+    }
+
+    fun resetChatIcon() {
+        val chatItem = navViewBinding.menu.findItem(R.id.nav_chat)
+        chatItem.icon = AppCompatResources.getDrawable(activity, com.rafalskrzypczyk.core.R.drawable.ic_chat_24)
+        chatItem.title = activity.getString(R.string.drawer_menu_title_chat)
     }
 }

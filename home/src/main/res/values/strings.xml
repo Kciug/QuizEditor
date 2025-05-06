@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="label_welcome_message">Cześć</string>
     <string name="message_return_to_last_edited">Wróć do ostatnio edytowanych</string>
     <string name="label_continue">Kontynuuj</string>
@@ -16,5 +16,5 @@
     <string name="statistics_title_swipe_mode">Swipe Quiz</string>
     <string name="statistics_title_calculations_mode">Obliczenia</string>
     <string name="statistics_title_scenarios_mode">Scenariusze</string>
-    <string name="notification_chat_new_messages">Masz nowe wiadomości!</string>
+    <string name="notification_chat_new_messages" tools:ignore="Typos">Masz nowe wiadomości!</string>
 </resources>

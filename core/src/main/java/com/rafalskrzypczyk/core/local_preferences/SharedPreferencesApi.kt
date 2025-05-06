@@ -2,6 +2,7 @@ package com.rafalskrzypczyk.core.local_preferences
 
 import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.user.UserData
+import java.util.Date
 
 interface SharedPreferencesApi {
     fun setCurrentUser(userData: UserData?)
@@ -13,4 +14,7 @@ interface SharedPreferencesApi {
 
     fun setCurrentDatabase(database: Database)
     fun getCurrentDatabase(): Database?
+
+    fun setLastDisplayedMessageTimestamp(timestamp: Date)
+    fun getLastDisplayedMessageTimestamp() : Date?
 }

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">QuizEditor</string>
 
     <!-- icon descriptions -->
@@ -43,4 +43,5 @@
     <string name="elements_count_label_singular">element</string>
     <string name="elements_count_label_few">elementy</string>
     <string name="elements_count_label_many">elementów</string>
+    <string name="ic_desc_notification_icon">Powiadomienie</string>
 </resources>
