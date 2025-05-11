@@ -143,6 +143,13 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         view.displayNewQuestionSheet(interactor.getCategoryId())
     }
 
+    override fun onCategoryQuestions() {
+        view.displayCategoryQuestionsList(
+            interactor.getCategoryId(),
+            initialCategoryTitle
+        )
+    }
+
     override fun onDestroy() {
         interactor.saveCachedCategory()
         super.onDestroy()

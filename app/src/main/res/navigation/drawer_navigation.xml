@@ -29,4 +29,16 @@
         android:label="@string/drawer_menu_title_swipe_quiz"
         tools:layout="@layout/fragment_list" />
 
+
+    <fragment
+        android:id="@+id/nav_category_questions_list"
+        android:name="com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuizQuestionsFragment"
+        android:label="@string/drawer_menu_title_quiz"
+        tools:layout="@layout/fragment_list">
+
+        <argument
+            android:name="nav_tag"
+            app:argType="string"
+            android:defaultValue="category_questions_list"/>
+    </fragment>
 </navigation>

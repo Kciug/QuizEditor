@@ -22,6 +22,7 @@ interface QuizCategoryDetailsContract {
         fun displayNewQuestionSheet(parentCategoryId: Long)
         fun displayQuestionListLoading()
         fun displayToastMessage(message: String)
+        fun displayCategoryQuestionsList(categoryId: Long, categoryTitle: String)
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)
@@ -35,5 +36,6 @@ interface QuizCategoryDetailsContract {
         fun updateQuestionList()
         fun onQuestionFromList()
         fun onNewQuestion()
+        fun onCategoryQuestions()
     }
 }

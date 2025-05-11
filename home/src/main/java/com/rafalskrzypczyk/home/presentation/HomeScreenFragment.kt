@@ -62,7 +62,7 @@ class HomeScreenFragment :
     }
 
     override fun navigateToDestination(destination: Int) {
-        activityDrawerNavigationHandler?.navigateToDestination(destination)
+        activityDrawerNavigationHandler?.navigateToTopLevelDestination(destination)
     }
 
     override fun displayNewMessagesNotification() {

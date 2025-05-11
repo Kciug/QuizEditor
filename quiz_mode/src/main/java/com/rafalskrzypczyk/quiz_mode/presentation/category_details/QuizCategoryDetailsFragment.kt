@@ -12,6 +12,7 @@ import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
+import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.R
@@ -53,6 +54,9 @@ class QuizCategoryDetailsFragment :
             sectionCategoryDetails.buttonChangeStatus.setOnClickListener { presenter.onChangeCategoryStatus() }
             sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
             sectionQuestionsList.buttonAddFromDb.setOnClickListener { presenter.onQuestionFromList() }
+            labelQuestions.setOnClickListener {
+                presenter.onCategoryQuestions()
+            }
         }
     }
 
@@ -189,6 +193,17 @@ class QuizCategoryDetailsFragment :
 
     override fun displayToastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun displayCategoryQuestionsList(
+        categoryId: Long,
+        categoryTitle: String,
+    ) {
+        val bundle = Bundle().apply {
+            putLong("categoryId", categoryId)
+            putString("categoryTitle", categoryTitle)
+        }
+        (requireActivity() as DrawerNavigationHandler).navigateToDestinationByTag("category_questions_list", bundle)
     }
 
     override fun displayLoading() {

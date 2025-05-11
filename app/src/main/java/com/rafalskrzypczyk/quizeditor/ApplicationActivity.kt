@@ -1,9 +1,13 @@
 package com.rafalskrzypczyk.quizeditor
 
+import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.collection.forEach
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -42,6 +46,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
     private lateinit var inAppNotificationManager: InAppNotificationManager
 
     private lateinit var navController: NavController
+    private var navDestinations: List<NavDestination>? = null
 
     override fun onViewBound() {
         super.onViewBound()
@@ -50,6 +55,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_editor) as NavHostFragment
         navController = navHostFragment.navController
+        collectDestinations()
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -93,13 +99,36 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         invalidateOptionsMenu()
     }
 
-    override fun navigateToDestination(destination: Int) {
+    override fun navigateToTopLevelDestination(destination: Int) {
         binding.drawerNavView.setCheckedItem(destination)
         navController.navigate(destination)
     }
 
     override fun navigateToChat() {
-        navigateToDestination(R.id.nav_chat)
+        navigateToTopLevelDestination(R.id.nav_chat)
+    }
+
+    override fun navigateToDestinationByTag(tag: String, args: Bundle?) {
+        val destination = findDestinationIdByTag(tag)
+        Log.d("KURWA", "destination - $destination")
+        destination?.let {
+            navController.navigate(it, args)
+        }
+    }
+
+    private fun findDestinationIdByTag(tag: String): Int? {
+        return navDestinations?.find { dest ->
+                (dest.arguments["nav_tag"]?.defaultValue as? String) == tag
+            }?.id
+    }
+
+    private fun collectDestinations() {
+        val graphNodes = navController.graph.nodes
+        var result = mutableListOf<NavDestination>()
+        graphNodes.forEach { id, node ->
+            result.add(node)
+        }
+        navDestinations = result
     }
 
     private fun observeNewChatMessages() {
