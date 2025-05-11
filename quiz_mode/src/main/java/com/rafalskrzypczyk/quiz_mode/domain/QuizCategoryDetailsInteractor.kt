@@ -69,6 +69,10 @@ class QuizCategoryDetailsInteractor @Inject constructor(
         categoryReference?.status = status
     }
 
+    fun updateIsFree(isFree: Boolean) {
+        categoryReference?.isFree = isFree
+    }
+
     fun saveCachedCategory() {
         if(categoryReference?.equals(categoryInitialState) == true) return
         categoryReference?.let { dataUpdateManager.updateCategory(categoryReference!!) }

@@ -16,10 +16,12 @@ interface QuizCategoryDetailsContract {
         fun displayQuestionCount(questionCount: Int)
         fun displayCategoryStatusMenu(options: List<SelectableMenuItem>)
         fun displayColorPicker(currentColor: Int)
+        fun displayIsFree(isFree: Boolean)
         fun displayQuestionsPicker()
         fun displayNewQuestionSheet(parentCategoryId: Long)
         fun displayQuestionsList(categoryId: Long, categoryTitle: String, categoryColor: Long)
         fun displayToastMessage(message: String)
+        fun displayContent()
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)
@@ -30,6 +32,7 @@ interface QuizCategoryDetailsContract {
         fun updateCategoryColor(color: Int)
         fun onChangeCategoryStatus()
         fun updateCategoryStatus(status: SelectableMenuItem)
+        fun updateIsFree(isFree: Boolean)
         fun onQuestionFromList()
         fun onNewQuestion()
         fun onCategoryQuestions()

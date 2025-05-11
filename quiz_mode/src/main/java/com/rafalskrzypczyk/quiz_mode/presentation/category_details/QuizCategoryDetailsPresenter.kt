@@ -69,7 +69,9 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             displayCreatedDetails(String.formatDate(category.creationDate))
             displayCategoryColor(category.color)
             displayCategoryStatus(category.status)
+            displayIsFree(category.isFree)
             displayQuestionCount(category.linkedQuestions.count())
+            displayContent()
         }
 
         initialCategoryTitle = category.title
@@ -117,6 +119,10 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             interactor.updateStatus(it)
             view.displayCategoryStatus(it)
         }
+    }
+
+    override fun updateIsFree(isFree: Boolean) {
+        interactor.updateIsFree(isFree)
     }
 
     override fun onQuestionFromList() {

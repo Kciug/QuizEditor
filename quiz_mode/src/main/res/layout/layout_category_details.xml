@@ -121,6 +121,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label_status" />
 
+    <TextView
+        android:id="@+id/label_is_free"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Kategoria bezpłatna"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider4" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_is_free"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="UseSwitchCompatOrMaterialXml"
+        app:thumbTint="@color/selector_correct_switch_tint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/label_is_free"
+        app:layout_constraintBottom_toBottomOf="@id/label_is_free"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider5"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_is_free" />
+
     <Button
         android:id="@+id/button_change_color"
         android:layout_width="0dp"
@@ -129,7 +158,7 @@
         app:layout_constraintEnd_toStartOf="@+id/divider_buttons"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider4" />
+        app:layout_constraintTop_toBottomOf="@id/divider5" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider_buttons"
@@ -162,6 +191,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:constraint_referenced_ids="category_description_field, label_color, label_status,
         color_preview, indicator_status, button_change_color, button_change_status,
-        divider1, divider2, divider3, divider4, divider_buttons" />
+        label_is_free, switch_is_free, divider1, divider2, divider3, divider4, divider5,
+        divider_buttons" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

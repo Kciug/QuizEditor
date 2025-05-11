@@ -9,6 +9,7 @@ data class CategoryDTO(
     val questionIDs: List<Long> = emptyList(),
     val status: String = "",
     val color: CategoryColorRGB? = null,
+    val free: Boolean = false,
     val dateCreated: Date = Date(),
     val dateModified: String = "",
     val productionTransferDate: Date? = null,

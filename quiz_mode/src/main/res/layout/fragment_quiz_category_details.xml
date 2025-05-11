@@ -87,4 +87,17 @@
         app:constraint_referenced_ids="section_creation_details, label_questions, category_questions_count,
         section_questions_list"/>
 
+    <androidx.constraintlayout.widget.Group
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/group_content"
+        app:constraint_referenced_ids="label_category, section_category_details"/>
+
+    <include
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/layout_loading"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

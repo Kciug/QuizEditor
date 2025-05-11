@@ -11,6 +11,9 @@ import androidx.fragment.app.setFragmentResultListener
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.color_picker.ColorPickerDialogFragment
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeInvisible
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
@@ -50,6 +53,9 @@ class QuizCategoryDetailsFragment :
             }
             sectionCategoryDetails.buttonChangeColor.setOnClickListener { presenter.onChangeColor() }
             sectionCategoryDetails.buttonChangeStatus.setOnClickListener { presenter.onChangeCategoryStatus() }
+            binding.sectionCategoryDetails.switchIsFree.setOnCheckedChangeListener { _, isChecked ->
+                presenter.updateIsFree(isChecked)
+            }
             sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
             sectionQuestionsList.buttonAddFromDb.setOnClickListener { presenter.onQuestionFromList() }
             sectionQuestionsList.buttonDisplayQuestions.setOnClickListener { presenter.onCategoryQuestions() }
@@ -165,6 +171,10 @@ class QuizCategoryDetailsFragment :
         }
     }
 
+    override fun displayIsFree(isFree: Boolean) {
+        binding.sectionCategoryDetails.switchIsFree.isChecked = isFree
+    }
+
     override fun displayQuestionsPicker() {
         val linkedQuestionsPicker = CheckablePickerFragment(parentInteractor)
         linkedQuestionsPicker.show(parentFragmentManager, "CategoriesPickerBS")
@@ -178,6 +188,12 @@ class QuizCategoryDetailsFragment :
 
     override fun displayToastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun displayContent() {
+        binding.groupEditionFields.makeVisible()
+        binding.groupContent.makeVisible()
+        binding.loading.root.makeGone()
     }
 
     override fun displayQuestionsList(
@@ -194,6 +210,9 @@ class QuizCategoryDetailsFragment :
     }
 
     override fun displayLoading() {
+        binding.groupEditionFields.makeInvisible()
+        binding.groupContent.makeInvisible()
+        binding.loading.root.makeVisible()
     }
 
     override fun displayError(message: String) {

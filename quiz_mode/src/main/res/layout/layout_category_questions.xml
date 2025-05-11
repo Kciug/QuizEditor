@@ -56,7 +56,8 @@
         app:layout_constraintTop_toBottomOf="@id/divider_horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:drawableEnd="@drawable/ic_keyboard_arrow_right_24"/>
+        android:drawableEnd="@drawable/ic_keyboard_arrow_right_24"
+        android:drawableTint="@color/primary"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
