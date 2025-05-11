@@ -1,8 +1,6 @@
 package com.rafalskrzypczyk.quiz_mode.presentation
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,22 +10,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.domain.DataUpdateManager
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class QuizModeFragment : Fragment() {
 
-    @Inject
-    lateinit var dataUpdateManager: DataUpdateManager
-
     private lateinit var navController: NavController
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        dataUpdateManager.initialize()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,13 +30,7 @@ class QuizModeFragment : Fragment() {
 
         return view.rootView
     }
-
-    override fun onDestroyView() {
-        dataUpdateManager.clear()
-        super.onDestroyView()
-    }
 }
-
 
 //        ViewCompat.setOnApplyWindowInsetsListener(binding.navQuizModeBottomBar) { view, insets ->
 //            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())

@@ -71,7 +71,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
             displayCategoryStatus(category.status)
             displayQuestionCount(category.linkedQuestions.count())
         }
-        updateQuestionList()
 
         initialCategoryTitle = category.title
     }
@@ -120,21 +119,6 @@ class QuizCategoryDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun updateQuestionList() {
-        presenterScope?.launch {
-            interactor.getLinkedQuestions().collectLatest {
-                when (it) {
-                    is Response.Success -> {
-                        view.displayQuestionList(it.data)
-                        view.displayQuestionCount(interactor.getLinkedQuestionsAmount())
-                    }
-                    is Response.Error -> view.displayError(it.error)
-                    is Response.Loading -> view.displayQuestionListLoading()
-                }
-            }
-        }
-    }
-
     override fun onQuestionFromList() {
         view.displayQuestionsPicker()
     }
@@ -144,9 +128,10 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun onCategoryQuestions() {
-        view.displayCategoryQuestionsList(
+        view.displayQuestionsList(
             interactor.getCategoryId(),
-            initialCategoryTitle
+            interactor.getCategoryName(),
+            interactor.getCategoryColor().toLong()
         )
     }
 

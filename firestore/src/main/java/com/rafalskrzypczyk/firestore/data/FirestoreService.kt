@@ -32,7 +32,7 @@ import javax.inject.Inject
 class FirestoreService @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val resourceProvider: ResourceProvider,
-    private val databaseManager: DatabaseManager,
+    databaseManager: DatabaseManager,
 ) : FirestoreApi {
     private var userDataCollection = FirestoreCollections.USER_DATA_COLLECTION
     private var messagesCollection = FirestoreCollections.MESSAGES
@@ -136,7 +136,6 @@ class FirestoreService @Inject constructor(
     override fun getSwipeQuestions(): Flow<Response<List<SwipeQuestionDTO>>> = flow {
         emit(Response.Loading)
         val questions = getFirestoreData(swipeQuestionsCollection)?.toObjects(SwipeQuestionDTO::class.java) ?: emptyList()
-        Log.d("KURWA", questions.toString())
         emit(Response.Success(questions))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -173,7 +172,6 @@ class FirestoreService @Inject constructor(
             .get().await()
         val mappedMessages = messages.toObjects(MessageDTO::class.java)
         lastObservedMessage = mappedMessages.lastOrNull()
-        Log.d("KURWA", "getter: $mappedMessages")
         emit(Response.Success(mappedMessages))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
@@ -255,8 +253,10 @@ class FirestoreService @Inject constructor(
                 .document(id)
                 .set(data, SetOptions.merge())
                 .await()
+            Log.d("KURWA", "modifyFirestoreDocument: $data")
             Response.Success(Unit)
         } catch (e: Exception) {
+            Log.d("KURWA", "modifyFirestoreDocument: $e")
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
         }
     }

@@ -1,5 +1,7 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
+import android.os.Bundle
+import android.util.Log
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
@@ -8,6 +10,7 @@ import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toFilterOption
@@ -36,13 +39,37 @@ class QuizQuestionsPresenter @Inject constructor(
     private val sortType = MutableStateFlow<QuestionSort.SortTypes>(QuestionSort.Companion.defaultSortType)
     private val filterType = MutableStateFlow<QuestionFilter>(QuestionFilter.Companion.defaultFilter)
 
+    private var categoryId: Long? = null
+    private var categoryTitle: String? = null
+    private var categoryColor: Long? = null
+
     override fun onViewCreated() {
         super.onViewCreated()
-        getData()
         observeDatabaseEvent()
     }
 
-    private fun getData(){
+    override fun getData(bundle: Bundle?) {
+        bundle?.let {
+            categoryId = it.getLong("categoryId")
+            categoryTitle = it.getString("categoryTitle")
+            categoryColor = it.getLong("categoryColor")
+        }
+
+        Log.d("KURWA", "categoryId: $categoryId, categoryTitle: $categoryTitle, categoryColor: $categoryColor")
+
+        if(categoryTitle != null && categoryColor != null) {
+            view.displayCategoryBadge(
+                category = SimpleCategoryUIModel(
+                    name = categoryTitle!!,
+                    color = categoryColor!!
+                )
+            )
+        }
+
+        fetchData()
+    }
+
+    private fun fetchData(){
         presenterScope?.launch {
             delay(Constants.PRESENTER_INITIAL_DELAY)
             repository.getAllQuestions().collectLatest{
@@ -69,7 +96,7 @@ class QuizQuestionsPresenter @Inject constructor(
     private fun observeDatabaseEvent() {
         presenterScope?.launch {
             DatabaseEventBus.eventReloadData.collectLatest {
-                getData()
+                fetchData()
             }
         }
     }
@@ -83,7 +110,8 @@ class QuizQuestionsPresenter @Inject constructor(
                 sortType,
                 filterType
             ) { questions, query, sortOption, sortType, filter ->
-                var searchedQuestions = questions.filter { it.text.contains(query, ignoreCase = true) }
+                var searchedQuestions = filterByCategory(questions)
+                searchedQuestions = searchedQuestions.filter { it.text.contains(query, ignoreCase = true) }
                 searchedQuestions = sortData(searchedQuestions, sortOption, sortType)
                 searchedQuestions = filterData(searchedQuestions, filter)
                 searchedQuestions
@@ -125,6 +153,11 @@ class QuizQuestionsPresenter @Inject constructor(
         presenterScope?.launch {
             repository.getUpdatedCategories().collectLatest { categoriesData.value = it }
         }
+    }
+
+    private fun filterByCategory(data: List<Question>): List<Question> {
+        if(categoryId == null) return data
+        return data.filter { it.linkedCategories.contains(categoryId) }
     }
 
     private fun sortData(data: List<Question>, sortOption: QuestionSort.SortOptions, sortType: QuestionSort.SortTypes) : List<Question> {
@@ -181,5 +214,9 @@ class QuizQuestionsPresenter @Inject constructor(
 
     override fun filterBy(filter: SelectableMenuItem) {
         filterType.value = filter.toFilterOption() ?: QuestionFilter.Companion.defaultFilter
+    }
+
+    override fun onNewElement() {
+        view.displayNewElementSheet(categoryId)
     }
 }

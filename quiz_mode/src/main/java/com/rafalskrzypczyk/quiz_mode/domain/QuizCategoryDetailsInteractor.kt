@@ -6,7 +6,6 @@ import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
-import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -70,23 +69,12 @@ class QuizCategoryDetailsInteractor @Inject constructor(
         categoryReference?.status = status
     }
 
-    fun getLinkedQuestions(): Flow<Response<List<Question>>> =
-        repository.getAllQuestions().map {
-            when (it) {
-                is Response.Success -> Response.Success(it.data.filter {
-                    categoryReference?.linkedQuestions?.contains(it.id) == true
-                })
-                is Response.Error -> Response.Error(it.error)
-                is Response.Loading -> Response.Loading
-            }
-        }
-
-    fun getLinkedQuestionsAmount(): Int = categoryReference?.linkedQuestions?.count() ?: 0
-
     fun saveCachedCategory() {
         if(categoryReference?.equals(categoryInitialState) == true) return
         categoryReference?.let { dataUpdateManager.updateCategory(categoryReference!!) }
     }
+
+    fun getCategoryName(): String = categoryReference?.title ?: ""
 
     fun getCategoryId(): Long = categoryReference?.id ?: -1
 

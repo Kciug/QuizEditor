@@ -1,6 +1,7 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isGone
@@ -17,7 +18,9 @@ import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.quiz_mode.R
+import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +36,11 @@ class QuizQuestionsFragment :
     private var noElementsView : View? = null
 
     private var recyclerViewManager: LinearLayoutManager? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.getData(arguments)
+    }
 
     override fun onViewBound() {
         super.onViewBound()
@@ -87,7 +95,7 @@ class QuizQuestionsFragment :
             }
 
             R.id.action_add_new -> {
-                openNewQuestionSheet()
+                presenter.onNewElement()
                 true
             }
 
@@ -134,7 +142,7 @@ class QuizQuestionsFragment :
             noElementsView = binding.stubEmptyList.inflate().apply { makeInvisible() }
 
             noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
-                ?.setOnClickListener { openNewQuestionSheet() }
+                ?.setOnClickListener { presenter.onNewElement() }
         }
 
         when {
@@ -154,17 +162,32 @@ class QuizQuestionsFragment :
         binding.searchBar.setElementsCount(count)
     }
 
+    override fun displayNewElementSheet(categoryId: Long?) {
+        val newQuestionSheetFragment = QuizQuestionDetailsFragment()
+        categoryId?.let {
+            val bundle = Bundle().apply { putLong("parentCategoryId", it) }
+            newQuestionSheetFragment.apply { arguments = bundle }
+        }
+        newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionBS")
+    }
+
+    override fun displayCategoryBadge(category: SimpleCategoryUIModel) {
+        val categoryBadge = ColorOutlinedLabelView(requireContext()).apply {
+            setColorAndText(category.color.toInt(), category.name)
+            gravity = Gravity.CENTER
+        }
+        binding.headerAppendixRoot.apply {
+            setPadding(10, 0, 10, 10)
+            addView(categoryBadge)
+        }
+    }
+
     private fun openQuestionDetailsSheet(questionId: Long) {
         val bundle = Bundle().apply {
             putLong("questionId", questionId)
         }
         val bottomBarCategoryDetails = QuizQuestionDetailsFragment().apply { arguments = bundle }
         bottomBarCategoryDetails.show(parentFragmentManager, "QuestionDetailsBS")
-    }
-
-    private fun openNewQuestionSheet() {
-        val bottomBarCategoryDetails = QuizQuestionDetailsFragment()
-        bottomBarCategoryDetails.show(parentFragmentManager, "NewQuestionBS")
     }
 
     override fun displayLoading() {

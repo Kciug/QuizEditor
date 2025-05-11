@@ -19,7 +19,6 @@ import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
-import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +32,6 @@ class QuizCategoryDetailsFragment :
     @Inject
     lateinit var parentInteractor: QuizCategoryDetailsInteractor
 
-    private lateinit var adapter: QuestionsSimpleAdapter
     private lateinit var keyboardController: KeyboardController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,21 +52,15 @@ class QuizCategoryDetailsFragment :
             sectionCategoryDetails.buttonChangeStatus.setOnClickListener { presenter.onChangeCategoryStatus() }
             sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
             sectionQuestionsList.buttonAddFromDb.setOnClickListener { presenter.onQuestionFromList() }
-            labelQuestions.setOnClickListener {
-                presenter.onCategoryQuestions()
-            }
+            sectionQuestionsList.buttonDisplayQuestions.setOnClickListener { presenter.onCategoryQuestions() }
         }
     }
 
     override fun setupView() {
-        adapter = QuestionsSimpleAdapter()
-
         with(binding){
             groupEditionFields.visibility = View.VISIBLE
             sectionCategoryDetails.groupDetailsEditionFields.visibility = View.VISIBLE
             sectionNavbar.buttonSave.visibility = View.GONE
-
-            sectionQuestionsList.questionsRecyclerView.adapter = adapter
 
             with(sectionCategoryDetails){
                 categoryNameField.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_NEXT)
@@ -149,10 +141,6 @@ class QuizCategoryDetailsFragment :
         binding.categoryQuestionsCount.text = String.format(questionCount.toString())
     }
 
-    override fun displayQuestionList(questions: List<Question>) {
-        adapter.submitList(questions)
-    }
-
     override fun displayCategoryStatusMenu(options: List<SelectableMenuItem>) {
         val statusPopupMenu = PopupMenu(requireContext(), binding.sectionCategoryDetails.buttonChangeStatus)
         options.forEach{
@@ -188,20 +176,19 @@ class QuizCategoryDetailsFragment :
         newQuestionSheetFragment.show(parentFragmentManager, "NewQuestionFromCategoryBS")
     }
 
-    override fun displayQuestionListLoading() {
-    }
-
     override fun displayToastMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun displayCategoryQuestionsList(
+    override fun displayQuestionsList(
         categoryId: Long,
         categoryTitle: String,
+        categoryColor: Long
     ) {
         val bundle = Bundle().apply {
             putLong("categoryId", categoryId)
             putString("categoryTitle", categoryTitle)
+            putLong("categoryColor", categoryColor)
         }
         (requireActivity() as DrawerNavigationHandler).navigateToDestinationByTag("category_questions_list", bundle)
     }
