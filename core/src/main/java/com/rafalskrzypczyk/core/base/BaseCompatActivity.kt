@@ -3,9 +3,6 @@ package com.rafalskrzypczyk.core.base
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseCompatActivity<VB: ViewBinding> (
@@ -24,6 +21,12 @@ abstract class BaseCompatActivity<VB: ViewBinding> (
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingInflater(layoutInflater)
+
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+//            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            view.setPadding(0, systemInsets.top, 0, systemInsets.bottom)
+//            insets
+//        }
 
         setContentView(binding.root)
         onViewBound()

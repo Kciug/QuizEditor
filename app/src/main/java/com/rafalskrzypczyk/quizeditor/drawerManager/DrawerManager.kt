@@ -5,6 +5,8 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -39,6 +41,8 @@ class DrawerManager (
     }
 
     fun setupDrawer(appBarConfiguration: AppBarConfiguration) {
+        applyWindowInsetsToDrawer()
+
         val userRole = user?.role ?: UserRole.USER
 
         setupDrawerHeader()
@@ -129,5 +133,21 @@ class DrawerManager (
         val chatItem = navViewBinding.menu.findItem(R.id.nav_chat)
         chatItem.icon = AppCompatResources.getDrawable(activity, com.rafalskrzypczyk.core.R.drawable.ic_chat_24)
         chatItem.title = activity.getString(R.string.drawer_menu_title_chat)
+    }
+
+    private fun applyWindowInsetsToDrawer() {
+        ViewCompat.setOnApplyWindowInsetsListener(navViewBinding) { view, insets ->
+            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            val header = navViewBinding.getHeaderView(0)
+            header?.setPadding(
+                header.paddingLeft,
+                systemInsets.top,
+                header.paddingRight,
+                header.paddingBottom
+            )
+
+            insets
+        }
     }
 }
