@@ -3,6 +3,9 @@ package com.rafalskrzypczyk.core.base
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseCompatActivity<VB: ViewBinding> (
@@ -21,6 +24,7 @@ abstract class BaseCompatActivity<VB: ViewBinding> (
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingInflater(layoutInflater)
+
         setContentView(binding.root)
         onViewBound()
     }
