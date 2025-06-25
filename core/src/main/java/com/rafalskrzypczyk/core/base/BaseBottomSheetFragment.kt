@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.rafalskrzypczyk.core.R
 import javax.inject.Inject
-import kotlin.math.pow
 
 abstract class BaseBottomSheetFragment<VB: ViewBinding, V : BaseContract.View, P : BaseContract.Presenter<V>> (
     private val bindingInflater: (inflater: LayoutInflater) -> VB
@@ -42,12 +41,15 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding, V : BaseContract.View, P
     val bottomSheet: View get() = _bottomSheet ?: throw
     IllegalStateException("BottomSheet is accessed before onViewCreated() or after onDestroyView()")
 
+    override fun getTheme(): Int = R.style.QuizEditorBottomSheetDialog
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater(inflater)
+
         activeSheetsCount++
         onViewBound()
         return binding.root
@@ -61,6 +63,7 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding, V : BaseContract.View, P
         presenter.onViewCreated()
 
         _bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+
         setupBottomSheetDialog()
     }
 
@@ -82,14 +85,14 @@ abstract class BaseBottomSheetFragment<VB: ViewBinding, V : BaseContract.View, P
      * Subclasses can override this method to change setup of bottom sheet dialog behavior.
      */
     protected open fun setupBottomSheetDialog(){
-        bottomSheet.let {
-            it.layoutParams.height = (resources.displayMetrics.heightPixels * HEIGHT_MODIFIER.pow(activeSheetsCount)).toInt()
-
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.skipCollapsed = true
-
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
+//        bottomSheet.let {
+//            //it.layoutParams.height = (resources.displayMetrics.heightPixels * HEIGHT_MODIFIER.pow(activeSheetsCount)).toInt()
+//
+//            val behavior = BottomSheetBehavior.from(it)
+//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//            behavior.skipCollapsed = true
+//            behavior.expandedOffset = (resources.displayMetrics.heightPixels * 0.03).toInt()
+//        }
     }
 
     /**

@@ -15,6 +15,10 @@
         <item name="android:windowBackground">@drawable/background_dialog</item>
         <item name="colorPrimary">@color/primary</item>
     </style>
+    <style name="QuizEditorBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="enableEdgeToEdge">true</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+    </style>
     <style name="FadeInOutAnimation" parent="android:Animation.Dialog">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>

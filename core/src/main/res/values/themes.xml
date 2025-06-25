@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?android:attr/colorBackground</item>
-        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="dialogTheme">@style/QuizEditorDialog</item>
