@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="translations_count">
+        <item quantity="one">%d tłumaczenie</item>
+        <item quantity="few">%d tłumaczenia</item>
+        <item quantity="many">%d tłumaczeń</item>
+        <item quantity="other">%d tłumaczeń</item>
+    </plurals>
+    <string name="no_translations">Brak tłumaczeń</string>
+
+    <string name="sort_by_date">Data</string>
+    <string name="sort_by_phrase">Fraza</string>
+    <string name="sort_by_translation_count">Liczba tłumaczeń</string>
+
+    <string name="sort_type_ascending">Rosnąco</string>
+    <string name="sort_type_descending">Malejąco</string>
+
+    <string name="filter_none">Brak</string>
+    <string name="filter_with_translations">Z tłumaczeniami</string>
+    <string name="filter_without_translations">Bez tłumaczeń</string>
+
+    <string name="label_phrase">Fraza</string>
+    <string name="hint_enter_phrase">Wpisz frazę...</string>
+    <string name="label_translations">Tłumaczenia</string>
+    <string name="hint_enter_translation">Wpisz tłumaczenie...</string>
+    <string name="warning_empty_phrase">Fraza nie może być pusta!</string>
+    <string name="warning_empty_translation">Tłumaczenie nie może być puste!</string>
+</resources>

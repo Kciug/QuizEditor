@@ -18,6 +18,7 @@ android {
         versionName = ProjectConfig.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resourceConfigurations += listOf("pl")
     }
 
     buildTypes {
@@ -50,6 +51,7 @@ dependencies {
 
     implementation(project(":quiz_mode"))
     implementation(project(":swipe_mode"))
+    implementation(project(":translations_mode"))
 
     coreKtx()
     ui()

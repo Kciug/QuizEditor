@@ -6,6 +6,7 @@ import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.TranslationQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import kotlinx.coroutines.flow.Flow
 
@@ -36,4 +37,10 @@ interface FirestoreApi {
     fun getOlderMessages(): Flow<Response<List<MessageDTO>>>
     fun getUpdatedMessages(): Flow<List<MessageDTO>>
     suspend fun sendMessage(message: MessageDTO): Response<Unit>
+
+    fun getTranslationQuestions(): Flow<Response<List<TranslationQuestionDTO>>>
+    fun getUpdatedTranslationQuestions(): Flow<List<TranslationQuestionDTO>>
+    suspend fun addTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
+    suspend fun updateTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
+    suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit>
 }

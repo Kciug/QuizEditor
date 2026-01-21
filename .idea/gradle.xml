@@ -32,9 +32,9 @@
             <option value="$PROJECT_DIR$/login_screen" />
             <option value="$PROJECT_DIR$/quiz_mode" />
             <option value="$PROJECT_DIR$/swipe_mode" />
+            <option value="$PROJECT_DIR$/translations_mode" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
