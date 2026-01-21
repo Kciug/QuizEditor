@@ -3,20 +3,27 @@ package com.rafalskrzypczyk.translations_mode.presentation.question_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
+import com.rafalskrzypczyk.core.di.IoDispatcher
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.translations_mode.R
 import com.rafalskrzypczyk.translations_mode.domain.TranslationQuestion
 import com.rafalskrzypczyk.translations_mode.domain.TranslationsRepository
 import com.rafalskrzypczyk.translations_mode.presentation.question_details.ui_models.TranslationEditUIModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TranslationQuestionDetailsPresenter @Inject constructor(
     private val repository: TranslationsRepository,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BasePresenter<TranslationQuestionDetailsContract.View>(), TranslationQuestionDetailsContract.Presenter {
+
+    private val externalScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     private var question: TranslationQuestion? = null
     private var isNewQuestion = false
@@ -115,15 +122,7 @@ class TranslationQuestionDetailsPresenter @Inject constructor(
                 dateModified = java.util.Date()
             )
             
-            // We use a separate scope or fire and forget if needed, 
-            // but presenterScope might be cancelled. 
-            // In this project, BasePresenter uses a scope that is cancelled in onDestroy.
-            // QuizQuestionDetailsFragment interactor handles this. 
-            // Since I don't have an interactor, I'll launch it in a way that it executes.
-            // Actually, onDestroy in BasePresenter cancels the scope.
-            // I should use a GlobalScope or a specialized scope for saving if I want to be sure.
-            // But I will stick to the repo call for now.
-            presenterScope?.launch {
+            externalScope.launch {
                 repository.updateQuestion(updatedQuestion)
             }
         }
