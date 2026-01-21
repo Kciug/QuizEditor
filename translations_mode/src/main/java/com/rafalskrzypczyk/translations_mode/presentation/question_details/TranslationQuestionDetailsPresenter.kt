@@ -115,6 +115,9 @@ class TranslationQuestionDetailsPresenter @Inject constructor(
     private fun saveChanges() {
         question?.let {
             if (currentPhrase.isBlank()) return
+
+            val hasChanged = currentPhrase != it.phrase || currentTranslations != it.translations
+            if (!hasChanged) return
             
             val updatedQuestion = it.copy(
                 phrase = currentPhrase,
