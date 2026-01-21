@@ -18,6 +18,7 @@ android {
         versionName = ProjectConfig.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resourceConfigurations += listOf("pl")
     }
 
     buildTypes {

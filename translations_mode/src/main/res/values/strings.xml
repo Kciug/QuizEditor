@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="translations_count_format">%d tłumaczeń</string>
+    <plurals name="translations_count">
+        <item quantity="one">%d tłumaczenie</item>
+        <item quantity="few">%d tłumaczenia</item>
+        <item quantity="many">%d tłumaczeń</item>
+        <item quantity="other">%d tłumaczeń</item>
+    </plurals>
     <string name="no_translations">Brak tłumaczeń</string>
 
     <string name="sort_by_date">Data</string>
