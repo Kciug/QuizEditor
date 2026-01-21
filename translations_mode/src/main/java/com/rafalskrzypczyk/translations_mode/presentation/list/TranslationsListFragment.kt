@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.translations_mode.presentation.list
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isGone
@@ -17,6 +18,7 @@ import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import com.rafalskrzypczyk.translations_mode.R
 import com.rafalskrzypczyk.translations_mode.presentation.list.ui_models.TranslationQuestionUIModel
+import com.rafalskrzypczyk.translations_mode.presentation.question_details.TranslationQuestionDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -129,11 +131,14 @@ class TranslationsListFragment :
     }
 
     private fun openQuestionDetailsSheet(questionId: Long) {
-        // TODO: Implement TranslationQuestionDetailsFragment
+        val questionDetailsSheet = TranslationQuestionDetailsFragment()
+        questionDetailsSheet.arguments = Bundle().apply { putLong("questionId", questionId) }
+        questionDetailsSheet.show(parentFragmentManager, questionDetailsSheet.tag)
     }
 
     private fun openNewQuestionSheet() {
-        // TODO: Implement TranslationQuestionDetailsFragment
+        val newQuestionSheet = TranslationQuestionDetailsFragment()
+        newQuestionSheet.show(parentFragmentManager, newQuestionSheet.tag)
     }
 
     private fun actionMenuCallback(item: MenuItem): Boolean {

@@ -4,6 +4,8 @@ import com.rafalskrzypczyk.translations_mode.data.TranslationsRepositoryImpl
 import com.rafalskrzypczyk.translations_mode.domain.TranslationsRepository
 import com.rafalskrzypczyk.translations_mode.presentation.list.TranslationsListContract
 import com.rafalskrzypczyk.translations_mode.presentation.list.TranslationsListPresenter
+import com.rafalskrzypczyk.translations_mode.presentation.question_details.TranslationQuestionDetailsContract
+import com.rafalskrzypczyk.translations_mode.presentation.question_details.TranslationQuestionDetailsPresenter
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,4 +31,9 @@ abstract class TranslationsListModule {
     abstract fun bindTranslationsListPresenter(
         presenter: TranslationsListPresenter
     ): TranslationsListContract.Presenter
+
+    @Binds
+    abstract fun bindTranslationQuestionDetailsPresenter(
+        presenter: TranslationQuestionDetailsPresenter
+    ): TranslationQuestionDetailsContract.Presenter
 }
