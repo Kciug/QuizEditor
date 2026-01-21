@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.translations_mode.databinding.CardTranslationQuestionBinding
 import com.rafalskrzypczyk.translations_mode.presentation.list.ui_models.TranslationQuestionUIModel
 
@@ -23,13 +24,17 @@ class TranslationsAdapter(
     }
 
     inner class TranslationViewHolder(private val binding: CardTranslationQuestionBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val deleteBubbleManager = DeleteBubbleManager(binding.root.context)
+
         fun bind(item: TranslationQuestionUIModel) {
             with(binding) {
                 tvPhrase.text = item.phrase
                 tvTranslationsCount.text = item.translationsText
                 root.setOnClickListener { onQuestionClicked(item.id) }
                 root.setOnLongClickListener {
-                    onQuestionRemoved(item.id)
+                    deleteBubbleManager.showDeleteBubble(it) {
+                        onQuestionRemoved(item.id)
+                    }
                     true
                 }
             }
