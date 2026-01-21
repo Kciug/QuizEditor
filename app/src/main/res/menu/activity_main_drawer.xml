@@ -25,6 +25,11 @@
                     android:icon="@drawable/ic_keyboard_arrow_right_24"
                     android:title="@string/drawer_menu_title_swipe_quiz" />
                 <item
+                    android:id="@+id/nav_translations_mode"
+                    android:checkable="true"
+                    android:icon="@drawable/ic_keyboard_arrow_right_24"
+                    android:title="@string/drawer_menu_title_translations_mode" />
+                <item
                     android:id="@+id/nav_slideshow"
                     android:checkable="true"
                     android:icon="@drawable/ic_keyboard_arrow_right_24"

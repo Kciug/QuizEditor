@@ -103,3 +103,4 @@ The project uses the standard Gradle wrapper.
 3.  **Code Style:** Adding comments in the code is strictly forbidden. The code should be self-documenting.
 4.  **Major Changes:** If a solution requires major changes to existing code or architecture, stop the task, present the proposed solution, and ask for explicit permission before proceeding.
 5.  **Structural Consistency:** Strictly follow the current project structure and patterns (like MVP and modularization) when implementing new functionalities.
+6.  **No Hardcoded Strings:** Hardcoding strings is forbidden. Use XML resources for UI text, and reuse common strings from the `core` module where possible.

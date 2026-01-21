@@ -2,6 +2,7 @@
     <string name="drawer_menu_title_home">Strona główna</string>
     <string name="drawer_menu_title_quiz">Tryb | Quiz</string>
     <string name="drawer_menu_title_swipe_quiz">Tryb | Swipe Quiz</string>
+    <string name="drawer_menu_title_translations_mode">Tryb | Tłumaczenia</string>
     <string name="drawer_menu_title_calculations">Tryb | Obliczenia</string>
     <string name="drawer_menu_title_scenarios">Tryb | Scenariusze</string>
 

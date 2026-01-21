@@ -11,6 +11,8 @@ class ResourceProvider @Inject constructor(
 ) {
     fun getString(resId: Int): String = context.getString(resId)
 
+    fun getString(resId: Int, vararg formatArgs: Any): String = context.getString(resId, *formatArgs)
+
     fun getColor(resId: Int): Int = context.getColor(resId)
 
     fun getDrawable(resId: Int): Drawable? = AppCompatResources.getDrawable(context, resId)

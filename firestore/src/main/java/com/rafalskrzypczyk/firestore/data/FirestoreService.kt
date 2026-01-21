@@ -19,6 +19,7 @@ import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.TranslationQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.UserDataDTO
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
 import kotlinx.coroutines.channels.awaitClose
@@ -39,6 +40,7 @@ class FirestoreService @Inject constructor(
     private var quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
     private var quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
     private var swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
+    private var translationQuestionsCollection = FirestoreCollections.TEST_TRANSLATION_QUESTIONS
 
     init {
         setDatabaseCollections(databaseManager.getDatabase())
@@ -161,6 +163,34 @@ class FirestoreService @Inject constructor(
     override suspend fun deleteSwipeQuestion(questionId: Long): Response<Unit> =
         deleteFirestoreDocument(questionId.toString(), swipeQuestionsCollection)
 
+    override fun getTranslationQuestions(): Flow<Response<List<TranslationQuestionDTO>>> = flow {
+        emit(Response.Loading)
+        val questions = getFirestoreData(translationQuestionsCollection)?.toObjects(TranslationQuestionDTO::class.java) ?: emptyList()
+        emit(Response.Success(questions))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedTranslationQuestions(): Flow<List<TranslationQuestionDTO>> = callbackFlow {
+        val listener = firestore.collection(translationQuestionsCollection)
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                value?.let { trySend(it.toObjects(TranslationQuestionDTO::class.java)) }
+            }
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun addTranslationQuestion(question: TranslationQuestionDTO): Response<Unit> =
+        addFirestoreDocument(question.id.toString(), question, translationQuestionsCollection)
+
+    override suspend fun updateTranslationQuestion(question: TranslationQuestionDTO): Response<Unit> =
+        modifyFirestoreDocument(question.id.toString(), question, translationQuestionsCollection)
+
+    override suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit> =
+        deleteFirestoreDocument(questionId.toString(), translationQuestionsCollection)
+
     private val messagesLimit = 15L
     private var lastObservedMessage: MessageDTO? = null
 
@@ -282,16 +312,19 @@ class FirestoreService @Inject constructor(
                 quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
                 quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
+                translationQuestionsCollection = FirestoreCollections.TEST_TRANSLATION_QUESTIONS
             }
             Database.DEVELOPMENT -> {
                 quizCategoriesCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_CATEGORIES
                 quizQuestionsCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.DEVELOPMENT_SWIPE_QUESTIONS
+                translationQuestionsCollection = FirestoreCollections.DEVELOPMENT_TRANSLATION_QUESTIONS
             }
             Database.PRODUCTION -> {
                 quizCategoriesCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_CATEGORIES
                 quizQuestionsCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.PRODUCTION_SWIPE_QUESTIONS
+                translationQuestionsCollection = FirestoreCollections.PRODUCTION_TRANSLATION_QUESTIONS
             }
         }
     }

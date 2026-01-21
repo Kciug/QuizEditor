@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="translations_count_format">%d tłumaczeń</string>
+    <string name="no_translations">Brak tłumaczeń</string>
+
+    <string name="sort_by_date">Data</string>
+    <string name="sort_by_phrase">Fraza</string>
+    <string name="sort_by_translation_count">Liczba tłumaczeń</string>
+
+    <string name="sort_type_ascending">Rosnąco</string>
+    <string name="sort_type_descending">Malejąco</string>
+
+    <string name="filter_none">Brak</string>
+    <string name="filter_with_translations">Z tłumaczeniami</string>
+    <string name="filter_without_translations">Bez tłumaczeń</string>
+</resources>
