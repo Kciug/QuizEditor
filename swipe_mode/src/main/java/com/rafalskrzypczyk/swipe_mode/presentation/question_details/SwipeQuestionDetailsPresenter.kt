@@ -33,7 +33,7 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
                 when (it) {
                     is Response.Success -> {
                         question = it.data
-                        view.displayQuestionDetails(it.data.text, it.data.isCorrect)
+                        view.displayQuestionDetails(it.data.text, it.data.explanation, it.data.isCorrect)
                         view.displayCreatedDetails(String.formatDate(it.data.dateCreated))
                         allowChange = true
                     }
@@ -55,6 +55,13 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
     }
 
+    override fun updateExplanation(explanation: String) {
+        question?.let {
+            it.explanation = explanation
+            updateQuestion()
+        }
+    }
+
     override fun updateIsCorrect(isCorrect: Boolean?) {
         question?.let {
             if(isCorrect == null) {
@@ -66,11 +73,12 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun saveNewQuestion(questionText: String, isCorrect: Boolean?) {
+    override fun saveNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?) {
         if(question != null || !validateQuestion(questionText, isCorrect)) return
 
         presenterScope?.launch {
             val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
+            newQuestion.explanation = explanation
             when(val response = repository.addQuestion(newQuestion)){
                 is Response.Success -> {
                     view.displayCreatedDetails(String.formatDate(newQuestion.dateCreated))
@@ -82,7 +90,7 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun saveAndOpenNewQuestion(questionText: String, isCorrect: Boolean?) {
+    override fun saveAndOpenNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?) {
         if(!validateQuestion(questionText, isCorrect)) return
 
         if(question != null) {
@@ -91,7 +99,9 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
 
         presenterScope?.launch {
-            when(val response = repository.addQuestion(SwipeQuestion.new(questionText, isCorrect!!))){
+            val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
+            newQuestion.explanation = explanation
+            when(val response = repository.addQuestion(newQuestion)){
                 is Response.Success -> replaceWithNewQuestion()
                 is Response.Error -> view.displayError(response.error)
                 is Response.Loading -> view.displayLoading()

@@ -63,6 +63,7 @@ class QuizQuestionDetailsPresenter @Inject constructor(
         with(view){
             setupView()
             displayQuestionText(question.text)
+            displayExplanation(question.explanation)
             displayAnswersDetails(question.answers.count(), question.answers.count { it.isCorrect })
             displayAnswersList(question.answers.map { it.toSimplePresentation() })
             displayCreatedOn(String.formatDate(question.creationDate), question.createdBy)
@@ -88,6 +89,12 @@ class QuizQuestionDetailsPresenter @Inject constructor(
             }
             interactor.updateQuestionText(questionText)
         } else saveNewQuestion(questionText)
+    }
+
+    override fun updateExplanation(explanation: String) {
+        if (isQuestionLoaded) {
+            interactor.updateExplanation(explanation)
+        }
     }
 
     override fun addAnswer(answerText: String) {

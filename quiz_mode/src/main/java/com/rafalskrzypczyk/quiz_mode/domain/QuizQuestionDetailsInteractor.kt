@@ -76,6 +76,10 @@ class QuizQuestionDetailsInteractor @Inject constructor(
         else questionReference?.text = text
     }
 
+    fun updateExplanation(explanation: String) {
+        questionReference?.explanation = explanation
+    }
+
     fun addAnswer(text: String) {
         Answer.new(text).let {
             questionReference?.answers?.add(it)

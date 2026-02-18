@@ -74,7 +74,7 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
         with(view) {
             setupView()
-            displayQuestionDetails(question.text)
+            displayQuestionDetails(question.text, question.explanation)
             displayCreatedDetails(String.formatDate(question.creationDate))
             displayAnswersCount(question.answers.size, question.answers.count { it.isCorrect })
             displayAnswers(question.answers.map { it.toUIModel() })
@@ -83,12 +83,13 @@ class CemQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun createNewQuestion(text: String) {
+    override fun createNewQuestion(text: String, explanation: String) {
         if (text.isEmpty()) {
             view.displayToastMessage("Question text cannot be empty")
             return
         }
         val newQuestion = CemQuestion.new(text)
+        newQuestion.explanation = explanation
         presenterScope?.launch {
             val result = repository.addQuestion(newQuestion)
             if (result is Response.Success) {
@@ -109,6 +110,15 @@ class CemQuestionDetailsPresenter @Inject constructor(
         currentQuestion?.let {
             if (it.text != text) {
                 it.text = text
+                saveChanges()
+            }
+        }
+    }
+
+    override fun updateExplanation(explanation: String) {
+        currentQuestion?.let {
+            if (it.explanation != explanation) {
+                it.explanation = explanation
                 saveChanges()
             }
         }

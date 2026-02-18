@@ -9,6 +9,7 @@ import java.util.Date
 data class CemQuestion(
     override val id: Long,
     var text: String,
+    var explanation: String,
     val answers: MutableList<CemAnswer>,
     val creationDate: Date,
     val linkedCategories: MutableList<Long>,
@@ -19,6 +20,7 @@ data class CemQuestion(
             return CemQuestion(
                 id = Long.generateId(),
                 text = text,
+                explanation = "",
                 answers = mutableListOf(),
                 creationDate = Date(),
                 linkedCategories = mutableListOf(),
@@ -45,6 +47,7 @@ data class CemAnswer(
 fun CemQuestionDTO.toDomain() = CemQuestion(
     id = id,
     text = questionText,
+    explanation = explanation,
     answers = answers.map { it.toDomain() }.toMutableList(),
     creationDate = dateCreated,
     linkedCategories = categoryIDs.toMutableList(),
@@ -54,6 +57,7 @@ fun CemQuestionDTO.toDomain() = CemQuestion(
 fun CemQuestion.toDTO() = CemQuestionDTO(
     id = id,
     questionText = text,
+    explanation = explanation,
     answers = answers.map { it.toDTO() },
     categoryIDs = linkedCategories,
     dateCreated = creationDate,
