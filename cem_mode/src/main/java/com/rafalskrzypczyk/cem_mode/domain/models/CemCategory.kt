@@ -67,8 +67,8 @@ fun CemCategory.toDTO() = CemCategoryDTO(
     color = color.toCategoryColorRGB(),
     free = isFree,
     dateCreated = creationDate,
-    questionCount = linkedQuestions.count(),
-    subcategoryCount = linkedSubcategories.count(),
+    questionsCount = linkedQuestions.count(),
+    subcategoriesCount = linkedSubcategories.count(),
     dateModified = Date().toString()
 )
 
