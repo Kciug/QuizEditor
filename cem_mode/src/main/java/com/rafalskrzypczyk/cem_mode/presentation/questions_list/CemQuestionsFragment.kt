@@ -37,6 +37,15 @@ class CemQuestionsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        val initialCategoryId = arguments?.getLong("categoryId", -1L) ?: -1L
+        if (initialCategoryId != -1L) {
+            val title = arguments?.getString("categoryTitle") ?: ""
+            val color = arguments?.getLong("categoryColor") ?: 0L
+            presenter.filterByCategory(initialCategoryId)
+            displayCategoryBadge(SimpleCategoryUIModel(title, color))
+        }
+        
         presenter.getData()
     }
 

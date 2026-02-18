@@ -109,7 +109,11 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
                 onBack?.invoke()
             }
         } else {
-            drawerManager.setupDrawer(appBarConfiguration)
+            binding.appBarMain.toolbar.navigationIcon = androidx.appcompat.content.res.AppCompatResources.getDrawable(this, com.rafalskrzypczyk.core.R.drawable.ic_menu_24)
+            binding.appBarMain.toolbar.navigationIcon?.setTint(getColor(com.rafalskrzypczyk.core.R.color.primary))
+            binding.appBarMain.toolbar.setNavigationOnClickListener {
+                binding.drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+            }
         }
     }
 

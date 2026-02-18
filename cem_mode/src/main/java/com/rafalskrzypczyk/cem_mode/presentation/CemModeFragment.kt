@@ -43,6 +43,10 @@ class CemModeFragment : Fragment() {
         binding.navCemModeBottomBar.setupWithNavController(navController)
     }
 
+    fun navigateToQuestions(bundle: Bundle) {
+        navController.navigate(R.id.navigation_cem_questions, bundle)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

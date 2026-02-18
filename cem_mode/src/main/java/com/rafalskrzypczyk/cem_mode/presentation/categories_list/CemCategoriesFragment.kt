@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.cem_mode.R
 import com.rafalskrzypczyk.cem_mode.domain.models.CemCategory
+import com.rafalskrzypczyk.cem_mode.presentation.CemModeFragment
 import com.rafalskrzypczyk.cem_mode.presentation.category_details.CemCategoryDetailsFragment
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
@@ -49,6 +50,16 @@ class CemCategoriesFragment :
         val parentId = arguments?.getLong("parentCategoryId") ?: CemCategory.ROOT_ID
         presenter.getData(parentId)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activityActionBarBuilder?.showBackArrow(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.refreshUI()
     }
 
     override fun onViewBound() {
@@ -99,7 +110,7 @@ class CemCategoriesFragment :
         }
         
         parentFragmentManager.setFragmentResultListener("open_questions", this) { _, bundle ->
-            requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.nav_cem_mode_bottom_bar)?.selectedItemId = R.id.navigation_cem_questions
+            (parentFragment?.parentFragment as? CemModeFragment)?.navigateToQuestions(bundle)
         }
     }
 

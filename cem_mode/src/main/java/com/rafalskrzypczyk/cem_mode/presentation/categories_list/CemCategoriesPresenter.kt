@@ -135,4 +135,8 @@ class CemCategoriesPresenter @Inject constructor(
             }
         }
     }
+
+    override fun refreshUI() {
+        updateDisplay()
+    }
 }

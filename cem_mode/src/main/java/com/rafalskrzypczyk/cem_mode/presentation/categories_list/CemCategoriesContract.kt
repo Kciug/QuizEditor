@@ -30,5 +30,6 @@ interface CemCategoriesContract {
         fun onAddNewCategory()
         fun onBreadcrumbClicked(categoryId: Long)
         fun onBackAction()
+        fun refreshUI()
     }
 }
