@@ -23,11 +23,11 @@ data class CemCategoryDTO(
     val isUpToDate: Boolean
         get() {
             if (productionTransferDate == null) return false
-            val modifiedDate = try {
+            val modifiedDateParsed = try {
                 SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateModified)
             } catch (e: Exception) {
                 null
             } ?: return false
-            return productionTransferDate.after(modifiedDate) || productionTransferDate == modifiedDate
+            return productionTransferDate.after(modifiedDateParsed) || productionTransferDate == modifiedDateParsed
         }
 }

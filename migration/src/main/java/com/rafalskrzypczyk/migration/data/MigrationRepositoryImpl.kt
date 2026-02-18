@@ -50,14 +50,22 @@ class MigrationRepositoryImpl @Inject constructor(
         val linkedQuestions = questions.data.filter { category.questionIDs.contains(it.id) }
 
         // Write to target
-        firestoreApi.addItemToCollection(category.id.toString(), category, targetCategoryCollection)
+        val transferDate = Date()
+        val targetResp = firestoreApi.addItemToCollection(category.id.toString(), category, targetCategoryCollection)
+        if (targetResp !is Response.Success) return Response.Error("Failed to write to target environment")
+
         linkedQuestions.forEach { 
             firestoreApi.addItemToCollection(it.id.toString(), it, targetQuestionCollection) 
         }
 
         if (targetEnv == Database.PRODUCTION) {
-            val updatedCategory = category.copy(productionTransferDate = Date())
-            firestoreApi.addItemToCollection(updatedCategory.id.toString(), updatedCategory, sourceCategoryCollection)
+            val sourceUpdateResp = firestoreApi.updateItemFieldInCollection(
+                category.id.toString(),
+                "productionTransferDate",
+                transferDate,
+                sourceCategoryCollection
+            )
+            if (sourceUpdateResp !is Response.Success) return Response.Error("Failed to update source item migration date")
         }
 
         val record = MigrationRecord(
@@ -68,7 +76,7 @@ class MigrationRepositoryImpl @Inject constructor(
             itemCount = 1 + linkedQuestions.size,
             itemDetails = listOf("${category.title} (${linkedQuestions.size} questions)"),
             performedBy = performedBy,
-            date = Date()
+            date = transferDate
         )
         return addMigrationRecord(record)
     }
@@ -84,11 +92,16 @@ class MigrationRepositoryImpl @Inject constructor(
         val questions = firestoreApi.getSwipeQuestionsFrom(sourceColl)
         if (questions !is Response.Success) return Response.Error("Failed to fetch source questions")
 
+        val transferDate = Date()
         questions.data.forEach { q ->
-            firestoreApi.addItemToCollection(q.id.toString(), q, targetColl)
-            if (targetEnv == Database.PRODUCTION) {
-                val updated = q.copy(productionTransferDate = Date())
-                firestoreApi.addItemToCollection(updated.id.toString(), updated, sourceColl)
+            val writeResp = firestoreApi.addItemToCollection(q.id.toString(), q, targetColl)
+            if (writeResp is Response.Success && targetEnv == Database.PRODUCTION) {
+                firestoreApi.updateItemFieldInCollection(
+                    q.id.toString(),
+                    "productionTransferDate",
+                    transferDate,
+                    sourceColl
+                )
             }
         }
 
@@ -100,7 +113,7 @@ class MigrationRepositoryImpl @Inject constructor(
             itemCount = questions.data.size,
             itemDetails = questions.data.map { it.text },
             performedBy = performedBy,
-            date = Date()
+            date = transferDate
         )
         return addMigrationRecord(record)
     }
@@ -116,11 +129,16 @@ class MigrationRepositoryImpl @Inject constructor(
         val translations = firestoreApi.getTranslationQuestionsFrom(sourceColl)
         if (translations !is Response.Success) return Response.Error("Failed to fetch source translations")
 
+        val transferDate = Date()
         translations.data.forEach { t ->
-            firestoreApi.addItemToCollection(t.id.toString(), t, targetColl)
-            if (targetEnv == Database.PRODUCTION) {
-                val updated = t.copy(productionTransferDate = Date())
-                firestoreApi.addItemToCollection(updated.id.toString(), updated, sourceColl)
+            val writeResp = firestoreApi.addItemToCollection(t.id.toString(), t, targetColl)
+            if (writeResp is Response.Success && targetEnv == Database.PRODUCTION) {
+                firestoreApi.updateItemFieldInCollection(
+                    t.id.toString(),
+                    "productionTransferDate",
+                    transferDate,
+                    sourceColl
+                )
             }
         }
 
@@ -132,7 +150,7 @@ class MigrationRepositoryImpl @Inject constructor(
             itemCount = translations.data.size,
             itemDetails = translations.data.map { it.phrase },
             performedBy = performedBy,
-            date = Date()
+            date = transferDate
         )
         return addMigrationRecord(record)
     }
@@ -161,13 +179,18 @@ class MigrationRepositoryImpl @Inject constructor(
         val treeQuestions = allQuestionsResp.data.filter { uniqueQuestionIds.contains(it.id) }
 
         // Write to target
+        val transferDate = Date()
         treeCategories.forEach { firestoreApi.addItemToCollection(it.id.toString(), it, targetCatColl) }
         treeQuestions.forEach { firestoreApi.addItemToCollection(it.id.toString(), it, targetQueColl) }
 
         if (targetEnv == Database.PRODUCTION) {
             treeCategories.forEach { cat ->
-                val updated = cat.copy(productionTransferDate = Date())
-                firestoreApi.addItemToCollection(updated.id.toString(), updated, sourceCatColl)
+                firestoreApi.updateItemFieldInCollection(
+                    cat.id.toString(),
+                    "productionTransferDate",
+                    transferDate,
+                    sourceCatColl
+                )
             }
         }
 
@@ -184,7 +207,7 @@ class MigrationRepositoryImpl @Inject constructor(
             itemCount = treeCategories.size + treeQuestions.size,
             itemDetails = itemDetails,
             performedBy = performedBy,
-            date = Date()
+            date = transferDate
         )
         return addMigrationRecord(record)
     }

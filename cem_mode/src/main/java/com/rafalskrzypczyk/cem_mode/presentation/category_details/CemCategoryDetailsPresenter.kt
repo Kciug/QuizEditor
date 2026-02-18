@@ -7,6 +7,7 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.extensions.formatDate
+import com.rafalskrzypczyk.core.extensions.formatToDataDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.user.UserRole
 import com.rafalskrzypczyk.core.user_management.UserManager
@@ -14,6 +15,7 @@ import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.core.R as coreR
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 class CemCategoryDetailsPresenter @Inject constructor(
@@ -124,6 +126,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         currentCategory?.let {
             if (it.title != categoryTitle) {
                 it.title = categoryTitle
+                it.modifiedDate = Date().formatToDataDate()
                 saveChanges()
             }
         }
@@ -133,6 +136,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         currentCategory?.let {
             if (it.description != categoryDescription) {
                 it.description = categoryDescription
+                it.modifiedDate = Date().formatToDataDate()
                 saveChanges()
             }
         }
@@ -146,6 +150,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         currentCategory?.let {
             if (it.color != color) {
                 it.color = color
+                it.modifiedDate = Date().formatToDataDate()
                 view.displayCategoryColor(color)
                 saveChanges()
             }
@@ -166,6 +171,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         val newStatus = CategoryStatus.entries.find { it.hashCode() == status.itemHashCode }
         if (newStatus != null && currentCategory != null && currentCategory!!.status != newStatus) {
             currentCategory!!.status = newStatus
+            currentCategory!!.modifiedDate = Date().formatToDataDate()
             view.displayCategoryStatus(newStatus)
             saveChanges()
         }
@@ -175,6 +181,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         currentCategory?.let {
             if (it.isFree != isFree) {
                 it.isFree = isFree
+                it.modifiedDate = Date().formatToDataDate()
                 saveChanges()
             }
         }

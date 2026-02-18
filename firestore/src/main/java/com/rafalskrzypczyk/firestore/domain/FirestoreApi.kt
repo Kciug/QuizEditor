@@ -23,6 +23,7 @@ interface FirestoreApi {
 
     suspend fun getItemsFromCollection(collectionName: String): Response<List<Any>>
     suspend fun <T : Any> addItemToCollection(id: String, data: T, collectionName: String): Response<Unit>
+    suspend fun updateItemFieldInCollection(id: String, fieldName: String, value: Any?, collectionName: String): Response<Unit>
 
     fun getCollectionNameForMode(mode: String, database: com.rafalskrzypczyk.core.database_management.Database, isQuestions: Boolean = false): String
 
@@ -32,6 +33,9 @@ interface FirestoreApi {
     suspend fun getTranslationQuestionsFrom(collectionName: String): Response<List<TranslationQuestionDTO>>
     suspend fun getCemCategoriesFrom(collectionName: String): Response<List<CemCategoryDTO>>
     suspend fun getCemQuestionsFrom(collectionName: String): Response<List<CemQuestionDTO>>
+
+    suspend fun getQuizCategoryFrom(id: String, collectionName: String): Response<CategoryDTO>
+    suspend fun getCemCategoryFrom(id: String, collectionName: String): Response<CemCategoryDTO>
 
     fun getQuizCategories(): Flow<Response<List<CategoryDTO>>>
     fun getUpdatedQuizCategories(): Flow<List<CategoryDTO>>

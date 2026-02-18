@@ -5,6 +5,7 @@ import com.rafalskrzypczyk.core.base.Identifiable
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toCategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toTitleString
+import com.rafalskrzypczyk.core.extensions.formatToDataDate
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
@@ -22,7 +23,7 @@ data class Category(
     var isFree: Boolean,
     val creationDate: Date,
     val createdBy: String,
-    val modifiedDate: String,
+    var modifiedDate: String,
     val productionTransferDate: Date?
 ) : Identifiable {
     val isUpToDate: Boolean
@@ -47,7 +48,7 @@ data class Category(
             isFree = false,
             creationDate = Date(),
             createdBy = "Random User",
-            modifiedDate = Date().toString(),
+            modifiedDate = Date().formatToDataDate(),
             productionTransferDate = null
         )
     }
@@ -77,7 +78,7 @@ fun Category.toDTO() = CategoryDTO(
     free = isFree,
     dateCreated = creationDate,
     questionCount = linkedQuestions.count(),
-    dateModified = Date().toString(),
+    dateModified = modifiedDate,
     productionTransferDate = productionTransferDate
 )
 

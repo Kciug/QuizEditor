@@ -76,6 +76,26 @@ class MigrationDetailsBottomSheetFragment : BaseBottomSheetFragment<FragmentMigr
         binding.tvPreviewDetails.text = details
     }
 
+    override fun displayProductionSyncInfo(lastTransferDate: String, needsUpdate: Boolean) {
+        with(binding) {
+            syncInfoSeparator.makeVisible()
+            containerSyncInfo.makeVisible()
+            tvLastMigrationDate.text = lastTransferDate
+            
+            if (needsUpdate) {
+                indicatorSyncStatus.setColorAndText(
+                    requireContext().getColor(com.rafalskrzypczyk.core.R.color.orange_primary),
+                    getString(com.rafalskrzypczyk.core.R.string.status_needs_update)
+                )
+            } else {
+                indicatorSyncStatus.setColorAndText(
+                    requireContext().getColor(com.rafalskrzypczyk.core.R.color.green),
+                    getString(com.rafalskrzypczyk.core.R.string.status_up_to_date)
+                )
+            }
+        }
+    }
+
     override fun displayMigrationSuccess() {
         Toast.makeText(requireContext(), "Migration successful", Toast.LENGTH_SHORT).show()
     }

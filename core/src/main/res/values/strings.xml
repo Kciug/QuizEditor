@@ -121,5 +121,11 @@
             <string name="guidance_failed_to_migrate_category">Migracja kategorii nie powiodła się. Spróbuj ponownie.</string>
             <string name="guidance_failed_to_migrate_swipe">Migracja pytań Swipe nie powiodła się. Spróbuj ponownie.</string>
             <string name="guidance_failed_to_migrate_translations">Migracja tłumaczeń nie powiodła się. Spróbuj ponownie.</string>
-            <string name="guidance_failed_to_migrate_cem_category">Migracja kategorii CEM nie powiodła się. Spróbuj ponownie.</string>
-        </resources>    
+                <string name="guidance_failed_to_migrate_cem_category">Migracja kategorii CEM nie powiodła się. Spróbuj ponownie.</string>
+            
+                <!-- Production Sync -->
+                <string name="label_last_production_migration">Ostatnia migracja na Produkcję:</string>
+                <string name="status_up_to_date">AKTUALNA</string>
+                <string name="status_needs_update">WYMAGA AKTUALIZACJI</string>
+                <string name="text_never">Nigdy</string>
+            </resources>

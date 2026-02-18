@@ -38,7 +38,6 @@ class CemCategoriesAdapter(
         
         val statusIndicator: ColorOutlinedLabelView = view.findViewById(coreR.id.category_status)
         val colorPreview: View = view.findViewById(coreR.id.color_preview)
-        val ivSyncStatus: View = view.findViewById(coreR.id.iv_sync_status)
 
         val deleteBubbleManager = DeleteBubbleManager(itemView.context)
 
@@ -46,7 +45,6 @@ class CemCategoriesAdapter(
             categoryTitle.text = category.title
             categoryDescription.text = category.description
             categoryDescription.visibility = if (category.description.isEmpty()) View.GONE else View.VISIBLE
-            ivSyncStatus.visibility = if (category.productionTransferDate != null && !category.isUpToDate) View.VISIBLE else View.GONE
             
             val totalQuestions = category.linkedQuestions.count()
             questionCount.text = totalQuestions.toString()

@@ -12,6 +12,7 @@ interface MigrationDetailsContract {
         fun displayItemCount(count: Int)
         fun displayMigrationHistory(history: List<MigrationRecord>)
         fun displayModePreview(mode: String, title: String, details: String)
+        fun displayProductionSyncInfo(lastTransferDate: String, needsUpdate: Boolean)
         fun displayMigrationSuccess()
         override fun displayLoading()
         fun hideLoading()

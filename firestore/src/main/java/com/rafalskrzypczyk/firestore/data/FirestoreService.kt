@@ -89,7 +89,7 @@ class FirestoreService @Inject constructor(
         emit(Response.Loading)
         val history = firestore.collection(migrationHistoryCollection)
             .whereEqualTo("mode", mode)
-            .get()
+            .get(Source.SERVER)
             .await()
             .toObjects(MigrationRecordDTO::class.java)
             .sortedByDescending { it.date }
@@ -101,7 +101,7 @@ class FirestoreService @Inject constructor(
 
     override suspend fun getItemsFromCollection(collectionName: String): Response<List<Any>> {
         return try {
-            val result = firestore.collection(collectionName).get().await()
+            val result = firestore.collection(collectionName).get(Source.SERVER).await()
             Response.Success(result.documents.mapNotNull { it.data })
         } catch (e: Exception) {
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
@@ -110,6 +110,39 @@ class FirestoreService @Inject constructor(
 
     override suspend fun <T : Any> addItemToCollection(id: String, data: T, collectionName: String): Response<Unit> =
         addFirestoreDocument(id, data, collectionName)
+
+    override suspend fun updateItemFieldInCollection(
+        id: String,
+        fieldName: String,
+        value: Any?,
+        collectionName: String
+    ): Response<Unit> {
+        return try {
+            val finalValue = if (value is java.util.Date) com.google.firebase.Timestamp(value) else value
+            firestore.collection(collectionName)
+                .document(id)
+                .update(fieldName, finalValue)
+                .await()
+            Response.Success(Unit)
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    override suspend fun getQuizCategoryFrom(id: String, collectionName: String): Response<CategoryDTO> =
+        fetchDocument(id, collectionName, CategoryDTO::class.java)
+
+    override suspend fun getCemCategoryFrom(id: String, collectionName: String): Response<CemCategoryDTO> =
+        fetchDocument(id, collectionName, CemCategoryDTO::class.java)
+
+    private suspend fun <T> fetchDocument(id: String, collectionName: String, clazz: Class<T>): Response<T> {
+        return try {
+            val result = firestore.collection(collectionName).document(id).get(Source.SERVER).await().toObject(clazz)
+            result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_no_data))
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
 
     override fun getCollectionNameForMode(mode: String, database: Database, isQuestions: Boolean): String {
         return when (database) {
@@ -157,7 +190,7 @@ class FirestoreService @Inject constructor(
 
     private suspend fun <T> fetchListFromCollection(collectionName: String, clazz: Class<T>): Response<List<T>> {
         return try {
-            val result = firestore.collection(collectionName).get().await().toObjects(clazz)
+            val result = firestore.collection(collectionName).get(Source.SERVER).await().toObjects(clazz)
             Response.Success(result)
         } catch (e: Exception) {
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))

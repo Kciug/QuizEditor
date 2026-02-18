@@ -7,22 +7,28 @@ import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.firestore.domain.FirestoreApi
 import com.rafalskrzypczyk.migration.domain.MigrationRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 class MigrationDetailsPresenter @Inject constructor(
     private val migrationRepository: MigrationRepository,
     private val databaseManager: DatabaseManager,
     private val userManager: UserManager,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val firestoreApi: FirestoreApi
 ) : BasePresenter<MigrationDetailsContract.View>(), MigrationDetailsContract.Presenter {
 
     private var mode: String = ""
     private var categoryId: Long = -1L
     private var sourceEnv: Database = Database.DEVELOPMENT
     private var targetEnv: Database = Database.PRODUCTION
+    
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     override fun getData(arguments: Bundle?) {
         mode = arguments?.getString("mode") ?: ""
@@ -42,8 +48,16 @@ class MigrationDetailsPresenter @Inject constructor(
         presenterScope?.launch {
             when (mode) {
                 "main" -> {
-                    view.displayModePreview("main", "Category Migration", "Transferring selected category and its questions")
-                    view.displayItemCount(0)
+                    val coll = firestoreApi.getCollectionNameForMode("main", sourceEnv)
+                    val response = firestoreApi.getQuizCategoryFrom(categoryId.toString(), coll)
+                    if (response is Response.Success) {
+                        val category = response.data
+                        view.displayModePreview("main", category.title, "${category.questionIDs.size} questions")
+                        view.displayItemCount(1 + category.questionIDs.size)
+                        
+                        val lastDate = category.productionTransferDate?.let { date -> dateFormat.format(date) } ?: resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_never)
+                        view.displayProductionSyncInfo(lastDate, !category.isUpToDate)
+                    }
                 }
                 "swipe" -> {
                     view.displayModePreview("swipe", "Swipe Mode Bulk Migration", "Transferring ALL swipe questions")
@@ -52,15 +66,22 @@ class MigrationDetailsPresenter @Inject constructor(
                     view.displayModePreview("translations", "Translations Bulk Migration", "Transferring ALL translations")
                 }
                 "cem" -> {
-                    val preview = migrationRepository.getCemCategoryMigrationPreview(categoryId, sourceEnv)
-                    if (preview is Response.Success) {
-                        val (subs, ques) = preview.data
-                        view.displayModePreview("cem", "CEM Category Tree Migration", "")
-                        view.displayItemCount(1 + subs + ques)
+                    val coll = firestoreApi.getCollectionNameForMode("cem", sourceEnv)
+                    val response = firestoreApi.getCemCategoryFrom(categoryId.toString(), coll)
+                    if (response is Response.Success) {
+                        val category = response.data
                         
-                        val details = "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_subcategories_count)} $subs, " +
-                                     "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_questions_count)} $ques"
-                        view.displayModePreview("cem", "CEM Category Tree", details)
+                        val preview = migrationRepository.getCemCategoryMigrationPreview(categoryId, sourceEnv)
+                        if (preview is Response.Success) {
+                            val (subs, ques) = preview.data
+                            val details = "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_subcategories_count)} $subs, " +
+                                         "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_questions_count)} $ques"
+                            view.displayModePreview("cem", category.title, details)
+                            view.displayItemCount(1 + subs + ques)
+                            
+                            val lastDate = category.productionTransferDate?.let { date -> dateFormat.format(date) } ?: resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_never)
+                            view.displayProductionSyncInfo(lastDate, !category.isUpToDate)
+                        }
                     }
                 }
             }
@@ -112,7 +133,9 @@ class MigrationDetailsPresenter @Inject constructor(
             when (result) {
                 is Response.Success -> {
                     view.displayMigrationSuccess()
-                    view.dismiss()
+                    kotlinx.coroutines.delay(1000) // Delay to ensure firestore propagation
+                    loadPreview()
+                    loadHistory()
                 }
                 is Response.Error -> view.displayError(result.error)
                 is Response.Loading -> {}
