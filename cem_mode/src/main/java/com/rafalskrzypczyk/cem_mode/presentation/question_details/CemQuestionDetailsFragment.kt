@@ -105,8 +105,12 @@ class CemQuestionDetailsFragment :
 
     override fun displayQuestionDetails(questionText: String, explanation: String) {
         isSilentUpdate = true
-        binding.questionDetails.inputQuestionText.setText(questionText)
-        binding.questionDetails.inputExplanation.setText(explanation)
+        if (binding.questionDetails.inputQuestionText.text.toString() != questionText) {
+            binding.questionDetails.inputQuestionText.setText(questionText)
+        }
+        if (binding.questionDetails.inputExplanation.text.toString() != explanation) {
+            binding.questionDetails.inputExplanation.setText(explanation)
+        }
         isSilentUpdate = false
     }
 

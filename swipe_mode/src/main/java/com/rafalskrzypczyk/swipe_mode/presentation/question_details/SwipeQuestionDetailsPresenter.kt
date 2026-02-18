@@ -6,20 +6,18 @@ import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.swipe_mode.R
-import com.rafalskrzypczyk.swipe_mode.domain.SwipeModeRepository
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeQuestion
+import com.rafalskrzypczyk.swipe_mode.domain.SwipeQuestionDetailsInteractor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SwipeQuestionDetailsPresenter @Inject constructor(
-    private val repository: SwipeModeRepository,
+    private val interactor: SwipeQuestionDetailsInteractor,
     private val resourceProvider: ResourceProvider
 ) : BasePresenter<SwipeQuestionDetailsContract.View>(), SwipeQuestionDetailsContract.Presenter {
 
-    private var question: SwipeQuestion? = null
-
-    private var allowChange: Boolean = false
+    private var isQuestionLoaded = false
 
     override fun getData(arguments: Bundle?) {
         val questionId = arguments?.getLong("questionId") ?: 0L
@@ -29,13 +27,12 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
 
         presenterScope?.launch{
-            repository.getQuestionById(questionId).collectLatest {
+            interactor.getQuestion(questionId).collectLatest {
                 when (it) {
                     is Response.Success -> {
-                        question = it.data
+                        isQuestionLoaded = true
                         view.displayQuestionDetails(it.data.text, it.data.explanation, it.data.isCorrect)
                         view.displayCreatedDetails(String.formatDate(it.data.dateCreated))
-                        allowChange = true
                     }
                     is Response.Error -> view.displayError(it.error)
                     is Response.Loading -> view.displayLoading()
@@ -45,44 +42,34 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateQuestionText(questionText: String) {
-        question?.let {
+        if (isQuestionLoaded) {
             if(questionText.isBlank()) {
                 view.displayToastMessage(resourceProvider.getString(R.string.warning_question_text_is_empty))
-                return
             }
-            it.text = questionText
-            updateQuestion()
+            interactor.updateQuestionText(questionText)
         }
     }
 
     override fun updateExplanation(explanation: String) {
-        question?.let {
-            it.explanation = explanation
-            updateQuestion()
+        if (isQuestionLoaded) {
+            interactor.updateExplanation(explanation)
         }
     }
 
     override fun updateIsCorrect(isCorrect: Boolean?) {
-        question?.let {
-            if(isCorrect == null) {
-                view.displayToastMessage(resourceProvider.getString(R.string.warning_question_is_correct_not_set))
-                return
-            }
-            it.isCorrect = isCorrect
-            updateQuestion()
+        if (isQuestionLoaded && isCorrect != null) {
+            interactor.updateIsCorrect(isCorrect)
         }
     }
 
     override fun saveNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?) {
-        if(question != null || !validateQuestion(questionText, isCorrect)) return
+        if(isQuestionLoaded || !validateQuestion(questionText, isCorrect)) return
 
         presenterScope?.launch {
-            val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
-            newQuestion.explanation = explanation
-            when(val response = repository.addQuestion(newQuestion)){
+            when(val response = interactor.instantiateNewQuestion(questionText, isCorrect!!, explanation)){
                 is Response.Success -> {
-                    view.displayCreatedDetails(String.formatDate(newQuestion.dateCreated))
-                    allowChange = true
+                    isQuestionLoaded = true
+                    view.displayCreatedDetails(String.formatDate(response.data.dateCreated))
                 }
                 is Response.Error -> view.displayError(response.error)
                 is Response.Loading -> view.displayLoading()
@@ -93,15 +80,13 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     override fun saveAndOpenNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?) {
         if(!validateQuestion(questionText, isCorrect)) return
 
-        if(question != null) {
+        if(isQuestionLoaded) {
             replaceWithNewQuestion()
             return
         }
 
         presenterScope?.launch {
-            val newQuestion = SwipeQuestion.new(questionText, isCorrect!!)
-            newQuestion.explanation = explanation
-            when(val response = repository.addQuestion(newQuestion)){
+            when(val response = interactor.instantiateNewQuestion(questionText, isCorrect!!, explanation)){
                 is Response.Success -> replaceWithNewQuestion()
                 is Response.Error -> view.displayError(response.error)
                 is Response.Loading -> view.displayLoading()
@@ -110,7 +95,8 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
     }
 
     private fun replaceWithNewQuestion() {
-        question = null
+        isQuestionLoaded = false
+        interactor.clearReference()
         view.replaceWithNewQuestion()
         view.openKeyboard()
     }
@@ -129,13 +115,8 @@ class SwipeQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    private fun updateQuestion() {
-        if(!allowChange) return
-
-        presenterScope?.launch {
-            repository.updateQuestion(question!!).let {
-                if(it is Response.Error) view.displayError(it.error)
-            }
-        }
+    override fun onDestroy() {
+        interactor.saveCachedQuestion()
+        super.onDestroy()
     }
 }
