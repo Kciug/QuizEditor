@@ -3,6 +3,8 @@ package com.rafalskrzypczyk.issue_reports.presentation.details
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.domain.models.GameMode
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
@@ -56,23 +58,18 @@ class IssueReportDetailsFragment :
     }
 
     override fun navigateToQuestionEditor(gameMode: String, questionId: Long) {
-        val navHandler = activity as? DrawerNavigationHandler
-        val bundle = Bundle().apply {
-            putLong("questionId", questionId)
-        }
+        val fragmentManager = requireActivity().supportFragmentManager
         
-        val tag = when(gameMode) {
-            "main" -> "nav_quiz_mode"
-            "swipe" -> "nav_swipe_quiz_mode"
-            "translations" -> "nav_translations_mode"
-            "cem" -> "nav_cem_mode"
-            else -> null
-        }
-        
-        tag?.let {
-            navHandler?.navigateToDestinationByTag(it, bundle)
-            showCloseReportDialog()
-        }
+        fragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f.tag == "QuestionDetailsFromReport") {
+                    showCloseReportDialog()
+                    fragmentManager.unregisterFragmentLifecycleCallbacks(this)
+                }
+            }
+        }, false)
+
+        (activity as? DrawerNavigationHandler)?.openQuestionDetails(gameMode, questionId)
     }
 
     override fun onResume() {
