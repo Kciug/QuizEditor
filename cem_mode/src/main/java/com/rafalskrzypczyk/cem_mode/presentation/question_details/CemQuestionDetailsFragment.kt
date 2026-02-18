@@ -38,7 +38,8 @@ class CemQuestionDetailsFragment :
 
     override fun onViewBound() {
         super.onViewBound()
-
+        keyboardController = KeyboardController(requireContext())
+        
         answersAdapter = CemAnswersAdapter(
             keyboardController = keyboardController,
             onAnswerChanged = { 
@@ -122,7 +123,7 @@ class CemQuestionDetailsFragment :
     }
 
     override fun displayCategoriesPicker() {
-        // Implementation for picker
+        // TODO: Implement categories picker for CEM
     }
 
     override fun displayToastMessage(message: String) {

@@ -11,6 +11,7 @@ import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +27,11 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
     override fun getData(bundle: Bundle?) {
         val questionId = bundle?.getLong("questionId", -1L) ?: -1L
-        parentCategoryID = bundle?.getLong("parentCategoryID", -1L) ?: -1L
+        parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
+            bundle.getLong("parentCategoryID")
+        } else {
+            -1L
+        }
 
         if (questionId == -1L) {
             view.setupNewElementView()
@@ -50,9 +55,9 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
     private fun updateUI(question: CemQuestion) {
         presenterScope?.launch {
-            val categories = repository.getCategories().first()
-            val linkedCategories = if (categories is Response.Success) {
-                categories.data.filter { it.id in question.linkedCategories }
+            val categoriesResult = repository.getCategories().filter { it is Response.Success }.first()
+            val linkedCategories = if (categoriesResult is Response.Success) {
+                categoriesResult.data.filter { it.id in question.linkedCategories }
                     .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
             } else emptyList()
 
@@ -76,16 +81,25 @@ class CemQuestionDetailsPresenter @Inject constructor(
         val newQuestion = CemQuestion.new(text)
         presenterScope?.launch {
             val result = repository.addQuestion(newQuestion)
-            if (result is Response.Success && parentCategoryID != -1L) {
-                repository.bindQuestionWithCategory(newQuestion.id, parentCategoryID)
+            if (result is Response.Success) {
+                if (parentCategoryID != -1L) {
+                    repository.bindQuestionWithCategory(newQuestion.id, parentCategoryID)
+                }
+                currentQuestion = newQuestion
+                isDataLoaded = true
+                updateUI(newQuestion)
+            } else if (result is Response.Error) {
+                view.displayError(result.error)
             }
         }
     }
 
     override fun updateQuestionText(text: String) {
         currentQuestion?.let {
-            it.text = text
-            saveChanges()
+            if (it.text != text) {
+                it.text = text
+                saveChanges()
+            }
         }
     }
 
@@ -103,16 +117,22 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
     override fun updateAnswerText(answerId: Long, text: String) {
         currentQuestion?.let { q ->
-            q.answers.find { it.id == answerId }?.text = text
-            saveChanges()
+            val answer = q.answers.find { it.id == answerId }
+            if (answer != null && answer.text != text) {
+                answer.text = text
+                saveChanges()
+            }
         }
     }
 
     override fun updateAnswerCorrectness(answerId: Long, isCorrect: Boolean) {
         currentQuestion?.let { q ->
-            q.answers.find { it.id == answerId }?.isCorrect = isCorrect
-            updateUI(q)
-            saveChanges()
+            val answer = q.answers.find { it.id == answerId }
+            if (answer != null && answer.isCorrect != isCorrect) {
+                answer.isCorrect = isCorrect
+                updateUI(q)
+                saveChanges()
+            }
         }
     }
 

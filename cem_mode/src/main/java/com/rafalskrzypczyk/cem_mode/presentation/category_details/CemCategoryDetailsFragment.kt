@@ -35,12 +35,12 @@ class CemCategoryDetailsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        keyboardController = KeyboardController(requireContext())
         presenter.getData(arguments)
     }
 
     override fun onViewBound() {
         super.onViewBound()
+        keyboardController = KeyboardController(requireContext())
 
         with(binding){
             sectionNavbar.buttonClose.setOnClickListener { dismiss() }

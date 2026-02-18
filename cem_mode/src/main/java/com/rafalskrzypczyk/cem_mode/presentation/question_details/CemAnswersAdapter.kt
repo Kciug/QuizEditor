@@ -36,8 +36,12 @@ class CemAnswersAdapter(
         val deleteBubbleManager = DeleteBubbleManager(itemView.context)
 
         fun bind(answer: CemAnswerUIModel) {
-            answerText.setText(answer.answerText)
-            correctSwitch.isChecked = answer.isCorrect
+            if (answerText.text.toString() != answer.answerText) {
+                answerText.setText(answer.answerText)
+            }
+            if (correctSwitch.isChecked != answer.isCorrect) {
+                correctSwitch.isChecked = answer.isCorrect
+            }
 
             itemView.setOnLongClickListener { view ->
                 deleteBubbleManager.showDeleteBubble(view) {
@@ -49,12 +53,14 @@ class CemAnswersAdapter(
             changeIsCorrect(answer.isCorrect)
 
             correctSwitch.setOnCheckedChangeListener { _, isChecked ->
-                answer.isCorrect = isChecked
-                onAnswerChanged(answer)
+                if (answer.isCorrect != isChecked) {
+                    answer.isCorrect = isChecked
+                    onAnswerChanged(answer)
 
-                QuizEditorAnimations.animateScaleOut(tvIsCorrect) {
-                    changeIsCorrect(isChecked)
-                    QuizEditorAnimations.animateScaleIn(tvIsCorrect)
+                    QuizEditorAnimations.animateScaleOut(tvIsCorrect) {
+                        changeIsCorrect(isChecked)
+                        QuizEditorAnimations.animateScaleIn(tvIsCorrect)
+                    }
                 }
             }
 
@@ -67,8 +73,11 @@ class CemAnswersAdapter(
             }
             answerText.addTextChangedListener(
                 afterTextChanged = {
-                    answer.answerText = it.toString()
-                    onAnswerChanged(answer)
+                    val newText = it.toString()
+                    if (answer.answerText != newText) {
+                        answer.answerText = newText
+                        onAnswerChanged(answer)
+                    }
                 }
             )
         }
