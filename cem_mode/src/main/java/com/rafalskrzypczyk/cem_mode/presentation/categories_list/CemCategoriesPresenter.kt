@@ -52,7 +52,7 @@ class CemCategoriesPresenter @Inject constructor(
             it.parentCategoryID == filterId && (searchQuery.isEmpty() || it.title.contains(searchQuery, ignoreCase = true))
         }
 
-        if (currentCategories.isEmpty()) {
+        if (currentCategories.isEmpty() && searchQuery.isEmpty()) {
             view.displayNoElementsView()
         } else {
             view.displayCategories(currentCategories)
@@ -64,6 +64,7 @@ class CemCategoriesPresenter @Inject constructor(
     private fun updateBreadcrumbs() {
         val path = mutableListOf<CemCategory>()
         var current: CemCategory? = allCategories.find { it.id == currentParentId }
+        
         while (current != null) {
             path.add(0, current)
             val parentId = current!!.parentCategoryID
@@ -102,26 +103,26 @@ class CemCategoriesPresenter @Inject constructor(
     override fun onBreadcrumbClicked(categoryId: Long) {
         if (categoryId == currentParentId) return
         
-        parentIdStack.clear()
+        currentParentId = categoryId
         
-        if (categoryId != CemCategory.ROOT_ID) {
+        // Rebuild stack from allCategories to maintain back button logic
+        parentIdStack.clear()
+        if (currentParentId != CemCategory.ROOT_ID) {
             val path = mutableListOf<Long>()
-            var current: CemCategory? = allCategories.find { it.id == categoryId }
-            
-            while (current != null) {
-                val parentId = current!!.parentCategoryID
-                if (parentId != null) {
-                    path.add(0, parentId)
-                    current = allCategories.find { it.id == parentId }
+            var curr: CemCategory? = allCategories.find { it.id == currentParentId }
+            while (curr != null) {
+                val pId = curr!!.parentCategoryID
+                if (pId != null) {
+                    path.add(0, pId)
+                    curr = allCategories.find { it.id == pId }
                 } else {
                     path.add(0, CemCategory.ROOT_ID)
-                    current = null
+                    curr = null
                 }
             }
             path.forEach { parentIdStack.push(it) }
         }
         
-        currentParentId = categoryId
         updateDisplay()
     }
 

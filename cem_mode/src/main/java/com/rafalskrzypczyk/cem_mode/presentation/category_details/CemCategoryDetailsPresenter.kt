@@ -25,7 +25,6 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun getData(bundle: Bundle?) {
         val categoryId = bundle?.getLong("categoryId", -1L) ?: -1L
-        // Ensure we check if key exists to avoid default -1L if null was intended
         parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
             bundle.getLong("parentCategoryID")
         } else {
@@ -61,6 +60,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
             displayCategoryStatus(category.status)
             displayIsFree(category.isFree)
             displayQuestionCount(category.linkedQuestions.count())
+            displaySubcategoryCount(category.linkedSubcategories.count())
             displayContent()
         }
     }
@@ -148,6 +148,10 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun onNewQuestion() {
         currentCategory?.let { view.displayNewQuestionSheet(it.id) }
+    }
+
+    override fun onNewSubcategory() {
+        currentCategory?.let { view.displayNewSubcategorySheet(it.id) }
     }
 
     private fun saveChanges() {

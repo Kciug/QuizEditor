@@ -47,7 +47,7 @@ class CemCategoriesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val parentId = arguments?.getLong("parentCategoryId") ?: CemCategory.ROOT_ID
+        val parentId = arguments?.getLong("parentCategoryID") ?: CemCategory.ROOT_ID
         presenter.getData(parentId)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
     }
@@ -212,7 +212,7 @@ class CemCategoriesFragment :
     override fun openCategoryDetails(categoryId: Long?, parentId: Long?) {
         val bundle = Bundle().apply {
             categoryId?.let { putLong("categoryId", it) }
-            parentId?.let { putLong("parentCategoryId", it) }
+            parentId?.let { putLong("parentCategoryID", it) }
         }
         CemCategoryDetailsFragment().apply { arguments = bundle }.show(parentFragmentManager, "CemCategoryDetailsBS")
     }

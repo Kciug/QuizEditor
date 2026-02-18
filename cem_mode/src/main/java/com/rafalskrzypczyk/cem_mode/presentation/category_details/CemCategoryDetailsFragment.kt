@@ -53,6 +53,7 @@ class CemCategoryDetailsFragment :
                 if (!isSilentUpdate) presenter.updateIsFree(isChecked)
             }
             sectionSubcategoriesList.buttonDisplaySubcategories.setOnClickListener { presenter.onCategorySubcategories() }
+            sectionSubcategoriesList.buttonNewSubcategory.setOnClickListener { presenter.onNewSubcategory() }
             sectionQuestionsList.buttonDisplayQuestions.setOnClickListener { presenter.onCategoryQuestions() }
             sectionQuestionsList.buttonNewQuestion.setOnClickListener { presenter.onNewQuestion() }
         }
@@ -141,6 +142,11 @@ class CemCategoryDetailsFragment :
         binding.categoryQuestionsCount.text = questionCount.toString()
     }
 
+    override fun displaySubcategoryCount(subcategoryCount: Int) {
+        // We can add a counter for subcategories too if needed in UI, 
+        // for now just using it for logic or simple log.
+    }
+
     override fun displayCategoryStatusMenu(options: List<SelectableMenuItem>) {
         val statusPopupMenu = PopupMenu(requireContext(), binding.sectionCategoryDetails.buttonChangeStatus)
         options.forEach{
@@ -189,6 +195,11 @@ class CemCategoryDetailsFragment :
     override fun displayNewQuestionSheet(categoryId: Long) {
         val bundle = Bundle().apply { putLong("parentCategoryID", categoryId) }
         CemQuestionDetailsFragment().apply { arguments = bundle }.show(parentFragmentManager, "NewCemQuestionBS")
+    }
+
+    override fun displayNewSubcategorySheet(parentId: Long) {
+        val bundle = Bundle().apply { putLong("parentCategoryID", parentId) }
+        CemCategoryDetailsFragment().apply { arguments = bundle }.show(parentFragmentManager, "NewCemSubcategoryBS")
     }
 
     override fun displayToastMessage(message: String) {

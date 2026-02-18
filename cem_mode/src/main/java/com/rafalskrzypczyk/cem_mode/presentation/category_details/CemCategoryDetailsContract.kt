@@ -14,12 +14,14 @@ interface CemCategoryDetailsContract {
         fun displayCategoryColor(color: Int)
         fun displayCategoryStatus(status: CategoryStatus)
         fun displayQuestionCount(questionCount: Int)
+        fun displaySubcategoryCount(subcategoryCount: Int)
         fun displayCategoryStatusMenu(options: List<SelectableMenuItem>)
         fun displayColorPicker(currentColor: Int)
         fun displayIsFree(isFree: Boolean)
         fun displaySubcategoriesList(parentId: Long)
         fun displayQuestionsList(categoryId: Long, categoryTitle: String, categoryColor: Long)
         fun displayNewQuestionSheet(categoryId: Long)
+        fun displayNewSubcategorySheet(parentId: Long)
         fun displayToastMessage(message: String)
         fun displayContent()
     }
@@ -36,5 +38,6 @@ interface CemCategoryDetailsContract {
         fun onCategorySubcategories()
         fun onCategoryQuestions()
         fun onNewQuestion()
+        fun onNewSubcategory()
     }
 }

@@ -11,7 +11,7 @@
         android:label="@string/bottom_bar_title_hierarchy"
         tools:layout="@layout/fragment_list">
         <argument
-            android:name="parentCategoryId"
+            android:name="parentCategoryID"
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
