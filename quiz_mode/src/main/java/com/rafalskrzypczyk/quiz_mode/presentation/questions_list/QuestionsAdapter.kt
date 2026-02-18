@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.R as coreR
+import com.rafalskrzypczyk.core.presentation.adapters.CategoriesPreviewAdapter
 import com.rafalskrzypczyk.quiz_mode.R
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.CategoriesPreviewAdapter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 
 class QuestionsAdapter(

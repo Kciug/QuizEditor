@@ -13,12 +13,14 @@ interface CemQuestionsContract {
         override fun displayError(message: String)
         fun displaySortMenu(sortOptions: List<SelectableMenuItem>, sortTypes: List<SelectableMenuItem>)
         fun displayFilterMenu(filterOptions: List<SelectableMenuItem>)
+        fun displayCategoryBadge(category: com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel)
         fun openQuestionDetails(questionId: Long?)
     }
 
     interface Presenter : BaseContract.Presenter<View> {
         fun getData()
         fun searchBy(query: String)
+        fun filterByCategory(categoryId: Long?)
         fun onQuestionClicked(question: CemQuestionUIModel)
         fun removeQuestion(question: CemQuestionUIModel)
         fun onSortMenuOpened()

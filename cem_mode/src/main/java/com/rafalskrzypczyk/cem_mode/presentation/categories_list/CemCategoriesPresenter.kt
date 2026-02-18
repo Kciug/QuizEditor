@@ -8,6 +8,7 @@ import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.Stack
 import javax.inject.Inject
 
 class CemCategoriesPresenter @Inject constructor(
@@ -18,9 +19,13 @@ class CemCategoriesPresenter @Inject constructor(
     private var currentCategories: List<CemCategory> = emptyList()
     private var currentParentId: Long = CemCategory.ROOT_ID
     private var searchQuery: String = ""
+    
+    private val parentIdStack = Stack<Long>()
 
     override fun getData(parentId: Long) {
         currentParentId = parentId
+        parentIdStack.clear()
+        
         repository.getCategories()
             .onEach { response ->
                 when (response) {
@@ -41,8 +46,10 @@ class CemCategoriesPresenter @Inject constructor(
     }
 
     private fun updateDisplay() {
+        val filterId = if (currentParentId == CemCategory.ROOT_ID) null else currentParentId
+        
         currentCategories = allCategories.filter { 
-            it.parentCategoryId == currentParentId && (searchQuery.isEmpty() || it.title.contains(searchQuery, ignoreCase = true))
+            it.parentCategoryID == filterId && (searchQuery.isEmpty() || it.title.contains(searchQuery, ignoreCase = true))
         }
 
         if (currentCategories.isEmpty()) {
@@ -59,7 +66,8 @@ class CemCategoriesPresenter @Inject constructor(
         var current: CemCategory? = allCategories.find { it.id == currentParentId }
         while (current != null) {
             path.add(0, current)
-            current = allCategories.find { it.id == current!!.parentCategoryId }
+            val parentId = current!!.parentCategoryID
+            current = if (parentId == null) null else allCategories.find { it.id == parentId }
         }
         view.updateBreadcrumbs(path)
     }
@@ -70,6 +78,7 @@ class CemCategoriesPresenter @Inject constructor(
     }
 
     override fun onCategoryClicked(category: CemCategory) {
+        parentIdStack.push(currentParentId)
         currentParentId = category.id
         updateDisplay()
     }
@@ -91,7 +100,39 @@ class CemCategoriesPresenter @Inject constructor(
     }
 
     override fun onBreadcrumbClicked(categoryId: Long) {
+        if (categoryId == currentParentId) return
+        
+        parentIdStack.clear()
+        
+        if (categoryId != CemCategory.ROOT_ID) {
+            val path = mutableListOf<Long>()
+            var current: CemCategory? = allCategories.find { it.id == categoryId }
+            
+            while (current != null) {
+                val parentId = current!!.parentCategoryID
+                if (parentId != null) {
+                    path.add(0, parentId)
+                    current = allCategories.find { it.id == parentId }
+                } else {
+                    path.add(0, CemCategory.ROOT_ID)
+                    current = null
+                }
+            }
+            path.forEach { parentIdStack.push(it) }
+        }
+        
         currentParentId = categoryId
         updateDisplay()
+    }
+
+    override fun onBackAction() {
+        if (parentIdStack.isNotEmpty()) {
+            val previousParentId = currentParentId
+            currentParentId = parentIdStack.pop()
+            updateDisplay()
+            if (previousParentId != CemCategory.ROOT_ID) {
+                view.openCategoryDetails(previousParentId, null)
+            }
+        }
     }
 }

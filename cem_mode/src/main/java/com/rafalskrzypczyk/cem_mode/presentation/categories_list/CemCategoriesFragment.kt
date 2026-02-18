@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,10 +38,17 @@ class CemCategoriesFragment :
     
     private var breadcrumbsContainer: LinearLayout? = null
 
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            presenter.onBackAction()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val parentId = arguments?.getLong("parentCategoryId") ?: CemCategory.ROOT_ID
         presenter.getData(parentId)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     override fun onViewBound() {
@@ -50,7 +58,7 @@ class CemCategoriesFragment :
         actionMenuCallback = { actionMenuCallback(it) }
 
         adapter = CemCategoriesAdapter(
-            onCategoryClicked = { presenter.onCategoryClicked(it) },
+            onCategoryClicked = { openCategoryDetails(it.id, null) },
             onCategoryRemoved = { presenter.removeCategory(it) }
         )
 
@@ -84,6 +92,15 @@ class CemCategoriesFragment :
             onSortTypeSelected = { presenter.sortByType(it.itemHashCode) },
             onFilterSelected = { presenter.filterBy(it.itemHashCode) }
         )
+
+        parentFragmentManager.setFragmentResultListener("open_subcategory", this) { _, bundle ->
+            val parentId = bundle.getLong("parentId")
+            presenter.onBreadcrumbClicked(parentId)
+        }
+        
+        parentFragmentManager.setFragmentResultListener("open_questions", this) { _, bundle ->
+            requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.nav_cem_mode_bottom_bar)?.selectedItemId = R.id.navigation_cem_questions
+        }
     }
 
     private fun actionMenuCallback(item: MenuItem): Boolean {
@@ -164,12 +181,16 @@ class CemCategoriesFragment :
             addBreadcrumbItem(" > ", -2L)
             addBreadcrumbItem(category.title, category.id)
         }
+        
+        val isDeep = path.isNotEmpty()
+        backPressedCallback.isEnabled = isDeep
+        activityActionBarBuilder?.showBackArrow(isDeep) { presenter.onBackAction() }
     }
     
     private fun addBreadcrumbItem(title: String, id: Long) {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.item_breadcrumb, breadcrumbsContainer, false) as TextView
         view.text = title
-        if (id >= CemCategory.ROOT_ID) {
+        if (id != -2L) {
             view.setOnClickListener { presenter.onBreadcrumbClicked(id) }
         } else {
             view.setTextColor(requireContext().getColor(com.rafalskrzypczyk.core.R.color.text_secondary))

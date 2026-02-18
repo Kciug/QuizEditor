@@ -15,6 +15,7 @@ import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.utils.KeyboardController
+import com.rafalskrzypczyk.core.R as coreR
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 
@@ -33,9 +34,9 @@ class AnswersListAdapter(
     )
 ) {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val answerText: EditText = itemView.findViewById(R.id.field_question_text)
-        val correctSwitch: SwitchCompat = itemView.findViewById(R.id.switch_correct)
-        val tvIsCorrect: TextView = itemView.findViewById(R.id.tv_is_correct)
+        val answerText: EditText = itemView.findViewById(coreR.id.field_question_text)
+        val correctSwitch: SwitchCompat = itemView.findViewById(coreR.id.switch_correct)
+        val tvIsCorrect: TextView = itemView.findViewById(coreR.id.tv_is_correct)
 
         val deleteBubbleManager = DeleteBubbleManager(itemView.context)
 
@@ -79,17 +80,17 @@ class AnswersListAdapter(
 
         private fun changeIsCorrect(isCorrect: Boolean) {
             if(isCorrect) {
-                tvIsCorrect.setText(R.string.label_correct_answer)
-                tvIsCorrect.setTextColor(itemView.context.getColor(com.rafalskrzypczyk.core.R.color.green))
+                tvIsCorrect.setText(coreR.string.label_correct_answer)
+                tvIsCorrect.setTextColor(itemView.context.getColor(coreR.color.green))
             } else {
-                tvIsCorrect.setText(R.string.label_incorrect_answer)
-                tvIsCorrect.setTextColor(itemView.context.getColor(com.rafalskrzypczyk.core.R.color.red))
+                tvIsCorrect.setText(coreR.string.label_incorrect_answer)
+                tvIsCorrect.setTextColor(itemView.context.getColor(coreR.color.red))
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_answer, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(coreR.layout.card_answer, parent, false)
         return ViewHolder(view)
     }
 

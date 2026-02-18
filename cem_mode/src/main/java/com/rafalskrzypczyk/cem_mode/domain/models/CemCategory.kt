@@ -16,7 +16,7 @@ data class CemCategory(
     var description: String,
     val linkedQuestions: MutableList<Long>,
     val linkedSubcategories: MutableList<Long>,
-    val parentCategoryId: Long,
+    val parentCategoryID: Long?,
     var status: CategoryStatus,
     var color: Int,
     var isFree: Boolean,
@@ -26,13 +26,13 @@ data class CemCategory(
     companion object {
         const val ROOT_ID = -1L
 
-        fun new(title: String, color: Int, parentCategoryId: Long = ROOT_ID) = CemCategory(
+        fun new(title: String, color: Int, parentCategoryID: Long? = null) = CemCategory(
             id = Long.generateId(),
             title = title,
             description = "",
             linkedQuestions = mutableListOf(),
             linkedSubcategories = mutableListOf(),
-            parentCategoryId = parentCategoryId,
+            parentCategoryID = parentCategoryID,
             status = CategoryStatus.DRAFT,
             color = color,
             isFree = false,
@@ -48,7 +48,7 @@ fun CemCategoryDTO.toDomain() = CemCategory(
     description = subtitle ?: "",
     linkedQuestions = questionIDs.toMutableList(),
     linkedSubcategories = subcategoryIDs.toMutableList(),
-    parentCategoryId = parentCategoryID,
+    parentCategoryID = parentCategoryID,
     status = status.toCategoryStatus(),
     color = color?.toAndroidColor() ?: Color.WHITE,
     isFree = free,
@@ -62,12 +62,13 @@ fun CemCategory.toDTO() = CemCategoryDTO(
     subtitle = description,
     questionIDs = linkedQuestions,
     subcategoryIDs = linkedSubcategories,
-    parentCategoryID = parentCategoryId,
+    parentCategoryID = parentCategoryID,
     status = status.toTitleString(),
     color = color.toCategoryColorRGB(),
     free = isFree,
     dateCreated = creationDate,
-    questionsCount = linkedQuestions.count(),
+    questionCount = linkedQuestions.count(),
+    subcategoryCount = linkedSubcategories.count(),
     dateModified = Date().toString()
 )
 

@@ -12,6 +12,7 @@ import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
+import com.rafalskrzypczyk.core.presentation.adapters.CategoriesPreviewAdapter
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor

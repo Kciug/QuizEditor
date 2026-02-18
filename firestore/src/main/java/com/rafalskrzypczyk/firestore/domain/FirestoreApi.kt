@@ -43,19 +43,20 @@ interface FirestoreApi {
     fun getTranslationQuestions(): Flow<Response<List<TranslationQuestionDTO>>>
     fun getUpdatedTranslationQuestions(): Flow<List<TranslationQuestionDTO>>
     suspend fun addTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
-        suspend fun updateTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
-        suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit>
-    
-        fun getCemCategories(): Flow<Response<List<CemCategoryDTO>>>
-        fun getUpdatedCemCategories(): Flow<List<CemCategoryDTO>>
-        suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit>
-        suspend fun updateCemCategory(category: CemCategoryDTO): Response<Unit>
-        suspend fun deleteCemCategory(categoryId: Long): Response<Unit>
-    
-        fun getCemQuestions(): Flow<Response<List<CemQuestionDTO>>>
-        fun getUpdatedCemQuestions(): Flow<List<CemQuestionDTO>>
-        suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit>
-        suspend fun updateCemQuestion(question: CemQuestionDTO): Response<Unit>
-        suspend fun deleteCemQuestion(questionId: Long): Response<Unit>
-    }
-    
+    suspend fun updateTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
+    suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit>
+
+    fun getCemCategories(): Flow<Response<List<CemCategoryDTO>>>
+    fun getUpdatedCemCategories(): Flow<List<CemCategoryDTO>>
+    fun getCemCategoryById(categoryId: Long): Flow<Response<CemCategoryDTO>>
+    suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit>
+    suspend fun updateCemCategory(category: CemCategoryDTO): Response<Unit>
+    suspend fun deleteCemCategory(categoryId: Long): Response<Unit>
+
+    fun getCemQuestions(): Flow<Response<List<CemQuestionDTO>>>
+    fun getUpdatedCemQuestions(): Flow<List<CemQuestionDTO>>
+    fun getCemQuestionById(questionId: Long): Flow<Response<CemQuestionDTO>>
+    suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit>
+    suspend fun updateCemQuestion(question: CemQuestionDTO): Response<Unit>
+    suspend fun deleteCemQuestion(questionId: Long): Response<Unit>
+}

@@ -29,5 +29,6 @@ interface CemCategoriesContract {
         fun filterBy(filterId: Int)
         fun onAddNewCategory()
         fun onBreadcrumbClicked(categoryId: Long)
+        fun onBackAction()
     }
 }

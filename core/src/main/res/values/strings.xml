@@ -69,7 +69,36 @@
         <string name="status_approved">ZATWIERDZONE</string>
         <string name="status_need_rework">WYMAGA ZMIAN</string>
     
-        <string name="drawer_menu_title_cem">Tryb CEM</string>
+        <string name="label_category_details">Kategoria</string>
+    <string name="label_category_title">Tytuł</string>
+    <string name="label_category_desc">Opis</string>
+    <string name="label_category_status">Status</string>
+    <string name="label_category_color">Kolor</string>
+    <string name="label_category_color_preview">KOLOR</string>
+    <string name="label_category_questions_section">Pytania w tej kategorii</string>
+    <string name="label_category_subcategories_section">Podkategorie</string>
+
+    <string name="hint_category_title">Nazwa kategorii</string>
+    <string name="hint_category_desc">Opis…</string>
+
+    <string name="button_change_color">Zmień kolor</string>
+    <string name="button_change_status">Zmień status</string>
+    <string name="button_add_new_question">Nowe pytanie</string>
+    <string name="button_add_question_from_database">Dodaj z bazy</string>
+    <string name="btn_category_questions">Pytania</string>
+    <string name="btn_category_subcategories">Podkategorie</string>
+
+    <string name="label_question">Pytanie</string>
+    <string name="hint_question_text">Tekst pytania</string>
+    <string name="label_answers">odpowiedzi</string>
+    <string name="label_no_categories">Brak kategorii</string>
+
+    <string name="label_correct_answer">Poprawna</string>
+    <string name="label_incorrect_answer">Błędna</string>
+    <string name="label_correct_answers">poprawnych</string>
+    <string name="hint_answer">Dodaj odpowiedź</string>
+
+    <string name="drawer_menu_title_cem">Tryb CEM</string>
         <string name="bottom_bar_title_hierarchy">Hierarchia</string>
     </resources>
     

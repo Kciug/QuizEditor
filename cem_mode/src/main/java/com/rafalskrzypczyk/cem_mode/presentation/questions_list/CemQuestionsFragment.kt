@@ -1,21 +1,25 @@
 package com.rafalskrzypczyk.cem_mode.presentation.questions_list
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.cem_mode.R
 import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel
 import com.rafalskrzypczyk.cem_mode.presentation.question_details.CemQuestionDetailsFragment
 import com.rafalskrzypczyk.core.animations.QuizEditorAnimations
 import com.rafalskrzypczyk.core.base.BaseFragment
+import com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.core.databinding.FragmentListBinding
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,6 +77,14 @@ class CemQuestionsFragment :
             onSortTypeSelected = { presenter.sortByType(it.itemHashCode) },
             onFilterSelected = { presenter.filterBy(it.itemHashCode) }
         )
+
+        parentFragmentManager.setFragmentResultListener("open_questions", this) { _, bundle ->
+            val categoryId = bundle.getLong("categoryId")
+            val title = bundle.getString("categoryTitle") ?: ""
+            val color = bundle.getLong("categoryColor")
+            presenter.filterByCategory(categoryId)
+            displayCategoryBadge(SimpleCategoryUIModel(title, color))
+        }
     }
 
     private fun actionMenuCallback(item: MenuItem): Boolean {
@@ -142,6 +154,22 @@ class CemQuestionsFragment :
             ahchorView = requireActivity().findViewById(com.rafalskrzypczyk.core.R.id.action_filter),
             filterOptions = filterOptions
         )
+    }
+
+    override fun displayCategoryBadge(category: SimpleCategoryUIModel) {
+        binding.headerAppendixRoot.removeAllViews()
+        val categoryBadge = ColorOutlinedLabelView(requireContext()).apply {
+            setColorAndText(category.color.toInt(), category.name)
+            gravity = Gravity.CENTER
+            setOnClickListener {
+                presenter.filterByCategory(null)
+                binding.headerAppendixRoot.removeAllViews()
+            }
+        }
+        binding.headerAppendixRoot.apply {
+            setPadding(10, 0, 10, 10)
+            addView(categoryBadge)
+        }
     }
 
     override fun openQuestionDetails(questionId: Long?) {

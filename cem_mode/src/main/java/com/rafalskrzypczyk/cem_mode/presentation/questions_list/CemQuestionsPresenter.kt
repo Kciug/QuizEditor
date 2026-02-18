@@ -1,6 +1,8 @@
 package com.rafalskrzypczyk.cem_mode.presentation.questions_list
 
 import com.rafalskrzypczyk.cem_mode.domain.CemModeRepository
+import com.rafalskrzypczyk.cem_mode.domain.models.CemCategory
+import com.rafalskrzypczyk.cem_mode.domain.models.CemQuestion
 import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel
 import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.toUIModel
 import com.rafalskrzypczyk.core.api_result.Response
@@ -17,8 +19,10 @@ class CemQuestionsPresenter @Inject constructor(
     private val repository: CemModeRepository
 ) : BasePresenter<CemQuestionsContract.View>(), CemQuestionsContract.Presenter {
 
-    private var allQuestions: List<CemQuestionUIModel> = emptyList()
+    private var allQuestions: List<CemQuestion> = emptyList()
+    private var allCategories: List<CemCategory> = emptyList()
     private var searchQuery: String = ""
+    private var filterCategoryId: Long? = null
 
     override fun getData() {
         combine(
@@ -39,14 +43,8 @@ class CemQuestionsPresenter @Inject constructor(
                 return@combine
             }
 
-            val questions = (questionsResponse as Response.Success).data
-            val categories = (categoriesResponse as Response.Success).data
-
-            allQuestions = questions.map { question ->
-                val linkedCategories = categories.filter { it.id in question.linkedCategories }
-                    .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
-                question.toUIModel(linkedCategories)
-            }
+            allQuestions = (questionsResponse as Response.Success).data
+            allCategories = (categoriesResponse as Response.Success).data
             updateDisplay()
         }.launchIn(presenterScope!!)
 
@@ -56,20 +54,32 @@ class CemQuestionsPresenter @Inject constructor(
     }
 
     private fun updateDisplay() {
-        val filtered = allQuestions.filter {
-            searchQuery.isEmpty() || it.text.contains(searchQuery, ignoreCase = true)
+        val filtered = allQuestions.filter { q ->
+            (filterCategoryId == null || q.linkedCategories.contains(filterCategoryId)) &&
+            (searchQuery.isEmpty() || q.text.contains(searchQuery, ignoreCase = true))
         }
 
-        if (filtered.isEmpty()) {
+        val uiModels = filtered.map { q ->
+            val linkedCatUI = allCategories.filter { it.id in q.linkedCategories }
+                .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
+            q.toUIModel(linkedCatUI)
+        }
+
+        if (uiModels.isEmpty()) {
             view.displayNoElementsView()
         } else {
-            view.displayQuestions(filtered)
+            view.displayQuestions(uiModels)
         }
-        view.displayElementsCount(filtered.size)
+        view.displayElementsCount(uiModels.size)
     }
 
     override fun searchBy(query: String) {
         searchQuery = query
+        updateDisplay()
+    }
+
+    override fun filterByCategory(categoryId: Long?) {
+        filterCategoryId = categoryId
         updateDisplay()
     }
 

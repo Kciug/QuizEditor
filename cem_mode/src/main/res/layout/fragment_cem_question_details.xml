@@ -1,38 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nested_scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="10dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/section_navbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            layout="@layout/layout_bottom_sheet_nav_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/label_question"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Question Details"
-            android:textSize="20sp"
+            android:text="@string/label_question"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingBottom="16dp" />
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/section_navbar" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <include
+            android:id="@+id/question_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Question Text">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_question_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="5dp"
+            layout="@layout/layout_question_details"
+            app:layout_constraintTop_toBottomOf="@id/label_question"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
-            android:id="@+id/button_save_question"
+        <include
+            android:id="@+id/creation_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            layout="@layout/layout_creation_details"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/question_details"
+            android:layout_marginTop="5dp" />
+
+        <include
+            android:id="@+id/answers_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            layout="@layout/layout_question_answers_details"
+            app:layout_constraintTop_toBottomOf="@id/creation_details"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"
-            android:text="Save" />
+            android:layout_marginHorizontal="8dp" />
 
-    </LinearLayout>
+        <include
+            android:id="@+id/new_answer_bar"
+            android:layout_width="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            layout="@layout/layout_question_new_answers_bar"
+            app:layout_constraintTop_toBottomOf="@id/answers_details"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_answers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/new_answer_bar"
+            android:layout_marginTop="5dp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_answer" />
+
+        <include
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/layout_loading"
+            android:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/content_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="label_question, question_details"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="creation_details, answers_details, new_answer_bar, rv_answers"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

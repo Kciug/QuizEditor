@@ -214,6 +214,13 @@ class FirestoreService @Inject constructor(
         awaitClose { listener.remove() }
     }
 
+    override fun getCemCategoryById(categoryId: Long): Flow<Response<CemCategoryDTO>> = flow {
+        emit(Response.Loading)
+        val result = getFirestoreDocument(categoryId.toString(), cemCategoriesCollection)
+            ?.toObject(CemCategoryDTO::class.java)
+        emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_not_found_category)))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
     override suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit> =
         addFirestoreDocument(category.id.toString(), category, cemCategoriesCollection)
 
@@ -241,6 +248,13 @@ class FirestoreService @Inject constructor(
             }
         awaitClose { listener.remove() }
     }
+
+    override fun getCemQuestionById(questionId: Long): Flow<Response<CemQuestionDTO>> = flow {
+        emit(Response.Loading)
+        val result = getFirestoreDocument(questionId.toString(), cemQuestionsCollection)
+            ?.toObject(CemQuestionDTO::class.java)
+        emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_not_found_question)))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
     override suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit> =
         addFirestoreDocument(question.id.toString(), question, cemQuestionsCollection)
@@ -306,6 +320,18 @@ class FirestoreService @Inject constructor(
             Response.Success(Unit)
         } catch (e: Exception) {
             Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    private suspend fun getFirestoreDocument(id: String, collection: String): com.google.firebase.firestore.DocumentSnapshot? {
+        return try {
+            firestore.collection(collection).document(id).get(Source.CACHE).await()
+        } catch (e: Exception) {
+            null
+        } ?: try {
+            firestore.collection(collection).document(id).get(Source.SERVER).await()
+        } catch (e: Exception) {
+            null
         }
     }
 

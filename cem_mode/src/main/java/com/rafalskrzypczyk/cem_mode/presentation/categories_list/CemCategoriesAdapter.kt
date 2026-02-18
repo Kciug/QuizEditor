@@ -20,7 +20,11 @@ class CemCategoriesAdapter(
     private val onCategoryRemoved: (CemCategory) -> Unit
 ) : ListAdapter<CemCategory, CemCategoriesAdapter.CemCategoryViewHolder>(GenericDiffCallback<CemCategory>(
     itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-    contentsTheSame = { oldItem, newItem -> oldItem == newItem }
+    contentsTheSame = { oldItem, newItem -> 
+        oldItem == newItem && 
+        oldItem.linkedQuestions.size == newItem.linkedQuestions.size &&
+        oldItem.linkedSubcategories.size == newItem.linkedSubcategories.size
+    }
 )) {
     inner class CemCategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val categoryTitle: TextView = view.findViewById(coreR.id.label_category_title)
