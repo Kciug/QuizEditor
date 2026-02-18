@@ -7,6 +7,8 @@ import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
 import com.rafalskrzypczyk.core.domain.models.GameMode
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
+import com.rafalskrzypczyk.core.extensions.makeGone
+import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.issue_reports.databinding.FragmentIssueReportDetailsBinding
 import com.rafalskrzypczyk.issue_reports.presentation.list.ui_models.IssueReportUIModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,9 +22,6 @@ class IssueReportDetailsFragment :
     override fun onViewBound() {
         super.onViewBound()
 
-        val reportId = arguments?.getString("reportId") ?: return
-        presenter.getReportDetails(reportId)
-
         binding.buttonOpenQuestion.setOnClickListener {
             presenter.onOpenQuestionClicked()
         }
@@ -32,7 +31,15 @@ class IssueReportDetailsFragment :
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val reportId = arguments?.getString("reportId") ?: return
+        presenter.getReportDetails(reportId)
+    }
+
     override fun displayReportDetails(report: IssueReportUIModel) {
+        binding.loadingDetails.makeGone()
+        binding.contentGroup.makeVisible()
         with(binding) {
             textDescription.text = report.description
             textQuestionContent.text = report.questionContent
@@ -55,18 +62,16 @@ class IssueReportDetailsFragment :
         }
         
         val tag = when(gameMode) {
-            "QUIZ_MODE" -> "nav_quiz_mode" // These tags should match what's in nav_graph or expected by navigateToDestinationByTag
-            "SWIPE_MODE" -> "nav_swipe_quiz_mode"
-            "TRANSLATIONS_MODE" -> "nav_translations_mode"
-            "CEM_MODE" -> "nav_cem_mode"
+            "main" -> "nav_quiz_mode"
+            "swipe" -> "nav_swipe_quiz_mode"
+            "translations" -> "nav_translations_mode"
+            "cem" -> "nav_cem_mode"
             else -> null
         }
         
         tag?.let {
             navHandler?.navigateToDestinationByTag(it, bundle)
-            // After returning from editor (handled by fragment lifecycle or simple check on resume)
-            // But here we'll just show the dialog if the user returns to THIS fragment.
-            // Since it's a BottomSheet, it might still be there.
+            showCloseReportDialog()
         }
     }
 
@@ -86,7 +91,8 @@ class IssueReportDetailsFragment :
     }
 
     override fun displayLoading() {
-        // Implement loading if needed
+        binding.loadingDetails.makeVisible()
+        binding.contentGroup.makeGone()
     }
 
     override fun displayError(message: String) {

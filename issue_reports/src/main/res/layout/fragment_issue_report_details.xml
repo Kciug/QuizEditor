@@ -12,8 +12,26 @@
         android:layout_height="wrap_content"
         android:text="Detale zgłoszenia"
         android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textColor="@color/primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/loading_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_title" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/content_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="label_game_mode,text_date,label_description,text_description,label_question,text_question_content,button_open_question,button_close_report" />
 
     <com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
         android:id="@+id/label_game_mode"
@@ -21,14 +39,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_title"
-        tools:text="QUIZ_MODE" />
+        app:layout_constraintTop_toBottomOf="@id/text_title" />
 
     <TextView
         android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="@id/label_game_mode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/label_game_mode"
@@ -51,10 +69,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/text_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_description"
-        tools:text="Pełny opis zgłoszenia od użytkownika..." />
+        app:layout_constraintTop_toBottomOf="@id/label_description" />
 
     <TextView
         android:id="@+id/label_question"
@@ -73,10 +91,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/text_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_question"
-        tools:text="Treść pytania którego dotyczy błąd." />
+        app:layout_constraintTop_toBottomOf="@id/label_question" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_open_question"

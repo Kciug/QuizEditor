@@ -68,11 +68,13 @@ class FirestoreService @Inject constructor(
 
     override fun getIssueReports(): Flow<Response<List<IssueReportDTO>>> = flow {
         emit(Response.Loading)
-        val reports = firestore.collection(issueReportsCollection)
+        val result = firestore.collection(issueReportsCollection)
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .get(Source.SERVER)
             .await()
-            .toObjects(IssueReportDTO::class.java)
+        val reports = result.documents.mapNotNull { doc ->
+            doc.toObject(IssueReportDTO::class.java)?.copy(id = doc.id)
+        }
         emit(Response.Success(reports))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 

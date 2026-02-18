@@ -1,10 +1,10 @@
 package com.rafalskrzypczyk.core.domain.models
 
 enum class GameMode(val value: String) {
-    QUIZ("QUIZ_MODE"),
-    SWIPE("SWIPE_MODE"),
-    TRANSLATION("TRANSLATIONS_MODE"),
-    CEM("CEM_MODE");
+    QUIZ("main"),
+    SWIPE("swipe"),
+    TRANSLATION("translations"),
+    CEM("cem");
 
     companion object {
         fun fromString(value: String): GameMode {

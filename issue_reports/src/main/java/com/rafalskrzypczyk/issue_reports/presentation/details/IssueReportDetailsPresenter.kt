@@ -19,23 +19,27 @@ class IssueReportDetailsPresenter @Inject constructor(
     override fun getReportDetails(reportId: String) {
         presenterScope?.launch {
             repository.getIssueReports().collectLatest { response ->
-                if (response is Response.Success) {
-                    val report = response.data.find { it.id == reportId }
-                    if (report != null) {
-                        currentReport = report
-                        view?.displayReportDetails(
-                            IssueReportUIModel(
-                                id = report.id,
-                                questionId = report.questionId,
-                                questionContent = report.questionContent,
-                                description = report.description,
-                                gameMode = report.gameMode,
-                                dateString = String.formatDate(report.date)
+                when (response) {
+                    is Response.Loading -> view?.displayLoading()
+                    is Response.Success -> {
+                        val report = response.data.find { it.id == reportId }
+                        if (report != null) {
+                            currentReport = report
+                            view?.displayReportDetails(
+                                IssueReportUIModel(
+                                    id = report.id,
+                                    questionId = report.questionId,
+                                    questionContent = report.questionContent,
+                                    description = report.description,
+                                    gameMode = report.gameMode,
+                                    dateString = String.formatDate(report.date)
+                                )
                             )
-                        )
-                    } else {
-                        view?.displayError("Report not found")
+                        } else {
+                            view?.displayError("Zgłoszenie nie zostało odnalezione (ID: $reportId)")
+                        }
                     }
+                    is Response.Error -> view?.displayError(response.error)
                 }
             }
         }
