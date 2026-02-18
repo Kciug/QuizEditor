@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.cem_mode.R
@@ -35,12 +36,12 @@ class CemQuestionsFragment :
     private var noElementsView: View? = null
     private var recyclerViewManager: LinearLayoutManager? = null
 
-    private val navTag: String? by lazy { arguments?.getString("nav_tag") }
+    private var initialCategoryId: Long = -1L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val initialCategoryId = arguments?.getLong("categoryId", -1L) ?: -1L
+        initialCategoryId = arguments?.getLong("categoryId", -1L) ?: -1L
         if (initialCategoryId != -1L) {
             val title = arguments?.getString("categoryTitle") ?: ""
             val color = arguments?.getLong("categoryColor") ?: 0L
@@ -53,18 +54,22 @@ class CemQuestionsFragment :
 
     override fun onResume() {
         super.onResume()
-        if (navTag == "cem_category_questions_list") {
-            activityActionBarBuilder?.showBackArrow(true) {
-                activityActionBarBuilder?.showBackArrow(false)
-                parentFragmentManager.popBackStack()
-            }
+        if (initialCategoryId != -1L) {
+            setupBackArrow()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (navTag == "cem_category_questions_list") {
+        if (initialCategoryId != -1L) {
             activityActionBarBuilder?.showBackArrow(false)
+        }
+    }
+
+    private fun setupBackArrow() {
+        activityActionBarBuilder?.showBackArrow(true) {
+            activityActionBarBuilder?.showBackArrow(false)
+            findNavController().popBackStack()
         }
     }
 
@@ -110,8 +115,10 @@ class CemQuestionsFragment :
             val categoryId = bundle.getLong("categoryId")
             val title = bundle.getString("categoryTitle") ?: ""
             val color = bundle.getLong("categoryColor")
+            initialCategoryId = categoryId
             presenter.filterByCategory(categoryId)
             displayCategoryBadge(SimpleCategoryUIModel(title, color))
+            setupBackArrow()
         }
     }
 
@@ -209,12 +216,11 @@ class CemQuestionsFragment :
             setColorAndText(category.color.toInt(), category.name)
             gravity = Gravity.CENTER
             setOnClickListener {
-                if (navTag == "cem_category_questions_list") {
+                presenter.filterByCategory(null)
+                binding.headerAppendixRoot.removeAllViews()
+                if (initialCategoryId != -1L) {
                     activityActionBarBuilder?.showBackArrow(false)
-                    parentFragmentManager.popBackStack()
-                } else {
-                    presenter.filterByCategory(null)
-                    binding.headerAppendixRoot.removeAllViews()
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -227,7 +233,6 @@ class CemQuestionsFragment :
     override fun openQuestionDetails(questionId: Long?) {
         val bundle = Bundle().apply {
             questionId?.let { putLong("questionId", it) }
-            val initialCategoryId = arguments?.getLong("categoryId", -1L) ?: -1L
             if (initialCategoryId != -1L) putLong("parentCategoryID", initialCategoryId)
         }
         CemQuestionDetailsFragment().apply { arguments = bundle }.show(parentFragmentManager, "CemQuestionDetailsBS")
