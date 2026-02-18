@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
+import com.rafalskrzypczyk.core.R as coreR
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.CategoriesPreviewAdapter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
@@ -26,12 +27,12 @@ class QuestionsAdapter(
     }
 )) {
     inner class QuestionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val questionText: TextView = view.findViewById(R.id.question_text)
-        val questionAnswers: TextView = view.findViewById(R.id.answers_count)
-        val questionAnswersText: TextView = view.findViewById(R.id.answers_count_text)
-        val categoryLabelsRecyclerView: RecyclerView = view.findViewById(R.id.categories_recycler_view)
-        val validationMessage: TextView = view.findViewById(R.id.validation_message)
-        val validationIcon: ImageView = view.findViewById(R.id.validation_icon)
+        val questionText: TextView = view.findViewById(coreR.id.question_text)
+        val questionAnswers: TextView = view.findViewById(coreR.id.answers_count)
+        val questionAnswersText: TextView = view.findViewById(coreR.id.answers_count_text)
+        val categoryLabelsRecyclerView: RecyclerView = view.findViewById(coreR.id.categories_recycler_view)
+        val validationMessage: TextView = view.findViewById(coreR.id.validation_message)
+        val validationIcon: ImageView = view.findViewById(coreR.id.validation_icon)
 
         val deleteBubbleManager = DeleteBubbleManager(view.context)
 
@@ -81,7 +82,7 @@ class QuestionsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_question, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(coreR.layout.card_question, parent, false)
         return QuestionViewHolder(view)
     }
 

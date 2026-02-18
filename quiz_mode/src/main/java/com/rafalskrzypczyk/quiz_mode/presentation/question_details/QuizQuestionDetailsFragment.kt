@@ -17,7 +17,7 @@ import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizQuestionDetailsBind
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
 import com.rafalskrzypczyk.quiz_mode.presentation.checkable_picker.CheckablePickerFragment
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

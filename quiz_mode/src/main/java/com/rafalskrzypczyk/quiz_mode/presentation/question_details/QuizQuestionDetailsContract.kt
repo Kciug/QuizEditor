@@ -3,7 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.question_details
 import android.os.Bundle
 import com.rafalskrzypczyk.core.base.BaseContract
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 
 interface QuizQuestionDetailsContract {
     interface View : BaseContract.View {

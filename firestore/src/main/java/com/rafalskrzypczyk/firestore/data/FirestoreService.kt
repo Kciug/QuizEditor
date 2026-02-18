@@ -16,6 +16,8 @@ import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
@@ -41,6 +43,8 @@ class FirestoreService @Inject constructor(
     private var quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
     private var swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
     private var translationQuestionsCollection = FirestoreCollections.TEST_TRANSLATION_QUESTIONS
+    private var cemCategoriesCollection = FirestoreCollections.TEST_CEM_CATEGORIES
+    private var cemQuestionsCollection = FirestoreCollections.TEST_CEM_QUESTIONS
 
     init {
         setDatabaseCollections(databaseManager.getDatabase())
@@ -191,6 +195,62 @@ class FirestoreService @Inject constructor(
     override suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit> =
         deleteFirestoreDocument(questionId.toString(), translationQuestionsCollection)
 
+    override fun getCemCategories(): Flow<Response<List<CemCategoryDTO>>> = flow {
+        emit(Response.Loading)
+        val categories = getFirestoreData(cemCategoriesCollection)?.toObjects(CemCategoryDTO::class.java) ?: emptyList()
+        emit(Response.Success(categories))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedCemCategories(): Flow<List<CemCategoryDTO>> = callbackFlow {
+        val listener = firestore.collection(cemCategoriesCollection)
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                value?.let { trySend(it.toObjects(CemCategoryDTO::class.java)) }
+            }
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit> =
+        addFirestoreDocument(category.id.toString(), category, cemCategoriesCollection)
+
+    override suspend fun updateCemCategory(category: CemCategoryDTO): Response<Unit> =
+        modifyFirestoreDocument(category.id.toString(), category, cemCategoriesCollection)
+
+    override suspend fun deleteCemCategory(categoryId: Long): Response<Unit> =
+        deleteFirestoreDocument(categoryId.toString(), cemCategoriesCollection)
+
+    override fun getCemQuestions(): Flow<Response<List<CemQuestionDTO>>> = flow {
+        emit(Response.Loading)
+        val questions = getFirestoreData(cemQuestionsCollection)?.toObjects(CemQuestionDTO::class.java) ?: emptyList()
+        emit(Response.Success(questions))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedCemQuestions(): Flow<List<CemQuestionDTO>> = callbackFlow {
+        val listener = firestore.collection(cemQuestionsCollection)
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                value?.let { trySend(it.toObjects(CemQuestionDTO::class.java)) }
+            }
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit> =
+        addFirestoreDocument(question.id.toString(), question, cemQuestionsCollection)
+
+    override suspend fun updateCemQuestion(question: CemQuestionDTO): Response<Unit> =
+        modifyFirestoreDocument(question.id.toString(), question, cemQuestionsCollection)
+
+    override suspend fun deleteCemQuestion(questionId: Long): Response<Unit> =
+        deleteFirestoreDocument(questionId.toString(), cemQuestionsCollection)
+
     private val messagesLimit = 15L
     private var lastObservedMessage: MessageDTO? = null
 
@@ -313,18 +373,24 @@ class FirestoreService @Inject constructor(
                 quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
                 translationQuestionsCollection = FirestoreCollections.TEST_TRANSLATION_QUESTIONS
+                cemCategoriesCollection = FirestoreCollections.TEST_CEM_CATEGORIES
+                cemQuestionsCollection = FirestoreCollections.TEST_CEM_QUESTIONS
             }
             Database.DEVELOPMENT -> {
                 quizCategoriesCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_CATEGORIES
                 quizQuestionsCollection = FirestoreCollections.DEVELOPMENT_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.DEVELOPMENT_SWIPE_QUESTIONS
                 translationQuestionsCollection = FirestoreCollections.DEVELOPMENT_TRANSLATION_QUESTIONS
+                cemCategoriesCollection = FirestoreCollections.DEVELOPMENT_CEM_CATEGORIES
+                cemQuestionsCollection = FirestoreCollections.DEVELOPMENT_CEM_QUESTIONS
             }
             Database.PRODUCTION -> {
                 quizCategoriesCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_CATEGORIES
                 quizQuestionsCollection = FirestoreCollections.PRODUCTION_QUIZ_MODE_QUESTIONS
                 swipeQuestionsCollection = FirestoreCollections.PRODUCTION_SWIPE_QUESTIONS
                 translationQuestionsCollection = FirestoreCollections.PRODUCTION_TRANSLATION_QUESTIONS
+                cemCategoriesCollection = FirestoreCollections.PRODUCTION_CEM_CATEGORIES
+                cemQuestionsCollection = FirestoreCollections.PRODUCTION_CEM_QUESTIONS
             }
         }
     }

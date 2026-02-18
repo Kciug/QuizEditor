@@ -7,6 +7,7 @@ import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.QuizQuestionDetailsInteractor
+import com.rafalskrzypczyk.quiz_mode.domain.mappers.toSimplePresentation
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.AnswerUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation

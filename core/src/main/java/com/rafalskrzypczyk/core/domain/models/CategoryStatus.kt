@@ -1,8 +1,8 @@
-package com.rafalskrzypczyk.quiz_mode.domain.models
+package com.rafalskrzypczyk.core.domain.models
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
-import com.rafalskrzypczyk.quiz_mode.R
+import com.rafalskrzypczyk.core.R
 
 enum class CategoryStatus(@StringRes val title: Int, @ColorRes val color: Int) {
     DRAFT(R.string.status_draft, R.color.status_draft),

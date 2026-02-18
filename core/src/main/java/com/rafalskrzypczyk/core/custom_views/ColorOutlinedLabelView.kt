@@ -1,4 +1,4 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.custom_views
+package com.rafalskrzypczyk.core.custom_views
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.utils.UITextHelpers
-import com.rafalskrzypczyk.quiz_mode.R
 
 class ColorOutlinedLabelView @JvmOverloads constructor(
     context: Context,
@@ -27,12 +27,12 @@ class ColorOutlinedLabelView @JvmOverloads constructor(
 
         colorIndicatorBackground = colorIndicator.background as GradientDrawable
 
-        setColorAndText(context.getColor(com.rafalskrzypczyk.core.R.color.red), context.getString(com.rafalskrzypczyk.core.R.string.text_placeholder_short))
+        setColorAndText(context.getColor(R.color.red), context.getString(R.string.text_placeholder_short))
     }
 
     fun setColorAndText(color: Int, text: String){
         colorIndicatorBackground.setColor(color)
-        statusText.setTextColor(UITextHelpers.Companion.getContrastingTextColor(color))
+        statusText.setTextColor(UITextHelpers.getContrastingTextColor(color))
 
         statusText.text = text
     }

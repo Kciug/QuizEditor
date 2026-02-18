@@ -41,7 +41,7 @@
         android:text="@string/text_placeholder_long"
         android:textSize="14sp"
         android:visibility="gone"
-        tools:visivility="visible"
+        tools:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/label_category_title"
         app:layout_constraintTop_toBottomOf="@id/label_category_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,37 +57,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label_category_description" />
 
-    <TextView
-        android:id="@+id/category_questions_amount"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/container_category_stats"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="start|center"
-        android:text="@string/text_placeholder_number"
-        android:textColor="@color/primary"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/label_category_title"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"/>
+        app:layout_constraintEnd_toStartOf="@id/category_status">
 
-    <TextView
-        android:id="@+id/label_category_questions_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="5dp"
-        android:text="@string/label_category_questions_amount_singular"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/category_questions_amount"
-        app:layout_constraintStart_toEndOf="@id/category_questions_amount"
-        app:layout_constraintTop_toTopOf="@+id/category_questions_amount" />
+        <TextView
+            android:id="@+id/category_questions_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_placeholder_number"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-    <com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
+        <TextView
+            android:id="@+id/label_category_questions_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:text="@string/label_category_questions_amount_singular"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/label_stats_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="6dp"
+            android:text="|"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/category_subcategories_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_placeholder_number"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/label_category_subcategories_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:text="@string/label_category_subcategories_amount_many"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </LinearLayout>
+
+    <com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
         android:id="@+id/category_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/category_questions_amount"
-        app:layout_constraintTop_toTopOf="@+id/category_questions_amount"
+        app:layout_constraintBottom_toBottomOf="@+id/container_category_stats"
+        app:layout_constraintTop_toTopOf="@+id/container_category_stats"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="7dp" />
 

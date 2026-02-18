@@ -4,6 +4,7 @@
     <!-- icon descriptions -->
     <string name="ic_desc_app_icon">App Icon</string>
     <string name="ic_desc_back">Cofnij</string>
+    <string name="content_desc_category_color">Kolor kategorii</string>
     <string name="ic_desc_close">Zamknij</string>
     <string name="ic_desc_edit">Edytuj</string>
     <string name="ic_desc_add">Dodaj nowy</string>
@@ -42,6 +43,33 @@
 
     <string name="elements_count_label_singular">element</string>
     <string name="elements_count_label_few">elementy</string>
-    <string name="elements_count_label_many">elementów</string>
-    <string name="ic_desc_notification_icon">Powiadomienie</string>
-</resources>
+        <string name="elements_count_label_many">elementów</string>
+    
+        <string name="label_category_questions_amount_singular">pytanie</string>
+        <string name="label_category_questions_amount_few">pytania</string>
+                <string name="label_category_questions_amount_many">pytań</string>
+            
+                <string name="label_category_subcategories_amount_singular">podkategoria</string>
+                <string name="label_category_subcategories_amount_few">podkategorie</string>
+                <string name="label_category_subcategories_amount_many">podkategorii</string>
+            
+                <string name="label_answers_count_one">odpowiedź</string>
+            
+            <string name="label_answers_count_many">odpowiedzi</string>
+            <string name="ic_desc_validation_ok">Status walidacji</string>
+            <string name="question_validation_ok">OK</string>
+            <string name="question_validation_missing_answers">Brak odpowiedzi</string>
+            <string name="question_validation_no_correct_answer">Brak poprawnej odpowiedzi</string>
+        
+            <string name="ic_desc_notification_icon">Powiadomienie</string>
+        
+            <string name="status_draft">SZKIC</string>
+        <string name="status_in_progress">W TRAKCIE</string>
+        <string name="status_done">GOTOWE</string>
+        <string name="status_approved">ZATWIERDZONE</string>
+        <string name="status_need_rework">WYMAGA ZMIAN</string>
+    
+        <string name="drawer_menu_title_cem">Tryb CEM</string>
+        <string name="bottom_bar_title_hierarchy">Hierarchia</string>
+    </resources>
+    

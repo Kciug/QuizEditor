@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/auth" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/cem_mode" />
             <option value="$PROJECT_DIR$/chat" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/database_management" />

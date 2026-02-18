@@ -2,8 +2,8 @@ package com.rafalskrzypczyk.quiz_mode.presentation.category_details
 
 import android.os.Bundle
 import com.rafalskrzypczyk.core.base.BaseContract
+import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 
 interface QuizCategoryDetailsContract {
     interface View : BaseContract.View {

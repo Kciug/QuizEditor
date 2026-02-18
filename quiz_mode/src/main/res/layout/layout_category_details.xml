@@ -77,7 +77,7 @@
 <!--        app:layout_constraintEnd_toEndOf="parent"-->
 <!--        app:layout_constraintTop_toTopOf="@+id/label_color" />-->
 
-    <com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
+    <com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
         android:id="@+id/color_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider3" />
 
-    <com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
+    <com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
         android:id="@+id/indicator_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

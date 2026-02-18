@@ -31,5 +31,12 @@
     <color name="bubble_background">#D9BABABA</color>
 
     <color name="color_picker_select_color">#A0A0A0</color>
-    <color name="colorable_default_color">#2196F3</color>
-</resources>
+        <color name="colorable_default_color">#2196F3</color>
+    
+        <color name="status_draft">#FFFB21</color>
+        <color name="status_in_progress">#5B62FF</color>
+        <color name="status_done">#018C18</color>
+        <color name="status_approved">#E700D1</color>
+        <color name="status_need_rework">#FF0000</color>
+    </resources>
+    

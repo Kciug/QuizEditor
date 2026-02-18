@@ -2,9 +2,9 @@ package com.rafalskrzypczyk.quiz_mode.domain
 
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
+import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

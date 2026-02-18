@@ -1,7 +1,8 @@
 package com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models
 
+import com.rafalskrzypczyk.core.domain.models.QuestionValidationMessage
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
 
 data class QuestionUIModel (
     val id: Long,

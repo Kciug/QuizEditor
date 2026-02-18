@@ -1,11 +1,7 @@
-package com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models
+package com.rafalskrzypczyk.quiz_mode.domain.mappers
 
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-
-data class SimpleCategoryUIModel(
-    val name: String,
-    val color: Long
-)
 
 fun Category.toSimplePresentation() : SimpleCategoryUIModel {
     return SimpleCategoryUIModel(

@@ -4,8 +4,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
-import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 
 class CategoriesPreviewAdapter : ListAdapter<SimpleCategoryUIModel, CategoriesPreviewAdapter.ViewHolder>(
     GenericDiffCallback(

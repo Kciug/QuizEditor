@@ -3,7 +3,7 @@ package com.rafalskrzypczyk.quiz_mode.presentation.questions_list
 import android.os.Bundle
 import com.rafalskrzypczyk.core.base.BaseContract
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionUIModel
 
 interface QuizQuestionsContract{

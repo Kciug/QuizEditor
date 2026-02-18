@@ -10,7 +10,8 @@ import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Question
-import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.quiz_mode.domain.mappers.toSimplePresentation
+import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.quiz_mode.presentation.question_details.ui_models.toSimplePresentation
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter
 import com.rafalskrzypczyk.quiz_mode.presentation.questions_list.ui_models.QuestionFilter.Companion.toFilterOption
