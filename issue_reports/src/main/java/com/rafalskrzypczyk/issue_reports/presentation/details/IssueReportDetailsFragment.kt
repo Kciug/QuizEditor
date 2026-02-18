@@ -24,12 +24,17 @@ class IssueReportDetailsFragment :
     override fun onViewBound() {
         super.onViewBound()
 
-        binding.buttonOpenQuestion.setOnClickListener {
-            presenter.onOpenQuestionClicked()
-        }
-        
-        binding.buttonCloseReport.setOnClickListener {
-            showCloseReportDialog()
+        with(binding) {
+            sectionNavbar.buttonClose.setOnClickListener { dismiss() }
+            sectionNavbar.buttonSave.makeGone()
+
+            buttonOpenQuestion.setOnClickListener {
+                presenter.onOpenQuestionClicked()
+            }
+            
+            buttonCloseReport.setOnClickListener {
+                showCloseReportDialog()
+            }
         }
     }
 
@@ -40,7 +45,7 @@ class IssueReportDetailsFragment :
     }
 
     override fun displayReportDetails(report: IssueReportUIModel) {
-        binding.loadingDetails.makeGone()
+        binding.loading.root.makeGone()
         binding.contentGroup.makeVisible()
         with(binding) {
             textDescription.text = report.description
@@ -88,7 +93,7 @@ class IssueReportDetailsFragment :
     }
 
     override fun displayLoading() {
-        binding.loadingDetails.makeVisible()
+        binding.loading.root.makeVisible()
         binding.contentGroup.makeGone()
     }
 
