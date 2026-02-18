@@ -5,10 +5,13 @@ import com.rafalskrzypczyk.core.base.Identifiable
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toCategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toTitleString
+import com.rafalskrzypczyk.core.extensions.formatToDataDate
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
 import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class CemCategory(
     override val id: Long,
@@ -21,8 +24,20 @@ data class CemCategory(
     var color: Int,
     var isFree: Boolean,
     val creationDate: Date,
-    val modifiedDate: String,
+    var modifiedDate: String,
+    val productionTransferDate: Date?
 ) : Identifiable {
+    val isUpToDate: Boolean
+        get() {
+            if (productionTransferDate == null) return false
+            val parsedModifiedDate = try {
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(modifiedDate)
+            } catch (e: Exception) {
+                null
+            } ?: return false
+            return productionTransferDate.after(parsedModifiedDate) || productionTransferDate == parsedModifiedDate
+        }
+
     companion object {
         const val ROOT_ID = -1L
 
@@ -37,7 +52,8 @@ data class CemCategory(
             color = color,
             isFree = false,
             creationDate = Date(),
-            modifiedDate = Date().toString()
+            modifiedDate = Date().formatToDataDate(),
+            productionTransferDate = null
         )
     }
 }
@@ -53,7 +69,8 @@ fun CemCategoryDTO.toDomain() = CemCategory(
     color = color?.toAndroidColor() ?: Color.WHITE,
     isFree = free,
     creationDate = dateCreated,
-    modifiedDate = dateModified
+    modifiedDate = dateModified,
+    productionTransferDate = productionTransferDate
 )
 
 fun CemCategory.toDTO() = CemCategoryDTO(
@@ -69,7 +86,8 @@ fun CemCategory.toDTO() = CemCategoryDTO(
     dateCreated = creationDate,
     questionsCount = linkedQuestions.count(),
     subcategoriesCount = linkedSubcategories.count(),
-    dateModified = Date().toString()
+    dateModified = modifiedDate,
+    productionTransferDate = productionTransferDate
 )
 
 private fun CategoryColorRGB.toAndroidColor(): Int {

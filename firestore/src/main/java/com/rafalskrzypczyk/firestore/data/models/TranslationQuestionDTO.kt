@@ -7,5 +7,6 @@ data class TranslationQuestionDTO(
     val phrase: String = "",
     val translations: List<String> = emptyList(),
     val dateCreated: Date = Date(),
-    val dateModified: Date = Date()
+    val dateModified: Date = Date(),
+    val productionTransferDate: Date? = null
 )

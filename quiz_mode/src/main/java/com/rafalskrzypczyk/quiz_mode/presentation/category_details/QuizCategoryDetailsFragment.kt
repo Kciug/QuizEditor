@@ -19,6 +19,7 @@ import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
+import com.rafalskrzypczyk.migration.presentation.migration_details.MigrationDetailsBottomSheetFragment
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.databinding.FragmentQuizCategoryDetailsBinding
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
@@ -51,6 +52,7 @@ class QuizCategoryDetailsFragment :
             sectionNavbar.buttonSave.setOnClickListener {
                 presenter.createNewCategory(binding.sectionCategoryDetails.categoryNameField.text.toString())
             }
+            sectionNavbar.buttonMigrate.setOnClickListener { presenter.onMigrateClicked() }
             sectionCategoryDetails.buttonChangeColor.setOnClickListener { presenter.onChangeColor() }
             sectionCategoryDetails.buttonChangeStatus.setOnClickListener { presenter.onChangeCategoryStatus() }
             binding.sectionCategoryDetails.switchIsFree.setOnCheckedChangeListener { _, isChecked ->
@@ -165,7 +167,7 @@ class QuizCategoryDetailsFragment :
         val colorPickerFragment = ColorPickerDialogFragment().apply { arguments = bundle }
         colorPickerFragment.show(parentFragmentManager, "ColorPickerDialog")
 
-        setFragmentResultListener("selectedColor") { requestKey, bundle ->
+        setFragmentResultListener("selectedColor") { _, bundle ->
             val result = bundle.getInt("selectedColor")
             presenter.updateCategoryColor(result)
         }
@@ -173,6 +175,20 @@ class QuizCategoryDetailsFragment :
 
     override fun displayIsFree(isFree: Boolean) {
         binding.sectionCategoryDetails.switchIsFree.isChecked = isFree
+    }
+
+    override fun displayMigrationButton(isVisible: Boolean) {
+        if (isVisible) binding.sectionNavbar.buttonMigrate.makeVisible()
+        else binding.sectionNavbar.buttonMigrate.makeGone()
+    }
+
+    override fun openMigrationSheet(categoryId: Long) {
+        val migrationSheet = MigrationDetailsBottomSheetFragment()
+        migrationSheet.arguments = Bundle().apply {
+            putString("mode", "main")
+            putLong("categoryId", categoryId)
+        }
+        migrationSheet.show(parentFragmentManager, migrationSheet.tag)
     }
 
     override fun displayQuestionsPicker() {

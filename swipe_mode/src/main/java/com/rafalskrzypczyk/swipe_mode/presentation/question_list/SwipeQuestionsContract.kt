@@ -11,8 +11,10 @@ interface SwipeQuestionsContract {
         fun displayFilterMenu(filterOptions: List<SelectableMenuItem>)
         fun displayNoElementsView()
         fun displayElementsCount(count: Int)
+        fun openMigrationSheet()
     }
     interface Presenter : BaseContract.Presenter<View> {
+        fun onMigrateClicked()
         fun removeCategory(questionId: Long)
         fun searchBy(query: String)
         fun onSortMenuOpened()

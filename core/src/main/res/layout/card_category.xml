@@ -96,7 +96,8 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/category_subcategories_amount"

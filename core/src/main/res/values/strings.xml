@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">QuizEditor</string>
 
     <!-- icon descriptions -->
@@ -99,6 +99,33 @@
     <string name="hint_answer">Dodaj odpowiedź</string>
 
     <string name="drawer_menu_title_cem">Tryb CEM</string>
-        <string name="bottom_bar_title_hierarchy">Hierarchia</string>
-    </resources>
-    
+            <string name="bottom_bar_title_hierarchy">Hierarchia</string>
+        
+            <!-- Migration System -->
+            <string name="title_migration">Migracja danych</string>
+            <string name="section_migration_details">Szczegóły migracji</string>
+            <string name="text_migrate_from">Migruj z:</string>
+            <string name="picker_migrate_to">Migruj do:</string>
+            <string name="button_migrate">MIGRUJ</string>
+            <string name="button_cancel">ANULUJ</string>
+            <string name="section_selected_category">Wybrany element</string>
+            <string name="section_migration_history">Historia migracji</string>
+            <string name="text_no_migration_history">Brak historii migracji</string>
+            <string name="text_performed_by">Wykonane przez:</string>
+            <string name="text_items_count">Liczba elementów:</string>
+            <string name="text_questions_count">Pytania:</string>
+            <string name="text_subcategories_count">Subkategorie:</string>
+            <string name="button_migrate_all">PRZENIEŚ WSZYSTKO</string>
+            <string name="alert_title_migration_declined">Migracja odrzucona</string>
+            <string name="message_migration_declined">Nie masz uprawnień do wykonania migracji.</string>
+            <string name="guidance_failed_to_migrate_category">Migracja kategorii nie powiodła się. Spróbuj ponownie.</string>
+            <string name="guidance_failed_to_migrate_swipe">Migracja pytań Swipe nie powiodła się. Spróbuj ponownie.</string>
+            <string name="guidance_failed_to_migrate_translations">Migracja tłumaczeń nie powiodła się. Spróbuj ponownie.</string>
+                <string name="guidance_failed_to_migrate_cem_category">Migracja kategorii CEM nie powiodła się. Spróbuj ponownie.</string>
+            
+                <!-- Production Sync -->
+                <string name="label_last_production_migration">Ostatnia migracja na Produkcję:</string>
+                <string name="status_up_to_date">AKTUALNA</string>
+                <string name="status_needs_update">WYMAGA AKTUALIZACJI</string>
+                <string name="text_never">Nigdy</string>
+            </resources>

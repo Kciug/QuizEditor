@@ -5,10 +5,13 @@ import com.rafalskrzypczyk.core.base.Identifiable
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toCategoryStatus
 import com.rafalskrzypczyk.core.domain.models.toTitleString
+import com.rafalskrzypczyk.core.extensions.formatToDataDate
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class Category(
     override val id: Long,
@@ -20,9 +23,20 @@ data class Category(
     var isFree: Boolean,
     val creationDate: Date,
     val createdBy: String,
-    val modifiedDate: String,
+    var modifiedDate: String,
     val productionTransferDate: Date?
 ) : Identifiable {
+    val isUpToDate: Boolean
+        get() {
+            if (productionTransferDate == null) return false
+            val parsedModifiedDate = try {
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(modifiedDate)
+            } catch (e: Exception) {
+                null
+            } ?: return false
+            return productionTransferDate.after(parsedModifiedDate) || productionTransferDate == parsedModifiedDate
+        }
+
     companion object {
         fun new(title: String, color: Int) = Category(
             id = Long.generateId(),
@@ -34,7 +48,7 @@ data class Category(
             isFree = false,
             creationDate = Date(),
             createdBy = "Random User",
-            modifiedDate = Date().toString(),
+            modifiedDate = Date().formatToDataDate(),
             productionTransferDate = null
         )
     }
@@ -64,7 +78,7 @@ fun Category.toDTO() = CategoryDTO(
     free = isFree,
     dateCreated = creationDate,
     questionCount = linkedQuestions.count(),
-    dateModified = Date().toString(),
+    dateModified = modifiedDate,
     productionTransferDate = productionTransferDate
 )
 

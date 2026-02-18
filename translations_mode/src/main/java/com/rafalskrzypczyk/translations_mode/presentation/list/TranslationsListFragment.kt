@@ -16,6 +16,7 @@ import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
+import com.rafalskrzypczyk.migration.presentation.migration_details.MigrationDetailsBottomSheetFragment
 import com.rafalskrzypczyk.translations_mode.R
 import com.rafalskrzypczyk.translations_mode.presentation.list.ui_models.TranslationQuestionUIModel
 import com.rafalskrzypczyk.translations_mode.presentation.question_details.TranslationQuestionDetailsFragment
@@ -26,6 +27,12 @@ class TranslationsListFragment :
     BaseFragment<FragmentListBinding, TranslationsListContract.View, TranslationsListContract.Presenter>(
         FragmentListBinding::inflate
     ), TranslationsListContract.View {
+
+    override fun openMigrationSheet() {
+        val migrationSheet = MigrationDetailsBottomSheetFragment()
+        migrationSheet.arguments = Bundle().apply { putString("mode", "translations") }
+        migrationSheet.show(parentFragmentManager, migrationSheet.tag)
+    }
 
     private lateinit var adapter: TranslationsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
@@ -149,6 +156,10 @@ class TranslationsListFragment :
             }
             R.id.action_filter -> {
                 presenter.onFilterMenuOpened()
+                true
+            }
+            R.id.action_migrate -> {
+                presenter.onMigrateClicked()
                 true
             }
             R.id.action_add_new -> {

@@ -3,11 +3,13 @@ package com.rafalskrzypczyk.quiz_mode.domain
 import com.rafalskrzypczyk.core.R
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
+import com.rafalskrzypczyk.core.extensions.formatToDataDate
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
 import com.rafalskrzypczyk.quiz_mode.domain.models.Checkable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Date
 import javax.inject.Inject
 
 class QuizCategoryDetailsInteractor @Inject constructor(
@@ -53,24 +55,39 @@ class QuizCategoryDetailsInteractor @Inject constructor(
     }
 
     fun updateCategoryTitle(title: String) {
-        if(title.isEmpty()) categoryReference?.title = categoryInitialState.title
-        else categoryReference?.title = title
+        val newTitle = if (title.isEmpty()) categoryInitialState.title else title
+        if (categoryReference?.title == newTitle) return
+        
+        categoryReference?.title = newTitle
+        categoryReference?.modifiedDate = Date().formatToDataDate()
     }
 
     fun updateCategoryDescription(description: String) {
+        if (categoryReference?.description == description) return
+        
         categoryReference?.description = description
+        categoryReference?.modifiedDate = Date().formatToDataDate()
     }
 
     fun updateColor(color: Int) {
+        if (categoryReference?.color == color) return
+        
         categoryReference?.color = color
+        categoryReference?.modifiedDate = Date().formatToDataDate()
     }
 
     fun updateStatus(status: CategoryStatus) {
+        if (categoryReference?.status == status) return
+        
         categoryReference?.status = status
+        categoryReference?.modifiedDate = Date().formatToDataDate()
     }
 
     fun updateIsFree(isFree: Boolean) {
+        if (categoryReference?.isFree == isFree) return
+        
         categoryReference?.isFree = isFree
+        categoryReference?.modifiedDate = Date().formatToDataDate()
     }
 
     fun saveCachedCategory() {

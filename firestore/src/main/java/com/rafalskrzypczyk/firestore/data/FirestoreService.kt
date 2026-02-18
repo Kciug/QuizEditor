@@ -19,6 +19,7 @@ import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
+import com.rafalskrzypczyk.firestore.data.models.MigrationRecordDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.TranslationQuestionDTO
@@ -39,6 +40,7 @@ class FirestoreService @Inject constructor(
 ) : FirestoreApi {
     private var userDataCollection = FirestoreCollections.USER_DATA_COLLECTION
     private var messagesCollection = FirestoreCollections.MESSAGES
+    private var migrationHistoryCollection = FirestoreCollections.MIGRATION_HISTORY
     private var quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
     private var quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
     private var swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
@@ -82,6 +84,118 @@ class FirestoreService @Inject constructor(
             scenariosModeStatistics = 0
         )))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getMigrationHistory(mode: String): Flow<Response<List<MigrationRecordDTO>>> = flow {
+        emit(Response.Loading)
+        val history = firestore.collection(migrationHistoryCollection)
+            .whereEqualTo("mode", mode)
+            .get(Source.SERVER)
+            .await()
+            .toObjects(MigrationRecordDTO::class.java)
+            .sortedByDescending { it.date }
+        emit(Response.Success(history))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override suspend fun addMigrationRecord(record: MigrationRecordDTO): Response<Unit> =
+        addFirestoreDocument(record.id, record, migrationHistoryCollection)
+
+    override suspend fun getItemsFromCollection(collectionName: String): Response<List<Any>> {
+        return try {
+            val result = firestore.collection(collectionName).get(Source.SERVER).await()
+            Response.Success(result.documents.mapNotNull { it.data })
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    override suspend fun <T : Any> addItemToCollection(id: String, data: T, collectionName: String): Response<Unit> =
+        addFirestoreDocument(id, data, collectionName)
+
+    override suspend fun updateItemFieldInCollection(
+        id: String,
+        fieldName: String,
+        value: Any?,
+        collectionName: String
+    ): Response<Unit> {
+        return try {
+            val finalValue = if (value is java.util.Date) com.google.firebase.Timestamp(value) else value
+            firestore.collection(collectionName)
+                .document(id)
+                .update(fieldName, finalValue)
+                .await()
+            Response.Success(Unit)
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    override suspend fun getQuizCategoryFrom(id: String, collectionName: String): Response<CategoryDTO> =
+        fetchDocument(id, collectionName, CategoryDTO::class.java)
+
+    override suspend fun getCemCategoryFrom(id: String, collectionName: String): Response<CemCategoryDTO> =
+        fetchDocument(id, collectionName, CemCategoryDTO::class.java)
+
+    private suspend fun <T> fetchDocument(id: String, collectionName: String, clazz: Class<T>): Response<T> {
+        return try {
+            val result = firestore.collection(collectionName).document(id).get(Source.SERVER).await().toObject(clazz)
+            result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_no_data))
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
+
+    override fun getCollectionNameForMode(mode: String, database: Database, isQuestions: Boolean): String {
+        return when (database) {
+            Database.TEST -> when (mode) {
+                "main" -> if (isQuestions) FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS else FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
+                "swipe" -> FirestoreCollections.TEST_SWIPE_QUESTIONS
+                "translations" -> FirestoreCollections.TEST_TRANSLATION_QUESTIONS
+                "cem" -> if (isQuestions) FirestoreCollections.TEST_CEM_QUESTIONS else FirestoreCollections.TEST_CEM_CATEGORIES
+                else -> ""
+            }
+            Database.DEVELOPMENT -> when (mode) {
+                "main" -> if (isQuestions) FirestoreCollections.DEVELOPMENT_QUIZ_MODE_QUESTIONS else FirestoreCollections.DEVELOPMENT_QUIZ_MODE_CATEGORIES
+                "swipe" -> FirestoreCollections.DEVELOPMENT_SWIPE_QUESTIONS
+                "translations" -> FirestoreCollections.DEVELOPMENT_TRANSLATION_QUESTIONS
+                "cem" -> if (isQuestions) FirestoreCollections.DEVELOPMENT_CEM_QUESTIONS else FirestoreCollections.DEVELOPMENT_CEM_CATEGORIES
+                else -> ""
+            }
+            Database.PRODUCTION -> when (mode) {
+                "main" -> if (isQuestions) FirestoreCollections.PRODUCTION_QUIZ_MODE_QUESTIONS else FirestoreCollections.PRODUCTION_QUIZ_MODE_CATEGORIES
+                "swipe" -> FirestoreCollections.PRODUCTION_SWIPE_QUESTIONS
+                "translations" -> FirestoreCollections.PRODUCTION_TRANSLATION_QUESTIONS
+                "cem" -> if (isQuestions) FirestoreCollections.PRODUCTION_CEM_QUESTIONS else FirestoreCollections.PRODUCTION_CEM_CATEGORIES
+                else -> ""
+            }
+        }
+    }
+
+    override suspend fun getQuizCategoriesFrom(collectionName: String): Response<List<CategoryDTO>> =
+        fetchListFromCollection(collectionName, CategoryDTO::class.java)
+
+    override suspend fun getQuizQuestionsFrom(collectionName: String): Response<List<QuestionDTO>> =
+        fetchListFromCollection(collectionName, QuestionDTO::class.java)
+
+    override suspend fun getSwipeQuestionsFrom(collectionName: String): Response<List<SwipeQuestionDTO>> =
+        fetchListFromCollection(collectionName, SwipeQuestionDTO::class.java)
+
+    override suspend fun getTranslationQuestionsFrom(collectionName: String): Response<List<TranslationQuestionDTO>> =
+        fetchListFromCollection(collectionName, TranslationQuestionDTO::class.java)
+
+    override suspend fun getCemCategoriesFrom(collectionName: String): Response<List<CemCategoryDTO>> =
+        fetchListFromCollection(collectionName, CemCategoryDTO::class.java)
+
+    override suspend fun getCemQuestionsFrom(collectionName: String): Response<List<CemQuestionDTO>> =
+        fetchListFromCollection(collectionName, CemQuestionDTO::class.java)
+
+    private suspend fun <T> fetchListFromCollection(collectionName: String, clazz: Class<T>): Response<List<T>> {
+        return try {
+            val result = firestore.collection(collectionName).get(Source.SERVER).await().toObjects(clazz)
+            Response.Success(result)
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))
+        }
+    }
 
     override fun getQuizCategories(): Flow<Response<List<CategoryDTO>>> = flow {
         emit(Response.Loading)
@@ -354,11 +468,11 @@ class FirestoreService @Inject constructor(
     private suspend fun getFirestoreDocument(id: String, collection: String): com.google.firebase.firestore.DocumentSnapshot? {
         return try {
             firestore.collection(collection).document(id).get(Source.CACHE).await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         } ?: try {
             firestore.collection(collection).document(id).get(Source.SERVER).await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

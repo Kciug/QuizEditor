@@ -6,6 +6,8 @@ import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.user.UserRole
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.QuizCategoryDetailsInteractor
@@ -17,11 +19,20 @@ import javax.inject.Inject
 
 class QuizCategoryDetailsPresenter @Inject constructor(
     private val interactor: QuizCategoryDetailsInteractor,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val userManager: UserManager
 ) : BasePresenter<QuizCategoryDetailsContract.View>(), QuizCategoryDetailsContract.Presenter {
     private var isDataLoaded = false
 
     private var initialCategoryTitle: String = ""
+
+    override fun onMigrateClicked() {
+        if (userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN) {
+            view.openMigrationSheet(interactor.getCategoryId())
+        } else {
+            view.displayError(resourceProvider.getString(com.rafalskrzypczyk.core.R.string.message_migration_declined))
+        }
+    }
 
     override fun onViewCreated() {
         super.onViewCreated()
@@ -29,6 +40,9 @@ class QuizCategoryDetailsPresenter @Inject constructor(
     }
 
     override fun getData(bundle: Bundle?) {
+        val isAdmin = userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN
+        view.displayMigrationButton(isAdmin)
+        
         val categoryId = bundle?.getLong("categoryId")
         if (categoryId == null) {
             view.setupNewElementView()
