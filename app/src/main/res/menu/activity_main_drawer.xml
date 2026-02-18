@@ -12,6 +12,10 @@
             android:id="@+id/nav_chat"
             android:icon="@drawable/ic_chat_24"
             android:title="@string/drawer_menu_title_chat" />
+        <item
+            android:id="@+id/nav_issue_reports"
+            android:icon="@drawable/ic_edit_24"
+            android:title="@string/drawer_menu_title_issue_reports" />
         <item android:title="@string/drawer_menu_header_modules">
             <menu>
                 <item

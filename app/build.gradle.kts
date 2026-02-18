@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":swipe_mode"))
     implementation(project(":translations_mode"))
     implementation(project(":cem_mode"))
+    implementation(project(":issue_reports"))
 
     coreKtx()
     ui()

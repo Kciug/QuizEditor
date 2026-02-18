@@ -11,15 +11,19 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import com.rafalskrzypczyk.cem_mode.presentation.question_details.CemQuestionDetailsFragment
 import com.rafalskrzypczyk.chat.domain.ChatMessagesHandler
 import com.rafalskrzypczyk.core.app_bar_handler.ActionBarBuilder
 import com.rafalskrzypczyk.core.base.BaseCompatActivity
 import com.rafalskrzypczyk.core.database_management.DatabaseManager
 import com.rafalskrzypczyk.core.internal_notifications.InAppNotificationManager
 import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
+import com.rafalskrzypczyk.quiz_mode.presentation.question_details.QuizQuestionDetailsFragment
 import com.rafalskrzypczyk.quizeditor.databinding.ActivityMainBinding
 import com.rafalskrzypczyk.quizeditor.drawerManager.DrawerManager
 import com.rafalskrzypczyk.quizeditor.drawerManager.DrawerManagerFactory
+import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsFragment
+import com.rafalskrzypczyk.translations_mode.presentation.question_details.TranslationQuestionDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,6 +70,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             R.id.nav_swipe_quiz_mode,
             R.id.nav_translations_mode,
             R.id.nav_cem_mode,
+            R.id.nav_issue_reports,
         ), binding.drawerLayout)
 
         drawerManager = drawerManagerFactory.create(
@@ -132,6 +137,22 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         destination?.let {
             navController.navigate(it, args)
         }
+    }
+
+    override fun openQuestionDetails(gameMode: String, questionId: Long) {
+        val bundle = Bundle().apply {
+            putLong("questionId", questionId)
+        }
+        
+        val fragment = when(gameMode) {
+            "main" -> QuizQuestionDetailsFragment().apply { arguments = bundle }
+            "swipe" -> SwipeQuestionDetailsFragment().apply { arguments = bundle }
+            "translations" -> TranslationQuestionDetailsFragment().apply { arguments = bundle }
+            "cem" -> CemQuestionDetailsFragment().apply { arguments = bundle }
+            else -> null
+        }
+        
+        fragment?.show(supportFragmentManager, "QuestionDetailsFromReport")
     }
 
     private fun findDestinationIdByTag(tag: String): Int? {

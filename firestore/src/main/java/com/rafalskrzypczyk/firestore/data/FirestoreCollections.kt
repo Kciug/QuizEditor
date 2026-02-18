@@ -26,4 +26,5 @@ object FirestoreCollections {
 
     const val MESSAGES = "messages"
     const val MIGRATION_HISTORY = "migration_history"
+    const val ISSUES_REPORTS = "issues_reports"
 }

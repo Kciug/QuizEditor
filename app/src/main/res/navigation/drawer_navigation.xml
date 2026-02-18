@@ -9,37 +9,77 @@
         android:id="@+id/nav_home"
         android:name="com.rafalskrzypczyk.home.presentation.HomeScreenFragment"
         android:label="@string/drawer_menu_title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_home"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_quiz_mode"
         android:name="com.rafalskrzypczyk.quiz_mode.presentation.QuizModeFragment"
         android:label="@string/drawer_menu_title_quiz"
-        tools:layout="@layout/fragment_quiz_mode" />
+        tools:layout="@layout/fragment_quiz_mode">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_quiz_mode"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_swipe_quiz_mode"
         android:name="com.rafalskrzypczyk.swipe_mode.presentation.question_list.SwipeQuestionsFragment"
         android:label="@string/drawer_menu_title_swipe_quiz"
-        tools:layout="@layout/fragment_swipe_mode" />
+        tools:layout="@layout/fragment_swipe_mode">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_swipe_quiz_mode"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_cem_mode"
         android:name="com.rafalskrzypczyk.cem_mode.presentation.CemModeFragment"
         android:label="@string/drawer_menu_title_cem"
-        tools:layout="@layout/fragment_cem_mode" />
-
+        tools:layout="@layout/fragment_cem_mode">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_cem_mode"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_translations_mode"
         android:name="com.rafalskrzypczyk.translations_mode.presentation.list.TranslationsListFragment"
         android:label="@string/drawer_menu_title_translations_mode"
-        tools:layout="@layout/fragment_translations_mode" />
+        tools:layout="@layout/fragment_translations_mode">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_translations_mode"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_chat"
         android:name="com.rafalskrzypczyk.chat.presentation.ChatFragment"
         android:label="@string/drawer_menu_title_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_chat"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_issue_reports"
+        android:name="com.rafalskrzypczyk.issue_reports.presentation.list.IssueReportsFragment"
+        android:label="@string/drawer_menu_title_issue_reports"
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="nav_tag"
+            android:defaultValue="nav_issue_reports"
+            app:argType="string" />
+    </fragment>
 
 </navigation>
