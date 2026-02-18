@@ -17,6 +17,8 @@ interface QuizCategoryDetailsContract {
         fun displayCategoryStatusMenu(options: List<SelectableMenuItem>)
         fun displayColorPicker(currentColor: Int)
         fun displayIsFree(isFree: Boolean)
+        fun displayMigrationButton(isVisible: Boolean)
+        fun openMigrationSheet(categoryId: Long)
         fun displayQuestionsPicker()
         fun displayNewQuestionSheet(parentCategoryId: Long)
         fun displayQuestionsList(categoryId: Long, categoryTitle: String, categoryColor: Long)
@@ -24,6 +26,7 @@ interface QuizCategoryDetailsContract {
         fun displayContent()
     }
     interface Presenter : BaseContract.Presenter<View> {
+        fun onMigrateClicked()
         fun getData(bundle: Bundle?)
         fun createNewCategory(categoryTitle: String)
         fun updateCategoryTitle(categoryTitle: String)

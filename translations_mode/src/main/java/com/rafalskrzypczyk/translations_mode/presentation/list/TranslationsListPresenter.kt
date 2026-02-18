@@ -6,6 +6,8 @@ import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.core.user.UserRole
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.translations_mode.domain.TranslationQuestion
 import com.rafalskrzypczyk.translations_mode.domain.TranslationsRepository
 import com.rafalskrzypczyk.translations_mode.presentation.list.ui_models.TranslationQuestionsFilters
@@ -25,13 +27,22 @@ import javax.inject.Inject
 
 class TranslationsListPresenter @Inject constructor(
     private val repository: TranslationsRepository,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val userManager: UserManager
 ) : BasePresenter<TranslationsListContract.View>(), TranslationsListContract.Presenter {
     private val questionsData = MutableStateFlow<List<TranslationQuestion>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<TranslationQuestionsSort.SortOptions>(TranslationQuestionsSort.defaultSortOption)
     private val sortType = MutableStateFlow<TranslationQuestionsSort.SortTypes>(TranslationQuestionsSort.defaultSortType)
     private val filterType = MutableStateFlow<TranslationQuestionsFilters>(TranslationQuestionsFilters.defaultFilter)
+
+    override fun onMigrateClicked() {
+        if (userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN) {
+            view.openMigrationSheet()
+        } else {
+            view.displayError(resourceProvider.getString(com.rafalskrzypczyk.core.R.string.message_migration_declined))
+        }
+    }
 
     override fun onViewCreated() {
         super.onViewCreated()

@@ -9,6 +9,8 @@ import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class Category(
     override val id: Long,
@@ -23,6 +25,17 @@ data class Category(
     val modifiedDate: String,
     val productionTransferDate: Date?
 ) : Identifiable {
+    val isUpToDate: Boolean
+        get() {
+            if (productionTransferDate == null) return false
+            val parsedModifiedDate = try {
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(modifiedDate)
+            } catch (e: Exception) {
+                null
+            } ?: return false
+            return productionTransferDate.after(parsedModifiedDate) || productionTransferDate == parsedModifiedDate
+        }
+
     companion object {
         fun new(title: String, color: Int) = Category(
             id = Long.generateId(),

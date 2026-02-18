@@ -11,8 +11,10 @@ interface TranslationsListContract {
         fun displayFilterMenu(filterOptions: List<SelectableMenuItem>)
         fun displayNoElementsView()
         fun displayElementsCount(count: Int)
+        fun openMigrationSheet()
     }
     interface Presenter : BaseContract.Presenter<View> {
+        fun onMigrateClicked()
         fun removeQuestion(questionId: Long)
         fun searchBy(query: String)
         fun onSortMenuOpened()

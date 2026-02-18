@@ -5,6 +5,9 @@ import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
+import com.rafalskrzypczyk.core.user.UserRole
+import com.rafalskrzypczyk.core.user_management.UserManager
+import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeModeRepository
 import com.rafalskrzypczyk.swipe_mode.domain.SwipeQuestion
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionsFilters
@@ -24,12 +27,22 @@ import javax.inject.Inject
 
 class SwipeQuestionsPresenter @Inject constructor(
     private val repository: SwipeModeRepository,
+    private val userManager: UserManager,
+    private val resourceProvider: ResourceProvider
 ) : BasePresenter<SwipeQuestionsContract.View>(), SwipeQuestionsContract.Presenter {
     private val questionsData = MutableStateFlow<List<SwipeQuestion>>(emptyList())
     private val searchQuery = MutableStateFlow("")
     private val sortOption = MutableStateFlow<SwipeQuestionsSort.SortOptions>(SwipeQuestionsSort.Companion.defaultSortOption)
     private val sortType = MutableStateFlow<SwipeQuestionsSort.SortTypes>(SwipeQuestionsSort.Companion.defaultSortType)
     private val filterType = MutableStateFlow<SwipeQuestionsFilters>(SwipeQuestionsFilters.Companion.defaultFilter)
+
+    override fun onMigrateClicked() {
+        if (userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN) {
+            view.openMigrationSheet()
+        } else {
+            view.displayError(resourceProvider.getString(com.rafalskrzypczyk.core.R.string.message_migration_declined))
+        }
+    }
 
     override fun onViewCreated() {
         super.onViewCreated()

@@ -8,5 +8,6 @@ data class SwipeQuestionDTO(
     @field:JvmField
     val isCorrect: Boolean = false,
     val dateCreated: Date = Date(),
-    val dateModified: Date = Date()
+    val dateModified: Date = Date(),
+    val productionTransferDate: Date? = null
 )

@@ -38,5 +38,8 @@
         <color name="status_done">#018C18</color>
         <color name="status_approved">#E700D1</color>
         <color name="status_need_rework">#FF0000</color>
-    </resources>
+
+    <color name="orange_primary">#FF9800</color>
+    <color name="divider">#CCCCCC</color>
+</resources>
     

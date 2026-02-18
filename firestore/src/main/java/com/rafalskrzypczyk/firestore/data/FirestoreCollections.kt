@@ -25,4 +25,5 @@ object FirestoreCollections {
     const val PRODUCTION_CEM_CATEGORIES = "production_cem_categories"
 
     const val MESSAGES = "messages"
+    const val MIGRATION_HISTORY = "migration_history"
 }

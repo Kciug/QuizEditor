@@ -16,6 +16,7 @@ import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.sort_filter.SortAndFilterMenuBuilder
+import com.rafalskrzypczyk.migration.presentation.migration_details.MigrationDetailsBottomSheetFragment
 import com.rafalskrzypczyk.swipe_mode.R
 import com.rafalskrzypczyk.swipe_mode.presentation.question_details.SwipeQuestionDetailsFragment
 import com.rafalskrzypczyk.swipe_mode.presentation.question_list.ui_models.SwipeQuestionSimpleUIModel
@@ -26,6 +27,12 @@ class SwipeQuestionsFragment :
     BaseFragment<FragmentListBinding, SwipeQuestionsContract.View, SwipeQuestionsContract.Presenter>(
         FragmentListBinding::inflate
     ), SwipeQuestionsContract.View {
+    
+    override fun openMigrationSheet() {
+        val migrationSheet = MigrationDetailsBottomSheetFragment()
+        migrationSheet.arguments = Bundle().apply { putString("mode", "swipe") }
+        migrationSheet.show(parentFragmentManager, migrationSheet.tag)
+    }
 
     private lateinit var adapter: SwipeQuestionsAdapter
     private lateinit var actionBarMenuBuilder: SortAndFilterMenuBuilder
@@ -152,6 +159,10 @@ class SwipeQuestionsFragment :
             }
             R.id.action_filter -> {
                 presenter.onFilterMenuOpened()
+                true
+            }
+            R.id.action_migrate -> {
+                presenter.onMigrateClicked()
                 true
             }
             R.id.action_add_new -> {

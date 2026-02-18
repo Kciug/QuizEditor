@@ -2,6 +2,8 @@ package com.rafalskrzypczyk.firestore.data.models
 
 import com.google.firebase.firestore.PropertyName
 import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class CemCategoryDTO(
     val id: Long = -1,
@@ -18,4 +20,15 @@ data class CemCategoryDTO(
     val productionTransferDate: Date? = null,
     var questionsCount: Int = 0,
     var subcategoriesCount: Int = 0,
-)
+) {
+    val isUpToDate: Boolean
+        get() {
+            if (productionTransferDate == null) return false
+            val modifiedDate = try {
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateModified)
+            } catch (e: Exception) {
+                null
+            } ?: return false
+            return productionTransferDate.after(modifiedDate) || productionTransferDate == modifiedDate
+        }
+}

@@ -6,6 +6,7 @@ import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
+import com.rafalskrzypczyk.firestore.data.models.MigrationRecordDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.TranslationQuestionDTO
@@ -16,6 +17,21 @@ interface FirestoreApi {
     fun getUserData(userId: String): Flow<Response<UserDataDTO>>
 
     suspend fun getDatabaseStatistics() : Flow<Response<DataStatistics>>
+
+    fun getMigrationHistory(mode: String): Flow<Response<List<MigrationRecordDTO>>>
+    suspend fun addMigrationRecord(record: MigrationRecordDTO): Response<Unit>
+
+    suspend fun getItemsFromCollection(collectionName: String): Response<List<Any>>
+    suspend fun <T : Any> addItemToCollection(id: String, data: T, collectionName: String): Response<Unit>
+
+    fun getCollectionNameForMode(mode: String, database: com.rafalskrzypczyk.core.database_management.Database, isQuestions: Boolean = false): String
+
+    suspend fun getQuizCategoriesFrom(collectionName: String): Response<List<CategoryDTO>>
+    suspend fun getQuizQuestionsFrom(collectionName: String): Response<List<QuestionDTO>>
+    suspend fun getSwipeQuestionsFrom(collectionName: String): Response<List<SwipeQuestionDTO>>
+    suspend fun getTranslationQuestionsFrom(collectionName: String): Response<List<TranslationQuestionDTO>>
+    suspend fun getCemCategoriesFrom(collectionName: String): Response<List<CemCategoryDTO>>
+    suspend fun getCemQuestionsFrom(collectionName: String): Response<List<CemQuestionDTO>>
 
     fun getQuizCategories(): Flow<Response<List<CategoryDTO>>>
     fun getUpdatedQuizCategories(): Flow<List<CategoryDTO>>

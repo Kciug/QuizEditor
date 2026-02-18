@@ -4,12 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel
-import com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
+import com.rafalskrzypczyk.core.presentation.adapters.CategoriesPreviewAdapter
 import com.rafalskrzypczyk.core.R as coreR
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
@@ -30,11 +29,12 @@ class CemQuestionsAdapter(
         val answersCountText: TextView = view.findViewById(coreR.id.answers_count_text)
         val validationIcon: ImageView = view.findViewById(coreR.id.validation_icon)
         val validationMessage: TextView = view.findViewById(coreR.id.validation_message)
-        val categoriesContainer: LinearLayout = view.findViewById(coreR.id.categories_container)
+        val categoryLabelsRecyclerView: RecyclerView = view.findViewById(coreR.id.categories_recycler_view)
         
         val deleteBubbleManager = DeleteBubbleManager(view.context)
 
         fun bind(question: CemQuestionUIModel) {
+            val categoryLabelsAdapter = CategoriesPreviewAdapter()
             questionText.text = question.text
             answersCount.text = question.answersCount.toString()
             answersCountText.text = UITextHelpers.provideDeclinedNumberText(
@@ -49,19 +49,8 @@ class CemQuestionsAdapter(
             validationMessage.text = itemView.context.getString(question.validationMessage.message)
             validationMessage.setTextColor(itemView.context.getColor(question.validationMessage.color))
 
-            categoriesContainer.removeAllViews()
-            question.linkedCategories.forEach { category ->
-                val label = ColorOutlinedLabelView(itemView.context).apply {
-                    setColorAndText(category.color.toInt(), category.name)
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 8, 0)
-                    }
-                }
-                categoriesContainer.addView(label)
-            }
+            categoryLabelsRecyclerView.adapter = categoryLabelsAdapter
+            categoryLabelsAdapter.submitList(question.linkedCategories)
 
             itemView.setOnClickListener { onItemClicked(question) }
             itemView.setOnLongClickListener { view ->

@@ -8,6 +8,8 @@ import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
+import com.rafalskrzypczyk.core.user.UserRole
+import com.rafalskrzypczyk.core.user_management.UserManager
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.core.R as coreR
 import kotlinx.coroutines.flow.collectLatest
@@ -16,18 +18,31 @@ import javax.inject.Inject
 
 class CemCategoryDetailsPresenter @Inject constructor(
     private val repository: CemModeRepository,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val userManager: UserManager
 ) : BasePresenter<CemCategoryDetailsContract.View>(), CemCategoryDetailsContract.Presenter {
 
     private var currentCategory: CemCategory? = null
     private var isDataLoaded = false
     private var parentCategoryID: Long = CemCategory.ROOT_ID
 
+    override fun onMigrateClicked() {
+        val categoryId = currentCategory?.id ?: return
+        if (userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN) {
+            view.openMigrationSheet(categoryId)
+        } else {
+            view.displayError(resourceProvider.getString(com.rafalskrzypczyk.core.R.string.message_migration_declined))
+        }
+    }
+
     override fun onViewCreated() {
         super.onViewCreated()
     }
 
     override fun getData(bundle: Bundle?) {
+        val isAdmin = userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN
+        view.displayMigrationButton(isAdmin)
+        
         val categoryId = bundle?.getLong("categoryId", -1L) ?: -1L
         parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
             bundle.getLong("parentCategoryID")
