@@ -9,6 +9,7 @@ import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.ResourceProvider
+import com.rafalskrzypczyk.core.R as coreR
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +25,12 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun getData(bundle: Bundle?) {
         val categoryId = bundle?.getLong("categoryId", -1L) ?: -1L
-        parentCategoryID = bundle?.getLong("parentCategoryID", CemCategory.ROOT_ID) ?: CemCategory.ROOT_ID
+        // Ensure we check if key exists to avoid default -1L if null was intended
+        parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
+            bundle.getLong("parentCategoryID")
+        } else {
+            CemCategory.ROOT_ID
+        }
 
         if (categoryId == -1L) {
             view.setupNewElementView()
@@ -64,10 +70,19 @@ class CemCategoryDetailsPresenter @Inject constructor(
             view.displayToastMessage("Title cannot be empty")
             return
         }
+        val defaultColor = resourceProvider.getColor(coreR.color.primary)
         val parentId = if (parentCategoryID == CemCategory.ROOT_ID) null else parentCategoryID
-        val newCategory = CemCategory.new(categoryTitle, 0, parentId)
+        val newCategory = CemCategory.new(categoryTitle, defaultColor, parentId)
+        
         presenterScope?.launch {
-            repository.addCategory(newCategory)
+            val result = repository.addCategory(newCategory)
+            if (result is Response.Success) {
+                isDataLoaded = true
+                currentCategory = newCategory
+                updateUI(newCategory)
+            } else if (result is Response.Error) {
+                view.displayError(result.error)
+            }
         }
     }
 
