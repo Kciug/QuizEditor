@@ -143,8 +143,7 @@ class CemCategoryDetailsFragment :
     }
 
     override fun displaySubcategoryCount(subcategoryCount: Int) {
-        // We can add a counter for subcategories too if needed in UI, 
-        // for now just using it for logic or simple log.
+        binding.categorySubcategoriesCount.text = subcategoryCount.toString()
     }
 
     override fun displayCategoryStatusMenu(options: List<SelectableMenuItem>) {

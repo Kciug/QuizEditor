@@ -56,6 +56,19 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/category_subcategories_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/label_subcategories"
+        app:layout_constraintBottom_toBottomOf="@id/label_subcategories"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/primary"
+        android:layout_marginEnd="8dp"
+        android:text="@string/text_placeholder_number"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
     <include
         android:id="@+id/section_subcategories_list"
         android:layout_width="match_parent"
@@ -104,7 +117,7 @@
         android:id="@+id/group_edition_fields"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:constraint_referenced_ids="section_creation_details, label_subcategories, section_subcategories_list, label_questions, category_questions_count,
+        app:constraint_referenced_ids="section_creation_details, label_subcategories, category_subcategories_count, section_subcategories_list, label_questions, category_questions_count,
         section_questions_list"/>
 
     <androidx.constraintlayout.widget.Group
