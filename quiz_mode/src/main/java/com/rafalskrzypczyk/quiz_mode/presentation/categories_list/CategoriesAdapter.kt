@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rafalskrzypczyk.core.custom_views.ColorOutlinedLabelView
 import com.rafalskrzypczyk.core.delete_bubble_manager.DeleteBubbleManager
 import com.rafalskrzypczyk.core.generic.GenericDiffCallback
 import com.rafalskrzypczyk.core.utils.UITextHelpers
+import com.rafalskrzypczyk.core.R as coreR
 import com.rafalskrzypczyk.quiz_mode.R
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.presentation.custom_views.ColorOutlinedLabelView
 
 class CategoriesAdapter(
     private val onCategoryClicked: (Category) -> Unit,
@@ -25,12 +26,12 @@ class CategoriesAdapter(
     }
 )) {
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val categoryTitle: TextView = view.findViewById(R.id.label_category_title)
-        val categoryDescription: TextView = view.findViewById(R.id.label_category_description)
-        val questionCount: TextView = view.findViewById(R.id.category_questions_amount)
-        val questionCountLabel: TextView = view.findViewById(R.id.label_category_questions_amount)
-        val statusIndicator: ColorOutlinedLabelView = view.findViewById(R.id.category_status)
-        val colorPreview: View = view.findViewById(R.id.color_preview)
+        val categoryTitle: TextView = view.findViewById(coreR.id.label_category_title)
+        val categoryDescription: TextView = view.findViewById(coreR.id.label_category_description)
+        val questionCount: TextView = view.findViewById(coreR.id.category_questions_amount)
+        val questionCountLabel: TextView = view.findViewById(coreR.id.label_category_questions_amount)
+        val statusIndicator: ColorOutlinedLabelView = view.findViewById(coreR.id.category_status)
+        val colorPreview: View = view.findViewById(coreR.id.color_preview)
 
         val deleteBubbleManager = DeleteBubbleManager(itemView.context)
 
@@ -65,7 +66,7 @@ class CategoriesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.card_category, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(coreR.layout.card_category, parent, false)
         return CategoryViewHolder(view)
     }
 

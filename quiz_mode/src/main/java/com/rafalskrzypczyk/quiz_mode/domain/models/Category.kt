@@ -2,6 +2,9 @@ package com.rafalskrzypczyk.quiz_mode.domain.models
 
 import android.graphics.Color
 import com.rafalskrzypczyk.core.base.Identifiable
+import com.rafalskrzypczyk.core.domain.models.CategoryStatus
+import com.rafalskrzypczyk.core.domain.models.toCategoryStatus
+import com.rafalskrzypczyk.core.domain.models.toTitleString
 import com.rafalskrzypczyk.core.extensions.generateId
 import com.rafalskrzypczyk.firestore.data.models.CategoryColorRGB
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
@@ -82,4 +85,3 @@ private fun Int.toCategoryColorRGB(): CategoryColorRGB {
         blue = Color.blue(this) / 255f
     )
 }
-

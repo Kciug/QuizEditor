@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_cem_hierarchy"
+        android:icon="@drawable/ic_category_24"
+        android:title="@string/bottom_bar_title_hierarchy" />
+    <item
+        android:id="@+id/navigation_cem_questions"
+        android:icon="@drawable/ic_questions_24"
+        android:title="@string/bottom_bar_title_questions" />
+</menu>

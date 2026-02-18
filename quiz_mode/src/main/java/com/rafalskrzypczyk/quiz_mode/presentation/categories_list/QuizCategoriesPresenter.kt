@@ -3,11 +3,11 @@ package com.rafalskrzypczyk.quiz_mode.presentation.categories_list
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.database_management.DatabaseEventBus
+import com.rafalskrzypczyk.core.domain.models.CategoryStatus
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.Constants
 import com.rafalskrzypczyk.quiz_mode.domain.QuizModeRepository
 import com.rafalskrzypczyk.quiz_mode.domain.models.Category
-import com.rafalskrzypczyk.quiz_mode.domain.models.CategoryStatus
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toFilterOption
 import com.rafalskrzypczyk.quiz_mode.presentation.categories_list.ui_models.CategoryFilters.Companion.toSelectableMenuItem
@@ -143,12 +143,12 @@ class QuizCategoriesPresenter @Inject constructor(
         )
     }
 
-    override fun sortByOption(option: SelectableMenuItem) {
-        sortOption.value = option.toSortOption() ?: CategorySort.Companion.defaultSortOption
+    override fun sortByOption(sort: SelectableMenuItem) {
+        sortOption.value = sort.toSortOption() ?: CategorySort.Companion.defaultSortOption
     }
 
-    override fun sortByType(type: SelectableMenuItem) {
-        sortType.value = type.toSortType() ?: CategorySort.Companion.defaultSortType
+    override fun sortByType(sort: SelectableMenuItem) {
+        sortType.value = sort.toSortType() ?: CategorySort.Companion.defaultSortType
     }
 
     override fun filterBy(filter: SelectableMenuItem) {

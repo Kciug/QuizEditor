@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cem_mode_navigation"
+    app:startDestination="@+id/navigation_cem_hierarchy">
+
+    <fragment
+        android:id="@+id/navigation_cem_hierarchy"
+        android:name="com.rafalskrzypczyk.cem_mode.presentation.categories_list.CemCategoriesFragment"
+        android:label="@string/bottom_bar_title_hierarchy"
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="parentCategoryID"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_cem_questions"
+        android:name="com.rafalskrzypczyk.cem_mode.presentation.questions_list.CemQuestionsFragment"
+        android:label="@string/bottom_bar_title_questions"
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="categoryId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="categoryTitle"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="categoryColor"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

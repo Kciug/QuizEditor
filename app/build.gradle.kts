@@ -52,6 +52,7 @@ dependencies {
     implementation(project(":quiz_mode"))
     implementation(project(":swipe_mode"))
     implementation(project(":translations_mode"))
+    implementation(project(":cem_mode"))
 
     coreKtx()
     ui()

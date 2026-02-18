@@ -3,6 +3,8 @@ package com.rafalskrzypczyk.firestore.domain
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
+import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
 import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
@@ -43,4 +45,20 @@ interface FirestoreApi {
     suspend fun addTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
     suspend fun updateTranslationQuestion(question: TranslationQuestionDTO): Response<Unit>
     suspend fun deleteTranslationQuestion(questionId: Long): Response<Unit>
+
+    fun getCemCategories(): Flow<Response<List<CemCategoryDTO>>>
+    fun getUpdatedCemCategories(): Flow<List<CemCategoryDTO>>
+    fun getCemCategoryById(categoryId: Long): Flow<Response<CemCategoryDTO>>
+    fun getUpdatedCemCategoryById(categoryId: Long): Flow<CemCategoryDTO?>
+    suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit>
+    suspend fun updateCemCategory(category: CemCategoryDTO): Response<Unit>
+    suspend fun deleteCemCategory(categoryId: Long): Response<Unit>
+
+    fun getCemQuestions(): Flow<Response<List<CemQuestionDTO>>>
+    fun getUpdatedCemQuestions(): Flow<List<CemQuestionDTO>>
+    fun getCemQuestionById(questionId: Long): Flow<Response<CemQuestionDTO>>
+    fun getUpdatedCemQuestionById(questionId: Long): Flow<CemQuestionDTO?>
+    suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit>
+    suspend fun updateCemQuestion(question: CemQuestionDTO): Response<Unit>
+    suspend fun deleteCemQuestion(questionId: Long): Response<Unit>
 }

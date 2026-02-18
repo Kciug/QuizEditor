@@ -65,6 +65,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             R.id.nav_quiz_mode,
             R.id.nav_swipe_quiz_mode,
             R.id.nav_translations_mode,
+            R.id.nav_cem_mode,
         ), binding.drawerLayout)
 
         drawerManager = drawerManagerFactory.create(
@@ -98,6 +99,22 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
         actionMenuRes = menuRes
         actionMenuCallback = callback
         invalidateOptionsMenu()
+    }
+
+    override fun showBackArrow(show: Boolean, onBack: (() -> Unit)?) {
+        if (show) {
+            binding.appBarMain.toolbar.navigationIcon = androidx.appcompat.content.res.AppCompatResources.getDrawable(this, com.rafalskrzypczyk.core.R.drawable.ic_arrow_back_24)
+            binding.appBarMain.toolbar.navigationIcon?.setTint(getColor(com.rafalskrzypczyk.core.R.color.primary))
+            binding.appBarMain.toolbar.setNavigationOnClickListener {
+                onBack?.invoke()
+            }
+        } else {
+            binding.appBarMain.toolbar.navigationIcon = androidx.appcompat.content.res.AppCompatResources.getDrawable(this, com.rafalskrzypczyk.core.R.drawable.ic_menu_24)
+            binding.appBarMain.toolbar.navigationIcon?.setTint(getColor(com.rafalskrzypczyk.core.R.color.primary))
+            binding.appBarMain.toolbar.setNavigationOnClickListener {
+                binding.drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+            }
+        }
     }
 
     override fun navigateToTopLevelDestination(destination: Int) {
