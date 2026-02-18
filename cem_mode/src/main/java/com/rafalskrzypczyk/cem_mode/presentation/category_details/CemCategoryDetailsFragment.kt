@@ -8,6 +8,8 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
+import com.rafalskrzypczyk.cem_mode.R
 import com.rafalskrzypczyk.cem_mode.databinding.FragmentCemCategoryDetailsBinding
 import com.rafalskrzypczyk.cem_mode.presentation.question_details.CemQuestionDetailsFragment
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
@@ -189,7 +191,11 @@ class CemCategoryDetailsFragment :
             putString("categoryTitle", categoryTitle)
             putLong("categoryColor", categoryColor)
         }
-        (requireActivity() as DrawerNavigationHandler).navigateToDestinationByTag("cem_category_questions_list", bundle)
+        parentFragmentManager.findFragmentByTag("CemCategoryDetailsBS")?.let {
+            // This is a bottom sheet, so we need to navigate using the fragment that opened it or child nav controller
+        }
+        // Use the internal NavController of CEM Mode
+        parentFragmentManager.setFragmentResult("navigate_to_questions", bundle)
         dismiss()
     }
 

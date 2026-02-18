@@ -3,13 +3,12 @@ package com.rafalskrzypczyk.cem_mode.presentation.questions_list
 import com.rafalskrzypczyk.cem_mode.domain.CemModeRepository
 import com.rafalskrzypczyk.cem_mode.domain.models.CemCategory
 import com.rafalskrzypczyk.cem_mode.domain.models.CemQuestion
-import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel
 import com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.toUIModel
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
-import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,54 +22,56 @@ class CemQuestionsPresenter @Inject constructor(
     private var allCategories: List<CemCategory> = emptyList()
     private var searchQuery: String = ""
     private var filterCategoryId: Long? = null
+    private var isFirstLoad = true
 
     override fun getData() {
         combine(
             repository.getQuestions(),
-            repository.getCategories()
+            repository.getCategories().filter { it is Response.Success }
         ) { questionsResponse, categoriesResponse ->
-            if (questionsResponse is Response.Loading || categoriesResponse is Response.Loading) {
-                view.displayLoading()
-                return@combine
+            if (questionsResponse is Response.Loading && isFirstLoad) view.displayLoading()
+            
+            if (questionsResponse is Response.Success && categoriesResponse is Response.Success) {
+                isFirstLoad = false
+                allQuestions = questionsResponse.data
+                allCategories = categoriesResponse.data
+                updateDisplay()
             }
-
-            if (questionsResponse is Response.Error) {
-                view.displayError(questionsResponse.error)
-                return@combine
-            }
-            if (categoriesResponse is Response.Error) {
-                view.displayError(categoriesResponse.error)
-                return@combine
-            }
-
-            allQuestions = (questionsResponse as Response.Success).data
-            allCategories = (categoriesResponse as Response.Success).data
-            updateDisplay()
+            
+            if (questionsResponse is Response.Error) view.displayError(questionsResponse.error)
         }.launchIn(presenterScope!!)
 
         repository.getUpdatedQuestions()
-            .onEach { getData() }
-            .launchIn(presenterScope!!)
+            .onEach { questions ->
+                allQuestions = questions
+                updateDisplay()
+            }.launchIn(presenterScope!!)
+            
+        repository.getUpdatedCategories()
+            .onEach { categories ->
+                allCategories = categories
+                updateDisplay()
+            }.launchIn(presenterScope!!)
     }
 
     private fun updateDisplay() {
-        val filtered = allQuestions.filter { q ->
-            (filterCategoryId == null || q.linkedCategories.contains(filterCategoryId)) &&
-            (searchQuery.isEmpty() || q.text.contains(searchQuery, ignoreCase = true))
+        val filteredList = allQuestions.filter { question ->
+            val matchesCategory = filterCategoryId == null || filterCategoryId in question.linkedCategories
+            val matchesSearch = searchQuery.isEmpty() || question.text.contains(searchQuery, ignoreCase = true)
+            matchesCategory && matchesSearch
         }
 
-        val uiModels = filtered.map { q ->
-            val linkedCatUI = allCategories.filter { it.id in q.linkedCategories }
-                .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
-            q.toUIModel(linkedCatUI)
-        }
-
-        if (uiModels.isEmpty()) {
+        if (filteredList.isEmpty() && searchQuery.isEmpty()) {
             view.displayNoElementsView()
         } else {
-            view.displayQuestions(uiModels)
+            view.displayQuestions(filteredList.map { it.toUIModel(allCategories) })
         }
-        view.displayElementsCount(uiModels.size)
+        view.displayElementsCount(filteredList.size)
+    }
+
+    override fun filterByCategory(categoryId: Long?) {
+        filterCategoryId = if (categoryId == -1L) null else categoryId
+        updateDisplay()
     }
 
     override fun searchBy(query: String) {
@@ -78,16 +79,11 @@ class CemQuestionsPresenter @Inject constructor(
         updateDisplay()
     }
 
-    override fun filterByCategory(categoryId: Long?) {
-        filterCategoryId = categoryId
-        updateDisplay()
-    }
-
-    override fun onQuestionClicked(question: CemQuestionUIModel) {
+    override fun onQuestionClicked(question: com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel) {
         view.openQuestionDetails(question.id)
     }
 
-    override fun removeQuestion(question: CemQuestionUIModel) {
+    override fun removeQuestion(question: com.rafalskrzypczyk.cem_mode.presentation.questions_list.ui_models.CemQuestionUIModel) {
         presenterScope!!.launch {
             repository.deleteQuestion(question.id)
         }

@@ -2,20 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/drawer_navigation"
     app:startDestination="@+id/nav_home">
 
     <fragment
         android:id="@+id/nav_home"
         android:name="com.rafalskrzypczyk.home.presentation.HomeScreenFragment"
         android:label="@string/drawer_menu_title_home"
-        tools:layout="@layout/fragment_home_screen" />
-
-    <fragment
-        android:id="@+id/nav_chat"
-        android:name="com.rafalskrzypczyk.chat.presentation.ChatFragment"
-        android:label="@string/drawer_menu_title_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_quiz_mode"
@@ -27,13 +21,7 @@
         android:id="@+id/nav_swipe_quiz_mode"
         android:name="com.rafalskrzypczyk.swipe_mode.presentation.question_list.SwipeQuestionsFragment"
         android:label="@string/drawer_menu_title_swipe_quiz"
-        tools:layout="@layout/fragment_list" />
-
-    <fragment
-        android:id="@+id/nav_translations_mode"
-        android:name="com.rafalskrzypczyk.translations_mode.presentation.list.TranslationsListFragment"
-        android:label="@string/drawer_menu_title_translations_mode"
-        tools:layout="@layout/fragment_list" />
+        tools:layout="@layout/fragment_swipe_mode" />
 
     <fragment
         android:id="@+id/nav_cem_mode"
@@ -41,28 +29,17 @@
         android:label="@string/drawer_menu_title_cem"
         tools:layout="@layout/fragment_cem_mode" />
 
-    <fragment
-        android:id="@+id/nav_cem_category_questions_list"
-        android:name="com.rafalskrzypczyk.cem_mode.presentation.questions_list.CemQuestionsFragment"
-        android:label="@string/drawer_menu_title_cem"
-        tools:layout="@layout/fragment_list">
-
-        <argument
-            android:name="nav_tag"
-            app:argType="string"
-            android:defaultValue="cem_category_questions_list"/>
-    </fragment>
-
 
     <fragment
-        android:id="@+id/nav_category_questions_list"
-        android:name="com.rafalskrzypczyk.quiz_mode.presentation.questions_list.QuizQuestionsFragment"
-        android:label="@string/drawer_menu_title_quiz"
-        tools:layout="@layout/fragment_list">
+        android:id="@+id/nav_translations_mode"
+        android:name="com.rafalskrzypczyk.translations_mode.presentation.list.TranslationsListFragment"
+        android:label="@string/drawer_menu_title_translations_mode"
+        tools:layout="@layout/fragment_translations_mode" />
 
-        <argument
-            android:name="nav_tag"
-            app:argType="string"
-            android:defaultValue="category_questions_list"/>
-    </fragment>
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="com.rafalskrzypczyk.chat.presentation.ChatFragment"
+        android:label="@string/drawer_menu_title_chat"
+        tools:layout="@layout/fragment_chat" />
+
 </navigation>

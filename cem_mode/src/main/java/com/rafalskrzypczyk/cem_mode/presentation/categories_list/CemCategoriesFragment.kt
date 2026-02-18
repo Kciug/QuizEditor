@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rafalskrzypczyk.cem_mode.R
@@ -109,8 +110,8 @@ class CemCategoriesFragment :
             presenter.onBreadcrumbClicked(parentId)
         }
         
-        parentFragmentManager.setFragmentResultListener("open_questions", this) { _, bundle ->
-            (parentFragment?.parentFragment as? CemModeFragment)?.navigateToQuestions(bundle)
+        parentFragmentManager.setFragmentResultListener("navigate_to_questions", this) { _, bundle ->
+            findNavController().navigate(R.id.navigation_cem_questions, bundle)
         }
     }
 

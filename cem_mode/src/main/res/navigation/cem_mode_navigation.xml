@@ -20,6 +20,19 @@
         android:id="@+id/navigation_cem_questions"
         android:name="com.rafalskrzypczyk.cem_mode.presentation.questions_list.CemQuestionsFragment"
         android:label="@string/bottom_bar_title_questions"
-        tools:layout="@layout/fragment_list" />
+        tools:layout="@layout/fragment_list">
+        <argument
+            android:name="categoryId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="categoryTitle"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="categoryColor"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
 
 </navigation>
