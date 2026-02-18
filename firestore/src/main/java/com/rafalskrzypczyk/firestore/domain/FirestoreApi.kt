@@ -5,6 +5,7 @@ import com.rafalskrzypczyk.core.data_statistics.DataStatistics
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.IssueReportDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.MigrationRecordDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
@@ -15,6 +16,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirestoreApi {
     fun getUserData(userId: String): Flow<Response<UserDataDTO>>
+
+    fun getIssueReports(): Flow<Response<List<IssueReportDTO>>>
+    suspend fun deleteIssueReport(reportId: String): Response<Unit>
 
     suspend fun getDatabaseStatistics() : Flow<Response<DataStatistics>>
 

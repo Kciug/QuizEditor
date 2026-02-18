@@ -66,6 +66,7 @@ class ApplicationActivity : BaseCompatActivity<ActivityMainBinding>(ActivityMain
             R.id.nav_swipe_quiz_mode,
             R.id.nav_translations_mode,
             R.id.nav_cem_mode,
+            R.id.nav_issue_reports,
         ), binding.drawerLayout)
 
         drawerManager = drawerManagerFactory.create(

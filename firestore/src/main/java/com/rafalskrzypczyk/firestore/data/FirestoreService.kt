@@ -18,6 +18,7 @@ import com.rafalskrzypczyk.core.utils.ResourceProvider
 import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
+import com.rafalskrzypczyk.firestore.data.models.IssueReportDTO
 import com.rafalskrzypczyk.firestore.data.models.MessageDTO
 import com.rafalskrzypczyk.firestore.data.models.MigrationRecordDTO
 import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
@@ -41,6 +42,7 @@ class FirestoreService @Inject constructor(
     private var userDataCollection = FirestoreCollections.USER_DATA_COLLECTION
     private var messagesCollection = FirestoreCollections.MESSAGES
     private var migrationHistoryCollection = FirestoreCollections.MIGRATION_HISTORY
+    private var issueReportsCollection = FirestoreCollections.ISSUES_REPORTS
     private var quizCategoriesCollection = FirestoreCollections.TEST_QUIZ_MODE_CATEGORIES
     private var quizQuestionsCollection = FirestoreCollections.TEST_QUIZ_MODE_QUESTIONS
     private var swipeQuestionsCollection = FirestoreCollections.TEST_SWIPE_QUESTIONS
@@ -63,6 +65,19 @@ class FirestoreService @Inject constructor(
 
         emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_no_data)))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getIssueReports(): Flow<Response<List<IssueReportDTO>>> = flow {
+        emit(Response.Loading)
+        val reports = firestore.collection(issueReportsCollection)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .get(Source.SERVER)
+            .await()
+            .toObjects(IssueReportDTO::class.java)
+        emit(Response.Success(reports))
+    }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override suspend fun deleteIssueReport(reportId: String): Response<Unit> =
+        deleteFirestoreDocument(reportId, issueReportsCollection)
 
     override suspend fun getDatabaseStatistics(): Flow<Response<DataStatistics>> = flow {
         emit(Response.Loading)

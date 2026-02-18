@@ -30,6 +30,7 @@
             <option value="$PROJECT_DIR$/database_management" />
             <option value="$PROJECT_DIR$/firestore" />
             <option value="$PROJECT_DIR$/home" />
+            <option value="$PROJECT_DIR$/issue_reports" />
             <option value="$PROJECT_DIR$/login_screen" />
             <option value="$PROJECT_DIR$/migration" />
             <option value="$PROJECT_DIR$/quiz_mode" />
