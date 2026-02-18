@@ -116,11 +116,15 @@ class CemQuestionsFragment :
 
     override fun displayQuestions(questions: List<CemQuestionUIModel>) {
         adapter.submitList(questions)
+        
         if (binding.loading.root.isVisible) {
             QuizEditorAnimations.animateReplaceScaleOutExpandFromTop(binding.loading.root, binding.recyclerView)
-        }
-        if (noElementsView?.isVisible == true) {
+            noElementsView?.makeGone()
+        } else if (noElementsView?.isVisible == true) {
             QuizEditorAnimations.animateReplaceScaleOutIn(noElementsView!!, binding.recyclerView)
+        } else {
+            binding.recyclerView.makeVisible()
+            noElementsView?.makeGone()
         }
     }
 
@@ -130,10 +134,21 @@ class CemQuestionsFragment :
             noElementsView?.findViewById<View>(com.rafalskrzypczyk.core.R.id.button_add_new)
                 ?.setOnClickListener { presenter.onAddNewQuestion() }
         }
+        
+        if (noElementsView?.isVisible == true) return
+
         when {
-            binding.loading.root.isVisible -> QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
-            binding.recyclerView.isVisible -> QuizEditorAnimations.animateReplaceScaleOutIn(binding.recyclerView, noElementsView!!)
-            else -> noElementsView?.makeVisible()
+            binding.loading.root.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.loading.root, noElementsView!!)
+                binding.recyclerView.makeGone()
+            }
+            binding.recyclerView.isVisible -> {
+                QuizEditorAnimations.animateReplaceScaleOutIn(binding.recyclerView, noElementsView!!)
+            }
+            else -> {
+                noElementsView?.makeVisible()
+                binding.recyclerView.makeGone()
+            }
         }
     }
 
@@ -142,7 +157,11 @@ class CemQuestionsFragment :
     }
 
     override fun displayLoading() {
+        binding.recyclerView.animate().cancel()
+        noElementsView?.animate()?.cancel()
+
         binding.recyclerView.makeGone()
+        noElementsView?.makeGone()
         binding.loading.root.makeVisible()
     }
 
