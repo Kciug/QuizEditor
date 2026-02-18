@@ -221,6 +221,20 @@ class FirestoreService @Inject constructor(
         emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_not_found_category)))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
 
+    override fun getUpdatedCemCategoryById(categoryId: Long): Flow<CemCategoryDTO?> = callbackFlow {
+        val listener = firestore.collection(cemCategoriesCollection)
+            .document(categoryId.toString())
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                trySend(value?.toObject(CemCategoryDTO::class.java))
+            }
+        awaitClose { listener.remove() }
+    }
+
     override suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit> =
         addFirestoreDocument(category.id.toString(), category, cemCategoriesCollection)
 
@@ -255,6 +269,20 @@ class FirestoreService @Inject constructor(
             ?.toObject(CemQuestionDTO::class.java)
         emit(result?.let { Response.Success(it) } ?: Response.Error(resourceProvider.getString(R.string.error_not_found_question)))
     }.catch { emit(Response.Error(it.localizedMessage ?: resourceProvider.getString(R.string.error_unknown))) }
+
+    override fun getUpdatedCemQuestionById(questionId: Long): Flow<CemQuestionDTO?> = callbackFlow {
+        val listener = firestore.collection(cemQuestionsCollection)
+            .document(questionId.toString())
+            .addSnapshotListener { value, error ->
+                if(value?.metadata?.isFromCache == true) return@addSnapshotListener
+                if(error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                trySend(value?.toObject(CemQuestionDTO::class.java))
+            }
+        awaitClose { listener.remove() }
+    }
 
     override suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit> =
         addFirestoreDocument(question.id.toString(), question, cemQuestionsCollection)

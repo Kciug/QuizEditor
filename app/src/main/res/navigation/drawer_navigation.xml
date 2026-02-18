@@ -41,6 +41,18 @@
         android:label="@string/drawer_menu_title_cem"
         tools:layout="@layout/fragment_cem_mode" />
 
+    <fragment
+        android:id="@+id/nav_cem_category_questions_list"
+        android:name="com.rafalskrzypczyk.cem_mode.presentation.questions_list.CemQuestionsFragment"
+        android:label="@string/drawer_menu_title_cem"
+        tools:layout="@layout/fragment_list">
+
+        <argument
+            android:name="nav_tag"
+            app:argType="string"
+            android:defaultValue="cem_category_questions_list"/>
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_category_questions_list"

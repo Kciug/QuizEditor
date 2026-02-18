@@ -40,6 +40,9 @@ class CemModeRepositoryImpl @Inject constructor(
             }
         }
 
+    override fun getUpdatedCategoryById(categoryId: Long): Flow<CemCategory?> =
+        firestoreApi.getUpdatedCemCategoryById(categoryId).map { it?.toDomain() }
+
     override suspend fun addCategory(category: CemCategory): Response<Unit> {
         val result = firestoreApi.addCemCategory(category.toDTO())
         if (result is Response.Success && category.parentCategoryID != null) {
@@ -83,6 +86,9 @@ class CemModeRepositoryImpl @Inject constructor(
                 is Response.Loading -> Response.Loading
             }
         }
+
+    override fun getUpdatedQuestionById(questionId: Long): Flow<CemQuestion?> =
+        firestoreApi.getUpdatedCemQuestionById(questionId).map { it?.toDomain() }
 
     override suspend fun addQuestion(question: CemQuestion): Response<Unit> =
         firestoreApi.addCemQuestion(question.toDTO())

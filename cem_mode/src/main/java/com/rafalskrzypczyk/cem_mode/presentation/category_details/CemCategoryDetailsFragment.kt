@@ -18,6 +18,7 @@ import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
+import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.core.R as coreR
@@ -35,6 +36,7 @@ class CemCategoryDetailsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        keyboardController = KeyboardController(requireContext())
         presenter.getData(arguments)
     }
 
@@ -187,7 +189,7 @@ class CemCategoryDetailsFragment :
             putString("categoryTitle", categoryTitle)
             putLong("categoryColor", categoryColor)
         }
-        parentFragmentManager.setFragmentResult("open_questions", bundle)
+        (requireActivity() as DrawerNavigationHandler).navigateToDestinationByTag("cem_category_questions_list", bundle)
         dismiss()
     }
 

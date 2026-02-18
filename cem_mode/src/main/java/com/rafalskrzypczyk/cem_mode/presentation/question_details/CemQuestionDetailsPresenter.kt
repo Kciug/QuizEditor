@@ -3,14 +3,17 @@ package com.rafalskrzypczyk.cem_mode.presentation.question_details
 import android.os.Bundle
 import com.rafalskrzypczyk.cem_mode.domain.CemModeRepository
 import com.rafalskrzypczyk.cem_mode.domain.models.CemAnswer
+import com.rafalskrzypczyk.cem_mode.domain.models.CemCategory
 import com.rafalskrzypczyk.cem_mode.domain.models.CemQuestion
 import com.rafalskrzypczyk.cem_mode.presentation.question_details.ui_models.toUIModel
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
+import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -22,16 +25,13 @@ class CemQuestionDetailsPresenter @Inject constructor(
 ) : BasePresenter<CemQuestionDetailsContract.View>(), CemQuestionDetailsContract.Presenter {
 
     private var currentQuestion: CemQuestion? = null
+    private var allCategories: List<CemCategory> = emptyList()
     private var isDataLoaded = false
     private var parentCategoryID: Long = -1L
 
     override fun getData(bundle: Bundle?) {
         val questionId = bundle?.getLong("questionId", -1L) ?: -1L
-        parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
-            bundle.getLong("parentCategoryID")
-        } else {
-            -1L
-        }
+        parentCategoryID = bundle?.getLong("parentCategoryID", -1L) ?: -1L
 
         if (questionId == -1L) {
             view.setupNewElementView()
@@ -39,37 +39,47 @@ class CemQuestionDetailsPresenter @Inject constructor(
         }
 
         presenterScope?.launch {
-            repository.getQuestionById(questionId).collectLatest { response ->
-                when (response) {
-                    is Response.Success -> {
+            combine(
+                repository.getQuestionById(questionId),
+                repository.getCategories().filter { it is Response.Success }
+            ) { questionResponse, categoriesResponse ->
+                if (questionResponse is Response.Success && categoriesResponse is Response.Success) {
+                    allCategories = categoriesResponse.data
+                    currentQuestion = questionResponse.data
+                    updateUI(questionResponse.data)
+                    
+                    if (!isDataLoaded) {
                         isDataLoaded = true
-                        currentQuestion = response.data
-                        updateUI(response.data)
+                        attachChangeListener(questionId)
                     }
-                    is Response.Error -> view.displayError(response.error)
-                    is Response.Loading -> view.displayLoading()
+                }
+            }.collectLatest { }
+        }
+    }
+
+    private fun attachChangeListener(questionId: Long) {
+        presenterScope?.launch {
+            repository.getUpdatedQuestionById(questionId).collectLatest { question ->
+                question?.let {
+                    currentQuestion = it
+                    updateUI(it)
                 }
             }
         }
     }
 
     private fun updateUI(question: CemQuestion) {
-        presenterScope?.launch {
-            val categoriesResult = repository.getCategories().filter { it is Response.Success }.first()
-            val linkedCategories = if (categoriesResult is Response.Success) {
-                categoriesResult.data.filter { it.id in question.linkedCategories }
-                    .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
-            } else emptyList()
+        val linkedCategories = allCategories.filter { it.id in question.linkedCategories }
+            .map { SimpleCategoryUIModel(it.title, it.color.toLong()) }
 
-            with(view) {
-                setupView()
-                displayQuestionDetails(question.text)
-                displayCreatedDetails(String.formatDate(question.creationDate))
-                displayAnswersCount(question.answers.size, question.answers.count { it.isCorrect })
-                displayAnswers(question.answers.map { it.toUIModel() })
-                displayLinkedCategories(linkedCategories)
-                displayContent()
-            }
+        with(view) {
+            setupView()
+            displayQuestionDetails(question.text)
+            displayCreatedDetails(String.formatDate(question.creationDate))
+            displayAnswersCount(question.answers.size, question.answers.count { it.isCorrect })
+            displayAnswers(question.answers.map { it.toUIModel() })
+            displayLinkedCategories(linkedCategories)
+            displayContent()
         }
     }
 
@@ -85,9 +95,10 @@ class CemQuestionDetailsPresenter @Inject constructor(
                 if (parentCategoryID != -1L) {
                     repository.bindQuestionWithCategory(newQuestion.id, parentCategoryID)
                 }
-                currentQuestion = newQuestion
                 isDataLoaded = true
+                currentQuestion = newQuestion
                 updateUI(newQuestion)
+                attachChangeListener(newQuestion.id)
             } else if (result is Response.Error) {
                 view.displayError(result.error)
             }

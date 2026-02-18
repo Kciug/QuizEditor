@@ -23,6 +23,10 @@ class CemCategoryDetailsPresenter @Inject constructor(
     private var isDataLoaded = false
     private var parentCategoryID: Long = CemCategory.ROOT_ID
 
+    override fun onViewCreated() {
+        super.onViewCreated()
+    }
+
     override fun getData(bundle: Bundle?) {
         val categoryId = bundle?.getLong("categoryId", -1L) ?: -1L
         parentCategoryID = if (bundle?.containsKey("parentCategoryID") == true) {
@@ -40,12 +44,26 @@ class CemCategoryDetailsPresenter @Inject constructor(
             repository.getCategoryById(categoryId).collectLatest { response ->
                 when (response) {
                     is Response.Success -> {
-                        isDataLoaded = true
-                        currentCategory = response.data
-                        updateUI(response.data)
+                        if (!isDataLoaded) {
+                            isDataLoaded = true
+                            currentCategory = response.data
+                            updateUI(response.data)
+                            attachChangeListener(categoryId)
+                        }
                     }
                     is Response.Error -> view.displayError(response.error)
                     is Response.Loading -> view.displayLoading()
+                }
+            }
+        }
+    }
+
+    private fun attachChangeListener(categoryId: Long) {
+        presenterScope?.launch {
+            repository.getUpdatedCategoryById(categoryId).collectLatest { category ->
+                category?.let {
+                    currentCategory = it
+                    updateUI(it)
                 }
             }
         }
@@ -80,6 +98,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
                 isDataLoaded = true
                 currentCategory = newCategory
                 updateUI(newCategory)
+                attachChangeListener(newCategory.id)
             } else if (result is Response.Error) {
                 view.displayError(result.error)
             }
@@ -88,15 +107,19 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun updateCategoryTitle(categoryTitle: String) {
         currentCategory?.let {
-            it.title = categoryTitle
-            saveChanges()
+            if (it.title != categoryTitle) {
+                it.title = categoryTitle
+                saveChanges()
+            }
         }
     }
 
     override fun updateCategoryDescription(categoryDescription: String) {
         currentCategory?.let {
-            it.description = categoryDescription
-            saveChanges()
+            if (it.description != categoryDescription) {
+                it.description = categoryDescription
+                saveChanges()
+            }
         }
     }
 
@@ -106,9 +129,11 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun updateCategoryColor(color: Int) {
         currentCategory?.let {
-            it.color = color
-            view.displayCategoryColor(color)
-            saveChanges()
+            if (it.color != color) {
+                it.color = color
+                view.displayCategoryColor(color)
+                saveChanges()
+            }
         }
     }
 
@@ -124,7 +149,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun updateCategoryStatus(status: SelectableMenuItem) {
         val newStatus = CategoryStatus.entries.find { it.hashCode() == status.itemHashCode }
-        if (newStatus != null && currentCategory != null) {
+        if (newStatus != null && currentCategory != null && currentCategory!!.status != newStatus) {
             currentCategory!!.status = newStatus
             view.displayCategoryStatus(newStatus)
             saveChanges()
@@ -133,8 +158,10 @@ class CemCategoryDetailsPresenter @Inject constructor(
 
     override fun updateIsFree(isFree: Boolean) {
         currentCategory?.let {
-            it.isFree = isFree
-            saveChanges()
+            if (it.isFree != isFree) {
+                it.isFree = isFree
+                saveChanges()
+            }
         }
     }
 

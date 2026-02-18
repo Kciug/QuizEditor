@@ -35,6 +35,8 @@ class CemQuestionsFragment :
     private var noElementsView: View? = null
     private var recyclerViewManager: LinearLayoutManager? = null
 
+    private val navTag: String? by lazy { arguments?.getString("nav_tag") }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -47,6 +49,23 @@ class CemQuestionsFragment :
         }
         
         presenter.getData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (navTag == "cem_category_questions_list") {
+            activityActionBarBuilder?.showBackArrow(true) {
+                activityActionBarBuilder?.showBackArrow(false)
+                parentFragmentManager.popBackStack()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (navTag == "cem_category_questions_list") {
+            activityActionBarBuilder?.showBackArrow(false)
+        }
     }
 
     override fun onViewBound() {
@@ -190,8 +209,13 @@ class CemQuestionsFragment :
             setColorAndText(category.color.toInt(), category.name)
             gravity = Gravity.CENTER
             setOnClickListener {
-                presenter.filterByCategory(null)
-                binding.headerAppendixRoot.removeAllViews()
+                if (navTag == "cem_category_questions_list") {
+                    activityActionBarBuilder?.showBackArrow(false)
+                    parentFragmentManager.popBackStack()
+                } else {
+                    presenter.filterByCategory(null)
+                    binding.headerAppendixRoot.removeAllViews()
+                }
             }
         }
         binding.headerAppendixRoot.apply {
@@ -203,6 +227,8 @@ class CemQuestionsFragment :
     override fun openQuestionDetails(questionId: Long?) {
         val bundle = Bundle().apply {
             questionId?.let { putLong("questionId", it) }
+            val initialCategoryId = arguments?.getLong("categoryId", -1L) ?: -1L
+            if (initialCategoryId != -1L) putLong("parentCategoryID", initialCategoryId)
         }
         CemQuestionDetailsFragment().apply { arguments = bundle }.show(parentFragmentManager, "CemQuestionDetailsBS")
     }

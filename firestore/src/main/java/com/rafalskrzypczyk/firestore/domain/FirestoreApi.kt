@@ -49,6 +49,7 @@ interface FirestoreApi {
     fun getCemCategories(): Flow<Response<List<CemCategoryDTO>>>
     fun getUpdatedCemCategories(): Flow<List<CemCategoryDTO>>
     fun getCemCategoryById(categoryId: Long): Flow<Response<CemCategoryDTO>>
+    fun getUpdatedCemCategoryById(categoryId: Long): Flow<CemCategoryDTO?>
     suspend fun addCemCategory(category: CemCategoryDTO): Response<Unit>
     suspend fun updateCemCategory(category: CemCategoryDTO): Response<Unit>
     suspend fun deleteCemCategory(categoryId: Long): Response<Unit>
@@ -56,6 +57,7 @@ interface FirestoreApi {
     fun getCemQuestions(): Flow<Response<List<CemQuestionDTO>>>
     fun getUpdatedCemQuestions(): Flow<List<CemQuestionDTO>>
     fun getCemQuestionById(questionId: Long): Flow<Response<CemQuestionDTO>>
+    fun getUpdatedCemQuestionById(questionId: Long): Flow<CemQuestionDTO?>
     suspend fun addCemQuestion(question: CemQuestionDTO): Response<Unit>
     suspend fun updateCemQuestion(question: CemQuestionDTO): Response<Unit>
     suspend fun deleteCemQuestion(questionId: Long): Response<Unit>

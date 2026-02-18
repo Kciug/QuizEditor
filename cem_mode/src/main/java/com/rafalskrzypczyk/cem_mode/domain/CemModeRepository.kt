@@ -9,6 +9,7 @@ interface CemModeRepository {
     fun getCategories(): Flow<Response<List<CemCategory>>>
     fun getUpdatedCategories(): Flow<List<CemCategory>>
     fun getCategoryById(categoryId: Long): Flow<Response<CemCategory>>
+    fun getUpdatedCategoryById(categoryId: Long): Flow<CemCategory?>
     suspend fun addCategory(category: CemCategory): Response<Unit>
     suspend fun updateCategory(category: CemCategory): Response<Unit>
     suspend fun deleteCategory(categoryId: Long): Response<Unit>
@@ -16,6 +17,7 @@ interface CemModeRepository {
     fun getQuestions(): Flow<Response<List<CemQuestion>>>
     fun getUpdatedQuestions(): Flow<List<CemQuestion>>
     fun getQuestionById(questionId: Long): Flow<Response<CemQuestion>>
+    fun getUpdatedQuestionById(questionId: Long): Flow<CemQuestion?>
     suspend fun addQuestion(question: CemQuestion): Response<Unit>
     suspend fun updateQuestion(question: CemQuestion): Response<Unit>
     suspend fun deleteQuestion(questionId: Long): Response<Unit>
