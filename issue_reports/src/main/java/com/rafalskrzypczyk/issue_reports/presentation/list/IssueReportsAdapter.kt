@@ -1,5 +1,6 @@
 package com.rafalskrzypczyk.issue_reports.presentation.list
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -41,7 +42,8 @@ class IssueReportsAdapter(
                     GameMode.CEM -> com.rafalskrzypczyk.core.R.color.purple_500 to "CEM"
                 }
                 
-                labelGameMode.setColorAndText(root.context.getColor(result.first), result.second)
+                val color = root.context.getColor(result.first)
+                labelGameMode.setColorAndText(color, result.second)
                 
                 root.setOnClickListener { onItemClicked(item) }
             }
