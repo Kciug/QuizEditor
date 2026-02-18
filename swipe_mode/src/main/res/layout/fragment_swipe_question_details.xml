@@ -39,13 +39,29 @@
         app:layout_constraintTop_toBottomOf="@id/tv_question_header"
         tools:ignore="TextFields" />
 
+    <EditText
+        android:id="@+id/input_explanation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/background_tile"
+        android:hint="@string/hint_explanation"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:gravity="top|start"
+        android:padding="10dp"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_question" />
+
     <include
         android:id="@+id/creation_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         layout="@layout/layout_creation_details"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/input_question"
+        app:layout_constraintTop_toBottomOf="@id/input_explanation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -56,7 +72,7 @@
         layout="@layout/layout_correctness_picker"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_question"
+        app:layout_constraintTop_toBottomOf="@id/input_explanation"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="40dp"/>
 
@@ -83,6 +99,6 @@
         android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:constraint_referenced_ids="tv_question_header, input_question, correctness_picker, btn_add_next"/>
+        app:constraint_referenced_ids="tv_question_header, input_question, input_explanation, correctness_picker, btn_add_next"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

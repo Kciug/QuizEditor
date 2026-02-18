@@ -8,6 +8,7 @@ import java.util.Date
 data class Question(
     override val id: Long,
     var text: String,
+    var explanation: String,
     val answers: MutableList<Answer>,
     val creationDate: Date,
     val createdBy: String,
@@ -19,6 +20,7 @@ data class Question(
             return Question(
                 id = Long.generateId(),
                 text = text,
+                explanation = "",
                 answers = mutableListOf(),
                 creationDate = Date(),
                 createdBy = "Random User",
@@ -32,6 +34,7 @@ data class Question(
 fun QuestionDTO.toDomain() = Question(
     id = id,
     text = questionText,
+    explanation = explanation,
     answers = answers.map { it.toDomain() }.toMutableList(),
     creationDate = dateCreated,
     createdBy = "",
@@ -42,6 +45,7 @@ fun QuestionDTO.toDomain() = Question(
 fun Question.toDTO() = QuestionDTO(
     id = id,
     questionText = text,
+    explanation = explanation,
     answers = answers.map { it.toDTO() },
     categoryIDs = linkedCategories,
     dateCreated = creationDate,

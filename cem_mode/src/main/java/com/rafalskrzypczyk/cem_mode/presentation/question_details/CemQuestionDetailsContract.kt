@@ -9,7 +9,7 @@ interface CemQuestionDetailsContract {
     interface View : BaseContract.View {
         fun setupView()
         fun setupNewElementView()
-        fun displayQuestionDetails(questionText: String)
+        fun displayQuestionDetails(questionText: String, explanation: String)
         fun displayCreatedDetails(date: String)
         fun displayAnswersCount(total: Int, correct: Int)
         fun displayAnswers(answers: List<CemAnswerUIModel>)
@@ -20,8 +20,9 @@ interface CemQuestionDetailsContract {
     }
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(bundle: Bundle?)
-        fun createNewQuestion(text: String)
+        fun createNewQuestion(text: String, explanation: String)
         fun updateQuestionText(text: String)
+        fun updateExplanation(explanation: String)
         fun onAssignCategory()
         fun addAnswer(text: String)
         fun updateAnswerText(answerId: Long, text: String)

@@ -5,6 +5,7 @@ import java.util.Date
 data class SwipeQuestionDTO(
     val id: Long = -1,
     val text: String = "",
+    val explanation: String = "",
     @field:JvmField
     val isCorrect: Boolean = false,
     val dateCreated: Date = Date(),

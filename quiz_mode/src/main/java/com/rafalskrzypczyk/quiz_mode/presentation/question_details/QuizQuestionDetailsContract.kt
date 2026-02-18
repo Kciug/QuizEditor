@@ -9,6 +9,7 @@ interface QuizQuestionDetailsContract {
     interface View : BaseContract.View {
         fun displayContent()
         fun displayQuestionText(questionText: String)
+        fun displayExplanation(explanation: String)
         fun displayAnswersDetails(answersCount: Int, correctAnswersCount: Int)
         fun displayAnswersList(answers: List<AnswerUIModel>)
         fun displayLinkedCategories(categories: List<SimpleCategoryUIModel>)
@@ -23,6 +24,7 @@ interface QuizQuestionDetailsContract {
         fun getData(bundle: Bundle?)
         fun saveNewQuestion(questionText: String)
         fun updateQuestionText(questionText: String)
+        fun updateExplanation(explanation: String)
         fun addAnswer(answerText: String)
         fun updateAnswer(answer: AnswerUIModel)
         fun removeAnswer(answer: AnswerUIModel)

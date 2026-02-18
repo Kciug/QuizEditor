@@ -45,7 +45,6 @@ class SwipeQuestionDetailsFragment :
             inputQuestion.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             inputQuestion.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //presenter.updateQuestionText(inputQuestion.text.toString())
                     if(inputQuestion.text.isNotEmpty()) keyboardController.hideKeyboard(inputQuestion)
                     true
                 } else false
@@ -53,6 +52,19 @@ class SwipeQuestionDetailsFragment :
             inputQuestion.addTextChangedListener(
                 afterTextChanged = {
                     presenter.updateQuestionText(it.toString())
+                }
+            )
+
+            inputExplanation.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+            inputExplanation.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if(inputExplanation.text.isNotEmpty()) keyboardController.hideKeyboard(inputExplanation)
+                    true
+                } else false
+            }
+            inputExplanation.addTextChangedListener(
+                afterTextChanged = {
+                    presenter.updateExplanation(it.toString())
                 }
             )
 
@@ -66,17 +78,18 @@ class SwipeQuestionDetailsFragment :
 
             navbar.buttonClose.setOnClickListener { dismiss() }
             navbar.buttonSave.setOnClickListener {
-                presenter.saveNewQuestion(inputQuestion.text.toString(), currentPickerSelected)
+                presenter.saveNewQuestion(inputQuestion.text.toString(), inputExplanation.text.toString(), currentPickerSelected)
             }
             btnAddNext.setOnClickListener {
-                presenter.saveAndOpenNewQuestion(inputQuestion.text.toString(), currentPickerSelected)
+                presenter.saveAndOpenNewQuestion(inputQuestion.text.toString(), inputExplanation.text.toString(), currentPickerSelected)
             }
         }
     }
 
-    override fun displayQuestionDetails(questionText: String, isCorrect: Boolean?) {
+    override fun displayQuestionDetails(questionText: String, explanation: String, isCorrect: Boolean?) {
         with(binding) {
             inputQuestion.setText(questionText)
+            inputExplanation.setText(explanation)
             changeCorrectSelection(isCorrect, when (isCorrect) {
                     true -> correctnessPicker.btnAnswerTrue
                     false -> correctnessPicker.btnAnswerFalse
@@ -100,6 +113,7 @@ class SwipeQuestionDetailsFragment :
         with(binding) {
             QuizEditorAnimations.animateScaleOut(binding.root) {
                 inputQuestion.setText("")
+                inputExplanation.setText("")
                 changeCorrectSelection(null, correctnessPicker.btnAnswerUnknown, false)
                 creationDetails.root.makeInvisible()
                 QuizEditorAnimations.animateScaleIn(binding.root)

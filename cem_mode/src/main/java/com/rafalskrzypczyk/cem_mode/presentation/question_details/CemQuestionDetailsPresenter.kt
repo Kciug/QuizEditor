@@ -1,7 +1,7 @@
 package com.rafalskrzypczyk.cem_mode.presentation.question_details
 
 import android.os.Bundle
-import com.rafalskrzypczyk.cem_mode.domain.CemModeRepository
+import com.rafalskrzypczyk.cem_mode.domain.CemQuestionDetailsInteractor
 import com.rafalskrzypczyk.cem_mode.domain.models.CemAnswer
 import com.rafalskrzypczyk.cem_mode.domain.models.CemCategory
 import com.rafalskrzypczyk.cem_mode.domain.models.CemQuestion
@@ -10,21 +10,18 @@ import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.base.BasePresenter
 import com.rafalskrzypczyk.core.extensions.formatDate
 import com.rafalskrzypczyk.core.presentation.ui_models.SimpleCategoryUIModel
-import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.core.utils.ResourceProvider
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CemQuestionDetailsPresenter @Inject constructor(
-    private val repository: CemModeRepository,
+    private val interactor: CemQuestionDetailsInteractor,
     private val resourceProvider: ResourceProvider
 ) : BasePresenter<CemQuestionDetailsContract.View>(), CemQuestionDetailsContract.Presenter {
 
-    private var currentQuestion: CemQuestion? = null
     private var allCategories: List<CemCategory> = emptyList()
     private var isDataLoaded = false
     private var parentCategoryID: Long = -1L
@@ -40,12 +37,11 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
         presenterScope?.launch {
             combine(
-                repository.getQuestionById(questionId),
-                repository.getCategories().filter { it is Response.Success }
+                interactor.getQuestion(questionId),
+                interactor.getCategories().filter { it is Response.Success }
             ) { questionResponse, categoriesResponse ->
                 if (questionResponse is Response.Success && categoriesResponse is Response.Success) {
                     allCategories = categoriesResponse.data
-                    currentQuestion = questionResponse.data
                     updateUI(questionResponse.data)
                     
                     if (!isDataLoaded) {
@@ -59,9 +55,8 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
     private fun attachChangeListener(questionId: Long) {
         presenterScope?.launch {
-            repository.getUpdatedQuestionById(questionId).collectLatest { question ->
+            interactor.getUpdatedQuestion(questionId).collectLatest { question ->
                 question?.let {
-                    currentQuestion = it
                     updateUI(it)
                 }
             }
@@ -74,7 +69,7 @@ class CemQuestionDetailsPresenter @Inject constructor(
 
         with(view) {
             setupView()
-            displayQuestionDetails(question.text)
+            displayQuestionDetails(question.text, question.explanation)
             displayCreatedDetails(String.formatDate(question.creationDate))
             displayAnswersCount(question.answers.size, question.answers.count { it.isCorrect })
             displayAnswers(question.answers.map { it.toUIModel() })
@@ -83,22 +78,20 @@ class CemQuestionDetailsPresenter @Inject constructor(
         }
     }
 
-    override fun createNewQuestion(text: String) {
+    override fun createNewQuestion(text: String, explanation: String) {
         if (text.isEmpty()) {
             view.displayToastMessage("Question text cannot be empty")
             return
         }
-        val newQuestion = CemQuestion.new(text)
         presenterScope?.launch {
-            val result = repository.addQuestion(newQuestion)
+            val result = interactor.instantiateNewQuestion(text, explanation)
             if (result is Response.Success) {
                 if (parentCategoryID != -1L) {
-                    repository.bindQuestionWithCategory(newQuestion.id, parentCategoryID)
+                    interactor.bindWithCategory(parentCategoryID)
                 }
                 isDataLoaded = true
-                currentQuestion = newQuestion
-                updateUI(newQuestion)
-                attachChangeListener(newQuestion.id)
+                updateUI(result.data)
+                attachChangeListener(result.data.id)
             } else if (result is Response.Error) {
                 view.displayError(result.error)
             }
@@ -106,11 +99,14 @@ class CemQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun updateQuestionText(text: String) {
-        currentQuestion?.let {
-            if (it.text != text) {
-                it.text = text
-                saveChanges()
-            }
+        if (isDataLoaded) {
+            interactor.updateQuestionText(text)
+        }
+    }
+
+    override fun updateExplanation(explanation: String) {
+        if (isDataLoaded) {
+            interactor.updateExplanation(explanation)
         }
     }
 
@@ -119,47 +115,33 @@ class CemQuestionDetailsPresenter @Inject constructor(
     }
 
     override fun addAnswer(text: String) {
-        currentQuestion?.let {
-            it.answers.add(CemAnswer.new(text, false))
-            updateUI(it)
-            saveChanges()
+        if (isDataLoaded) {
+            interactor.addAnswer(text)
+            // Manual update since we don't have a flow for local changes yet
+            // In quiz_mode they use a repository flow for this
         }
     }
 
     override fun updateAnswerText(answerId: Long, text: String) {
-        currentQuestion?.let { q ->
-            val answer = q.answers.find { it.id == answerId }
-            if (answer != null && answer.text != text) {
-                answer.text = text
-                saveChanges()
-            }
+        if (isDataLoaded) {
+            interactor.updateAnswerText(answerId, text)
         }
     }
 
     override fun updateAnswerCorrectness(answerId: Long, isCorrect: Boolean) {
-        currentQuestion?.let { q ->
-            val answer = q.answers.find { it.id == answerId }
-            if (answer != null && answer.isCorrect != isCorrect) {
-                answer.isCorrect = isCorrect
-                updateUI(q)
-                saveChanges()
-            }
+        if (isDataLoaded) {
+            interactor.updateAnswerCorrectness(answerId, isCorrect)
         }
     }
 
     override fun deleteAnswer(answerId: Long) {
-        currentQuestion?.let { q ->
-            q.answers.removeAll { it.id == answerId }
-            updateUI(q)
-            saveChanges()
+        if (isDataLoaded) {
+            interactor.deleteAnswer(answerId)
         }
     }
 
-    private fun saveChanges() {
-        currentQuestion?.let {
-            presenterScope?.launch {
-                repository.updateQuestion(it)
-            }
-        }
+    override fun onDestroy() {
+        interactor.saveCachedQuestion()
+        super.onDestroy()
     }
 }

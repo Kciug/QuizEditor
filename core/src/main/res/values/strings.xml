@@ -88,6 +88,9 @@
     <string name="btn_category_questions">Pytania</string>
     <string name="btn_category_subcategories">Podkategorie</string>
 
+    <string name="label_explanation">Wyjaśnienie</string>
+    <string name="hint_explanation">Dodaj opcjonalne wyjaśnienie…</string>
+
     <string name="label_question">Pytanie</string>
     <string name="hint_question_text">Tekst pytania</string>
     <string name="label_answers">odpowiedzi</string>

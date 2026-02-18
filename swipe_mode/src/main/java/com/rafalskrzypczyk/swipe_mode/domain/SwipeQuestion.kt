@@ -8,6 +8,7 @@ import java.util.Date
 data class SwipeQuestion(
     override val id: Long,
     var text: String,
+    var explanation: String,
     var isCorrect: Boolean,
     val dateCreated: Date,
     var dateModified: Date,
@@ -16,6 +17,7 @@ data class SwipeQuestion(
         fun new(text: String, isCorrect: Boolean) = SwipeQuestion(
             id = Long.generateId(),
             text = text,
+            explanation = "",
             isCorrect = isCorrect,
             dateCreated = Date(),
             dateModified = Date()
@@ -26,6 +28,7 @@ data class SwipeQuestion(
 fun SwipeQuestionDTO.toDomain() = SwipeQuestion(
     id = id,
     text = text,
+    explanation = explanation,
     isCorrect = isCorrect,
     dateCreated = dateCreated,
     dateModified = dateModified
@@ -34,6 +37,7 @@ fun SwipeQuestionDTO.toDomain() = SwipeQuestion(
 fun SwipeQuestion.toDTO() = SwipeQuestionDTO(
     id = id,
     text = text,
+    explanation = explanation,
     isCorrect = isCorrect,
     dateCreated = dateCreated,
     dateModified = Date()

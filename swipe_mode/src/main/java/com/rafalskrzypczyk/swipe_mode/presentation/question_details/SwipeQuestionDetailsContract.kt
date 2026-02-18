@@ -5,7 +5,7 @@ import com.rafalskrzypczyk.core.base.BaseContract
 
 interface SwipeQuestionDetailsContract {
     interface View : BaseContract.View {
-        fun displayQuestionDetails(questionText: String, isCorrect: Boolean?)
+        fun displayQuestionDetails(questionText: String, explanation: String, isCorrect: Boolean?)
         fun displayCreatedDetails(dateCreated: String)
         fun replaceWithNewQuestion()
         fun displayToastMessage(message: String)
@@ -14,8 +14,9 @@ interface SwipeQuestionDetailsContract {
     interface Presenter : BaseContract.Presenter<View> {
         fun getData(arguments: Bundle?)
         fun updateQuestionText(questionText: String)
+        fun updateExplanation(explanation: String)
         fun updateIsCorrect(isCorrect: Boolean?)
-        fun saveNewQuestion(questionText: String, isCorrect: Boolean?)
-        fun saveAndOpenNewQuestion(questionText: String, isCorrect: Boolean?)
+        fun saveNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?)
+        fun saveAndOpenNewQuestion(questionText: String, explanation: String, isCorrect: Boolean?)
     }
 }

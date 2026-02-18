@@ -5,6 +5,7 @@ import java.util.Date
 data class QuestionDTO(
     val id: Long = -1,
     val questionText: String = "",
+    val explanation: String = "",
     val answers: List<AnswerDTO> = emptyList(),
     val categoryIDs: List<Long> = emptyList(),
     val dateCreated: Date = Date(),

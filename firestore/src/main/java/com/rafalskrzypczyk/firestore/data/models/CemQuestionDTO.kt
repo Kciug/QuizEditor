@@ -5,6 +5,7 @@ import java.util.Date
 data class CemQuestionDTO(
     val id: Long = -1,
     val questionText: String = "",
+    val explanation: String = "",
     val answers: List<CemAnswerDTO> = emptyList(),
     val categoryIDs: List<Long> = emptyList(),
     val dateCreated: Date = Date(),

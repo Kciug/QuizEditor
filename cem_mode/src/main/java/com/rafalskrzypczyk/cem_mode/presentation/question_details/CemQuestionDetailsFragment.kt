@@ -58,7 +58,10 @@ class CemQuestionDetailsFragment :
             
             sectionNavbar.buttonClose.setOnClickListener { dismiss() }
             sectionNavbar.buttonSave.setOnClickListener {
-                presenter.createNewQuestion(questionDetails.inputQuestionText.text.toString())
+                presenter.createNewQuestion(
+                    questionDetails.inputQuestionText.text.toString(),
+                    questionDetails.inputExplanation.text.toString()
+                )
             }
             questionDetails.btnAssignCategory.setOnClickListener { presenter.onAssignCategory() }
             newAnswerBar.btnAddAnswer.setOnClickListener {
@@ -79,6 +82,11 @@ class CemQuestionDetailsFragment :
                 inputQuestionText.addTextChangedListener(afterTextChanged = { 
                     if (!isSilentUpdate) presenter.updateQuestionText(it.toString()) 
                 })
+
+                inputExplanation.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+                inputExplanation.addTextChangedListener(afterTextChanged = { 
+                    if (!isSilentUpdate) presenter.updateExplanation(it.toString()) 
+                })
             }
         }
     }
@@ -90,13 +98,19 @@ class CemQuestionDetailsFragment :
             sectionNavbar.buttonSave.visibility = View.VISIBLE
 
             questionDetails.inputQuestionText.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+            questionDetails.inputExplanation.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             keyboardController.showKeyboardWithDelay(questionDetails.inputQuestionText)
         }
     }
 
-    override fun displayQuestionDetails(questionText: String) {
+    override fun displayQuestionDetails(questionText: String, explanation: String) {
         isSilentUpdate = true
-        binding.questionDetails.inputQuestionText.setText(questionText)
+        if (binding.questionDetails.inputQuestionText.text.toString() != questionText) {
+            binding.questionDetails.inputQuestionText.setText(questionText)
+        }
+        if (binding.questionDetails.inputExplanation.text.toString() != explanation) {
+            binding.questionDetails.inputExplanation.setText(explanation)
+        }
         isSilentUpdate = false
     }
 

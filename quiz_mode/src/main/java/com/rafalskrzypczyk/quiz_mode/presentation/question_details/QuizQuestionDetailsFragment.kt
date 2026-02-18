@@ -55,6 +55,15 @@ class QuizQuestionDetailsFragment :
                 } else false
             }
 
+            questionDetails.inputExplanation.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
+            questionDetails.inputExplanation.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    presenter.updateExplanation(questionDetails.inputExplanation.text.toString())
+                    if(questionDetails.inputExplanation.text.isNotEmpty()) keyboardController.hideKeyboard(questionDetails.inputExplanation)
+                    true
+                } else false
+            }
+
             newAnswerBar.inputNewAnswer.setupMultilineWithIMEAction(EditorInfo.IME_ACTION_DONE)
             newAnswerBar.inputNewAnswer.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -84,6 +93,10 @@ class QuizQuestionDetailsFragment :
 
     override fun displayQuestionText(questionText: String) {
         binding.questionDetails.inputQuestionText.setText(questionText)
+    }
+
+    override fun displayExplanation(explanation: String) {
+        binding.questionDetails.inputExplanation.setText(explanation)
     }
 
     override fun displayAnswersDetails(answersCount: Int, correctAnswersCount: Int) {
@@ -137,6 +150,12 @@ class QuizQuestionDetailsFragment :
             questionDetails.inputQuestionText.addTextChangedListener(
                 afterTextChanged = {
                     presenter.updateQuestionText(it.toString())
+                }
+            )
+
+            questionDetails.inputExplanation.addTextChangedListener(
+                afterTextChanged = {
+                    presenter.updateExplanation(it.toString())
                 }
             )
         }
