@@ -435,11 +435,11 @@ class FirestoreService @Inject constructor(
     private suspend fun getFirestoreDocument(id: String, collection: String): com.google.firebase.firestore.DocumentSnapshot? {
         return try {
             firestore.collection(collection).document(id).get(Source.CACHE).await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         } ?: try {
             firestore.collection(collection).document(id).get(Source.SERVER).await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

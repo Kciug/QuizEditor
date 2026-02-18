@@ -8,8 +8,6 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.fragment.findNavController
-import com.rafalskrzypczyk.cem_mode.R
 import com.rafalskrzypczyk.cem_mode.databinding.FragmentCemCategoryDetailsBinding
 import com.rafalskrzypczyk.cem_mode.presentation.question_details.CemQuestionDetailsFragment
 import com.rafalskrzypczyk.core.base.BaseBottomSheetFragment
@@ -20,13 +18,11 @@ import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeInvisible
 import com.rafalskrzypczyk.core.extensions.makeVisible
 import com.rafalskrzypczyk.core.extensions.setupMultilineWithIMEAction
-import com.rafalskrzypczyk.core.nav_handling.DrawerNavigationHandler
 import com.rafalskrzypczyk.core.sort_filter.SelectableMenuItem
 import com.rafalskrzypczyk.core.utils.KeyboardController
 import com.rafalskrzypczyk.migration.presentation.migration_details.MigrationDetailsBottomSheetFragment
 import com.rafalskrzypczyk.core.R as coreR
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CemCategoryDetailsFragment :

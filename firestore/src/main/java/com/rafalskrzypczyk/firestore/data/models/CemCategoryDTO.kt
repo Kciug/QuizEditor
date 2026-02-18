@@ -1,6 +1,5 @@
 package com.rafalskrzypczyk.firestore.data.models
 
-import com.google.firebase.firestore.PropertyName
 import java.util.Date
 import java.text.SimpleDateFormat
 import java.util.Locale

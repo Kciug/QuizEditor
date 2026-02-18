@@ -13,7 +13,6 @@ import com.rafalskrzypczyk.core.database_management.Database
 import com.rafalskrzypczyk.core.error_handling.ErrorDialog
 import com.rafalskrzypczyk.core.extensions.makeGone
 import com.rafalskrzypczyk.core.extensions.makeVisible
-import com.rafalskrzypczyk.migration.R
 import com.rafalskrzypczyk.migration.databinding.FragmentMigrationDetailsBinding
 import com.rafalskrzypczyk.migration.domain.models.MigrationRecord
 import dagger.hilt.android.AndroidEntryPoint

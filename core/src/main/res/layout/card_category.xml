@@ -43,6 +43,7 @@
         app:layout_constraintBottom_toBottomOf="@id/label_category_title"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="10dp"
+        android:contentDescription=""
         app:tint="@color/orange_primary"
         tools:visibility="visible"/>
 
@@ -109,7 +110,8 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/category_subcategories_amount"

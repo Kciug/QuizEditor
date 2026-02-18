@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rafalskrzypczyk.migration.di
 
 import com.rafalskrzypczyk.migration.presentation.migration_details.MigrationDetailsContract

@@ -2,14 +2,7 @@ package com.rafalskrzypczyk.migration.data
 
 import com.rafalskrzypczyk.core.api_result.Response
 import com.rafalskrzypczyk.core.database_management.Database
-import com.rafalskrzypczyk.core.utils.ResourceProvider
-import com.rafalskrzypczyk.firestore.data.models.CategoryDTO
 import com.rafalskrzypczyk.firestore.data.models.CemCategoryDTO
-import com.rafalskrzypczyk.firestore.data.models.CemQuestionDTO
-import com.rafalskrzypczyk.firestore.data.models.MigrationRecordDTO
-import com.rafalskrzypczyk.firestore.data.models.QuestionDTO
-import com.rafalskrzypczyk.firestore.data.models.SwipeQuestionDTO
-import com.rafalskrzypczyk.firestore.data.models.TranslationQuestionDTO
 import com.rafalskrzypczyk.firestore.domain.FirestoreApi
 import com.rafalskrzypczyk.migration.domain.MigrationRepository
 import com.rafalskrzypczyk.migration.domain.models.MigrationRecord
@@ -22,8 +15,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class MigrationRepositoryImpl @Inject constructor(
-    private val firestoreApi: FirestoreApi,
-    private val resourceProvider: ResourceProvider
+    private val firestoreApi: FirestoreApi
 ) : MigrationRepository {
 
     override fun getMigrationHistory(mode: String): Flow<Response<List<MigrationRecord>>> =

@@ -31,7 +31,7 @@ class CemCategoryDetailsPresenter @Inject constructor(
         if (userManager.getCurrentLoggedUser()?.role == UserRole.ADMIN) {
             view.openMigrationSheet(categoryId)
         } else {
-            view.displayError(resourceProvider.getString(com.rafalskrzypczyk.core.R.string.message_migration_declined))
+            view.displayError(resourceProvider.getString(coreR.string.message_migration_declined))
         }
     }
 

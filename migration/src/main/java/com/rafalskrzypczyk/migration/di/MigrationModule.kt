@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rafalskrzypczyk.migration.di
 
 import com.rafalskrzypczyk.migration.data.MigrationRepositoryImpl

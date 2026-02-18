@@ -28,12 +28,11 @@ class MigrationDetailsPresenter @Inject constructor(
         mode = arguments?.getString("mode") ?: ""
         categoryId = arguments?.getLong("categoryId", -1L) ?: -1L
         sourceEnv = databaseManager.getDatabase()
-        
-        // Pick a default target different from source
+
         targetEnv = Database.entries.find { it != sourceEnv } ?: sourceEnv
 
-        view?.displaySourceEnvironment(sourceEnv.name)
-        view?.displayTargetEnvironment(targetEnv.name)
+        view.displaySourceEnvironment(sourceEnv.name)
+        view.displayTargetEnvironment(targetEnv.name)
 
         loadPreview()
         loadHistory()
@@ -43,26 +42,25 @@ class MigrationDetailsPresenter @Inject constructor(
         presenterScope?.launch {
             when (mode) {
                 "main" -> {
-                    // We might need category details for title
-                    view?.displayModePreview("main", "Category Migration", "Transferring selected category and its questions")
-                    view?.displayItemCount(0) // Will be updated by repository if needed
+                    view.displayModePreview("main", "Category Migration", "Transferring selected category and its questions")
+                    view.displayItemCount(0)
                 }
                 "swipe" -> {
-                    view?.displayModePreview("swipe", "Swipe Mode Bulk Migration", "Transferring ALL swipe questions")
+                    view.displayModePreview("swipe", "Swipe Mode Bulk Migration", "Transferring ALL swipe questions")
                 }
                 "translations" -> {
-                    view?.displayModePreview("translations", "Translations Bulk Migration", "Transferring ALL translations")
+                    view.displayModePreview("translations", "Translations Bulk Migration", "Transferring ALL translations")
                 }
                 "cem" -> {
                     val preview = migrationRepository.getCemCategoryMigrationPreview(categoryId, sourceEnv)
                     if (preview is Response.Success) {
                         val (subs, ques) = preview.data
-                        view?.displayModePreview("cem", "CEM Category Tree Migration", "")
-                        view?.displayItemCount(1 + subs + ques)
+                        view.displayModePreview("cem", "CEM Category Tree Migration", "")
+                        view.displayItemCount(1 + subs + ques)
                         
                         val details = "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_subcategories_count)} $subs, " +
                                      "${resourceProvider.getString(com.rafalskrzypczyk.core.R.string.text_questions_count)} $ques"
-                        view?.displayModePreview("cem", "CEM Category Tree", details)
+                        view.displayModePreview("cem", "CEM Category Tree", details)
                     }
                 }
             }
@@ -74,9 +72,9 @@ class MigrationDetailsPresenter @Inject constructor(
             migrationRepository.getMigrationHistory(mode).collectLatest { response ->
                 when (response) {
                     is Response.Success -> {
-                        view?.displayMigrationHistory(response.data)
+                        view.displayMigrationHistory(response.data)
                     }
-                    is Response.Error -> view?.displayError(response.error)
+                    is Response.Error -> view.displayError(response.error)
                     is Response.Loading -> {}
                 }
             }
@@ -85,22 +83,22 @@ class MigrationDetailsPresenter @Inject constructor(
 
     override fun onTargetEnvClicked() {
         val options = Database.entries.filter { it != sourceEnv }
-        view?.displayTargetPicker(options)
+        view.displayTargetPicker(options)
     }
 
     override fun onTargetEnvSelected(env: Database) {
         targetEnv = env
-        view?.displayTargetEnvironment(targetEnv.name)
+        view.displayTargetEnvironment(targetEnv.name)
     }
 
     override fun onMigrateClicked() {
         val user = userManager.getCurrentLoggedUser()
         if (user == null) {
-            view?.displayError("User not logged in")
+            view.displayError("User not logged in")
             return
         }
 
-        view?.displayLoading()
+        view.displayLoading()
         presenterScope?.launch {
             val result = when (mode) {
                 "main" -> migrationRepository.migrateMainModeCategory(categoryId, sourceEnv, targetEnv, user.name)
@@ -110,19 +108,19 @@ class MigrationDetailsPresenter @Inject constructor(
                 else -> Response.Error("Unknown mode")
             }
 
-            view?.hideLoading()
+            view.hideLoading()
             when (result) {
                 is Response.Success -> {
-                    view?.displayMigrationSuccess()
-                    view?.dismiss()
+                    view.displayMigrationSuccess()
+                    view.dismiss()
                 }
-                is Response.Error -> view?.displayError(result.error)
+                is Response.Error -> view.displayError(result.error)
                 is Response.Loading -> {}
             }
         }
     }
 
     override fun onCancelClicked() {
-        view?.dismiss()
+        view.dismiss()
     }
 }

@@ -167,7 +167,7 @@ class QuizCategoryDetailsFragment :
         val colorPickerFragment = ColorPickerDialogFragment().apply { arguments = bundle }
         colorPickerFragment.show(parentFragmentManager, "ColorPickerDialog")
 
-        setFragmentResultListener("selectedColor") { requestKey, bundle ->
+        setFragmentResultListener("selectedColor") { _, bundle ->
             val result = bundle.getInt("selectedColor")
             presenter.updateCategoryColor(result)
         }

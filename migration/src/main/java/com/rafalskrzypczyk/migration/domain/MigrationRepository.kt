@@ -38,5 +38,5 @@ interface MigrationRepository {
     suspend fun getCemCategoryMigrationPreview(
         categoryId: Long,
         sourceEnv: Database
-    ): Response<Pair<Int, Int>> // Subcategories, Questions
+    ): Response<Pair<Int, Int>>
 }
