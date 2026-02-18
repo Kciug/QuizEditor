@@ -35,7 +35,11 @@ class MigrationDetailsPresenter @Inject constructor(
         categoryId = arguments?.getLong("categoryId", -1L) ?: -1L
         sourceEnv = databaseManager.getDatabase()
 
-        targetEnv = Database.entries.find { it != sourceEnv } ?: sourceEnv
+        targetEnv = if (sourceEnv != Database.PRODUCTION) {
+            Database.PRODUCTION
+        } else {
+            Database.entries.find { it != sourceEnv } ?: sourceEnv
+        }
 
         view.displaySourceEnvironment(sourceEnv.name)
         view.displayTargetEnvironment(targetEnv.name)
